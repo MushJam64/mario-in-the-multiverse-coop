@@ -1,0 +1,6 @@
+# make sure to rename all warp nodes to match these
+# this makes it so we cant do the sandbox thing where you can warp to og levels, eh watever
+
+//      OG LEVEL         COOP LEVEL
+level g (kirby level) -> level bob
+castle inside (hub)   -> castle inside

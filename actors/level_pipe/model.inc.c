@@ -1738,26 +1738,39 @@ Gfx level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_1[] = {
 
 
 Gfx mat_level_pipe_MversePipe1_layer1[] = {
-	gsSPCopyLightsPlayerPart(EMBLEM),
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
-	gsDPSetAlphaDither(G_AD_NOISE),
+	gsDPSetCombineLERP(1, 0, TEXEL0, ENVIRONMENT,
+		 0, 0, 0, ENVIRONMENT,
+		  COMBINED, 0, SHADE_ALPHA, 0,
+		   0, 0, 0, ENVIRONMENT),
+	gsSPGeometryMode(0, G_TEXTURE_GEN),
+	gsDPSetCycleType(G_CYC_2CYCLE),
+	gsDPSetRenderMode(G_RM_NOOP, G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(4032, 4032, 0, 0, 1),
+	gsDPSetEnvColor(255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 1, level_pipe_greypipe_i8),
+	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 2047, 256),
+	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b, 8, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0),
+	gsDPSetTileSize(0, 0, 0, 252, 252),
 	gsSPEndDisplayList(),
 };
 
 Gfx mat_revert_level_pipe_MversePipe1_layer1[] = {
 	gsDPPipeSync(),
-	
+	gsSPGeometryMode(G_TEXTURE_GEN, 0),
+	gsDPSetCycleType(G_CYC_1CYCLE),
+	gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
 	gsSPEndDisplayList(),
 };
 
 Gfx mat_level_pipe_MversePipe2_layer1[] = {
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(0, 0, 0, TEXEL0, TEXEL0, TEXEL1, ENVIRONMENT, 0, 0, 0, 0, 1, COMBINED, 0, SHADE, 0),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, SHADE, 0, TEXEL0, 0, ENVIRONMENT, 0),
 	gsSPGeometryMode(G_LIGHTING, 0),
-	gsDPSetCycleType(G_CYC_2CYCLE),
-	gsDPSetRenderMode(G_RM_NOOP, G_RM_AA_ZB_XLU_SURF2),
+//	gsDPSetCycleType(G_CYC_2CYCLE),
+//	gsDPSetRenderMode(G_RM_NOOP, G_RM_AA_ZB_XLU_SURF2),
+	gsDPSetEnvColor(255, 255, 255, 255),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_8b_LOAD_BLOCK, 1, level_pipe_mverse_pipe_stars_ia8),
 	gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
@@ -1772,24 +1785,23 @@ Gfx mat_level_pipe_MversePipe2_layer1[] = {
 Gfx mat_revert_level_pipe_MversePipe2_layer1[] = {
 	gsDPPipeSync(),
 	gsSPGeometryMode(0, G_LIGHTING),
-	gsDPSetCycleType(G_CYC_1CYCLE),
-	gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
 	gsSPEndDisplayList(),
 };
 
 Gfx level_pipe_Level_Pipe_Visual_mesh_layer_1[] = {
+	gsSPDisplayList(mat_level_pipe_MversePipe1_layer1),
+	gsSPDisplayList(level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_level_pipe_MversePipe1_layer1),
+	gsSPEndDisplayList(),
+};
+
+Gfx level_pipe_Level_Pipe_Visual_mesh_layer_5[] = {
 	gsSPDisplayList(mat_level_pipe_MversePipe2_layer1),
 	gsSPDisplayList(level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_1),
 	gsSPDisplayList(mat_revert_level_pipe_MversePipe2_layer1),
 	gsSPEndDisplayList(),
 };
 
-Gfx layervisual[] = {
-	gsSPDisplayList(mat_level_pipe_MversePipe1_layer1),
-	gsSPDisplayList(level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_0),
-	gsSPDisplayList(mat_revert_level_pipe_MversePipe1_layer1),
-	gsSPEndDisplayList(),
-};
 
 Gfx level_pipe_material_revert_render_settings[] = {
 	gsDPPipeSync(),
