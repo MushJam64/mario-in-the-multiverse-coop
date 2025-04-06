@@ -3,8 +3,8 @@
 const GeoLayout bob_area_5_geo[] = {
 	GEO_NODE_START(),
 	GEO_OPEN_NODE(),
-		//GEO_ASM(0, geo_update_g_marxscroll),
-		//GEO_ASM(0, e__shotgun_effects),
+		GEO_ASM(0, geo_update_g_marxscroll),
+		GEO_ASM(0, e__shotgun_effects),
 		GEO_DISPLAY_LIST(LAYER_TRANSPARENT, bob_dl_Circle_005_mesh_layer_5),
 		GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_Circle_006_mesh_layer_1),
 		GEO_DISPLAY_LIST(LAYER_ALPHA, bob_dl_Circle_006_mesh_layer_4),

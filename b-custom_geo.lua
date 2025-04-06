@@ -1,6 +1,6 @@
 -- Custom Geo ASMs and Switch Functions --
 
-function geo_update_mverse_pipe(n, _) -- replace any unused params with `_`
+function geo_update_mverse_pipe(n, m)
     local objectGraphnode = geo_get_current_object()
     local gfx = cast_graph_node(n.next).displayList
     if objectGraphnode then
@@ -15,4 +15,14 @@ function geo_update_mverse_pipe(n, _) -- replace any unused params with `_`
             end
         end)
     end
+end
+
+---!TODO
+function e__shotgun_effects(n, m)
+
+end
+
+---!TODO
+function geo_update_hub_sky(n, m)
+
 end

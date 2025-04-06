@@ -47,7 +47,7 @@ const LevelScript level_bob_entry[] = {
 		OBJECT(MODEL_NONE, -419, 3308, -15123, 0, 0, 0, (40 << 24) | (11 << 16), bhvWarp),
 		TERRAIN(bob_area_1_collision),
 		MACRO_OBJECTS(bob_area_1_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_CUSTOM_SAVE_HUT),
+		SET_BACKGROUND_MUSIC(0x00, 0x27),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -75,7 +75,7 @@ const LevelScript level_bob_entry[] = {
 		OBJECT(MODEL_G_STAR_PROJECTILE, -104, 554, -1629, 0, 90, 0, 0x00000000, bhvStarDoorStar),
 		TERRAIN(bob_area_2_collision),
 		MACRO_OBJECTS(bob_area_2_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_CUSTOM_SAVE_HUT),
+		SET_BACKGROUND_MUSIC(0x00, 0x27),
 		TERRAIN_TYPE(TERRAIN_STONE),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -88,7 +88,7 @@ const LevelScript level_bob_entry[] = {
 		WARP_NODE(0x0C, LEVEL_BOB, 0x04, 0x0D, WARP_NO_CHECKPOINT),
 		WARP_NODE(0x0A, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
 		OBJECT(MODEL_NONE, 2212, -1780, -10226, 0, 0, 0, (90 << 24) | (11 << 16), bhvWarp),
-		//OBJECT(MODEL_G_BANANA_DEE, 2871, 503, -8725, 0, 27, 0, (DIALOG_G_BANANADEE << 16), bhvGBananaDee),
+		OBJECT(MODEL_G_BANANA_DEE, 2871, 503, -8725, 0, 27, 0, (15 << 16), bhvGBananaDee), //DIALOG_G_BANANADEE
 		OBJECT(MODEL_G_BRONTO_BURT, 4962, 4226, -1141, 0, -165, 0, 0x00000000, bhvGBrontoBurt),
 		OBJECT(MODEL_G_BRONTO_BURT, 1980, 3056, -6224, 0, -122, 0, 0x00000000, bhvGBrontoBurt),
 		OBJECT(MODEL_G_BRONTO_BURT, 2780, 3091, -5682, 0, -122, 0, 0x00000000, bhvGBrontoBurt),

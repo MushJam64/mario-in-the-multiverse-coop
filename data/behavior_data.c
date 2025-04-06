@@ -1,4 +1,3 @@
-/*
 const BehaviorScript bhvGBananaDee[] = {
 	BEGIN(OBJ_LIST_GENACTOR),
     ID(id_bhvNewId),
@@ -6,26 +5,50 @@ const BehaviorScript bhvGBananaDee[] = {
 	SET_INTERACT_TYPE(INTERACT_TEXT),
 	SET_HITBOX(130, 100),
 	SET_INT(oInteractionSubtype, INT_SUBTYPE_NPC),
-	LOAD_ANIMATIONS(oAnimations, g_banana_dee_anims),
-	ANIMATE(0),
+	//LOAD_ANIMATIONS(oAnimations, g_banana_dee_anims),
+	//ANIMATE(0),
 	BEGIN_LOOP(),
         CALL_NATIVE(bhv_npc_loop),
 		SET_INT(oIntangibleTimer, 0),
 		SET_INT(oInteractStatus, 0),
-        SET_FLOAT(oDrawingDistance, 12000),
 	END_LOOP(),
 };
-*/
 
 const BehaviorScript bhvLevelPipe[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
     LOAD_COLLISION_DATA(level_pipe_collision),
     OR_INT(oFlags, (OBJ_FLAG_ACTIVE_FROM_AFAR | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    SET_FLOAT(oDrawingDistance, 20000),
     CALL_NATIVE(level_pipe_init),
     BEGIN_LOOP(),
         CALL_NATIVE(level_pipe_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvGSpring[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)), //OR OBJ_FLAG_ATTACHABLE_BY_ROPE also
+    LOAD_COLLISION_DATA(g_spring_collision),
+    SET_FLOAT(oDrawingDistance, 16000),
+    CALL_NATIVE(bhv_g_spring_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_spring_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvGWaddleDee[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW )), // OR OBJ_FLAG_E__SG_ENEMY also
+    //LOAD_ANIMATIONS(oAnimations, g_waddle_dee_anims),
+    SET_HOME(),
+    //SET_FLOAT(oDrawingDistance, 16000),
+    //ANIMATE(0),
+    CALL_NATIVE(bhv_g_waddle_dee_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_waddle_dee_loop),
     END_LOOP(),
 };
 
@@ -3476,19 +3499,6 @@ const BehaviorScript bhvGStarDoor[] = {
     END_LOOP(),
 };
 
-const BehaviorScript bhvGSpring[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_ATTACHABLE_BY_ROPE)),
-    LOAD_COLLISION_DATA(g_spring_collision),
-    SET_FLOAT(oDrawingDistance, 16000),
-    CALL_NATIVE(bhv_g_spring_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_spring_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
 const BehaviorScript bhvGCutRock[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
@@ -3697,20 +3707,6 @@ const BehaviorScript bhvGMarxDoor[] = {
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_g_marx_door_loop),
         CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvGWaddleDee[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_E__SG_ENEMY | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW )),
-    LOAD_ANIMATIONS(oAnimations, g_waddle_dee_anims),
-    SET_HOME(),
-    SET_FLOAT(oDrawingDistance, 16000),
-    ANIMATE(0),
-    CALL_NATIVE(bhv_g_waddle_dee_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_waddle_dee_loop),
     END_LOOP(),
 };
 

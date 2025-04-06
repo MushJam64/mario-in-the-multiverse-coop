@@ -179,8 +179,13 @@ end
 
 queued_pipe_cutscene     = false
 hub_level_current_index  = 0
-
+hub_level_index = -1
 hub_titlecard_alpha      = 0
 hub_returnback_box_alpha = 0
 
-levels_unlocked          = mod_storage_load_number("levels_unlocked") or 0
+--levels_unlocked = 1 means first course is open
+levels_unlocked          = mod_storage_load_number("levels_unlocked_" ..(get_current_save_file_num()-1)) or 1
+if save_file_get_flags() == 0 or levels_unlocked == 0 then -- has nothing
+    levels_unlocked = 1
+    mod_storage_save_number("levels_unlocked_" ..(get_current_save_file_num()-1), levels_unlocked)
+end

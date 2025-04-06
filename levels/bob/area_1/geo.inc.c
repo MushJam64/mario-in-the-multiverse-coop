@@ -3,7 +3,7 @@
 const GeoLayout bob_area_1_geo[] = {
 	GEO_NODE_START(),
 	GEO_OPEN_NODE(),
-		//GEO_ASM(0, e__shotgun_effects),
+		GEO_ASM(0, e__shotgun_effects),
 		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_ALPHA, -3532, 879, -2882, 0, 45, 0, bob_dl_debris_mesh_layer_4),
 		GEO_OPEN_NODE(),
 			GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_debris_mesh_layer_1),
@@ -16,7 +16,7 @@ const GeoLayout bob_area_1_geo[] = {
 		GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_kirblock_mesh_layer_1),
 		GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_Plane_mesh_layer_1),
 		GEO_DISPLAY_LIST(LAYER_TRANSPARENT, bob_dl_Plane_001_mesh_layer_5),
-		//GEO_ASM(0, e__shotgun_effects),
+		GEO_ASM(0, e__shotgun_effects),
 	GEO_CLOSE_NODE(),
 	GEO_RETURN(),
 };
