@@ -1,4 +1,6 @@
-function geo_update_mverse_pipe(n, m)
+-- Custom Geo ASMs and Switch Functions --
+
+function geo_update_mverse_pipe(n, _) -- replace any unused params with `_`
     local objectGraphnode = geo_get_current_object()
     local gfx = cast_graph_node(n.next).displayList
     if objectGraphnode then
@@ -9,7 +11,7 @@ function geo_update_mverse_pipe(n, m)
         local b = 120 + sins(timer * 0x300 + 0xAAAA) * 55.0 * grade;
         gfx_parse(gfx, function(dl, cmd)
             if cmd == G_SETENVCOLOR then
-                gfx_set_command(dl, "gsDPSetEnvColor", r, g, b, grade * 255.0 - 255.0);
+                gfx_set_command(dl, "gsDPSetEnvColor", r, g, b, 255);
             end
         end)
     end
