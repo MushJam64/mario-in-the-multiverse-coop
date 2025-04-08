@@ -28,7 +28,7 @@ const BehaviorScript bhvLevelPipe[] = {
 const BehaviorScript bhvGSpring[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)), //OR OBJ_FLAG_ATTACHABLE_BY_ROPE also
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE) | (OBJ_FLAG_30 + 16)), //OR OBJ_FLAG_ATTACHABLE_BY_ROPE also
     LOAD_COLLISION_DATA(g_spring_collision),
     SET_FLOAT(oDrawingDistance, 16000),
     CALL_NATIVE(bhv_g_spring_init),
@@ -52,20 +52,59 @@ const BehaviorScript bhvGWaddleDee[] = {
     END_LOOP(),
 };
 
-/* these are behavior functions from behavior_data.c in mario in the multiverse
-extern void bhv_hub_platform_loop(void);
+const BehaviorScript bhvGAttachedRope[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    CALL_NATIVE(bhv_g_attached_rope_init),
+    //SET_FLOAT(oDrawingDistance, 16000),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_attached_rope_loop),
+    END_LOOP(),
+};
+
 const BehaviorScript bhvHubPlatform[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
     LOAD_COLLISION_DATA(hub_platform_collision),
     OR_INT(oFlags, (OBJ_FLAG_ACTIVE_FROM_AFAR | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    SET_FLOAT(oDrawingDistance, 20000),
+    //SET_FLOAT(oDrawingDistance, 20000),
     SET_HOME(),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_hub_platform_loop),
         CALL_NATIVE(load_object_collision_model),
     END_LOOP(),
 };
+
+const BehaviorScript bhvGBrontoBurt[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)), // OR OBJ_FLAG_E__SG_ENEMY also
+    //LOAD_ANIMATIONS(oAnimations, g_bronto_burt_anims),
+    SET_HOME(),
+    //SET_FLOAT(oDrawingDistance, 16000),
+    //ANIMATE(0),
+    CALL_NATIVE(bhv_g_bronto_burt_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_bronto_burt_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvGCannon[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
+    LOAD_COLLISION_DATA(g_cannon_collision),
+    //SET_FLOAT(oDrawingDistance, 16000),
+    CALL_NATIVE(bhv_g_cannon_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_cannon_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+/* these are behavior functions from behavior_data.c in mario in the multiverse
+extern void bhv_hub_platform_loop(void);
 
 extern void bhv_shopitem_loop(void);
 const BehaviorScript bhvShopItem[] = {
@@ -3453,17 +3492,6 @@ const BehaviorScript bhvStarDrop[] = {
     END_LOOP(),
 };
 
-const BehaviorScript bhvGAttachedRope[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    CALL_NATIVE(bhv_g_attached_rope_init),
-    SET_FLOAT(oDrawingDistance, 16000),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_attached_rope_loop),
-    END_LOOP(),
-};
-
 const BehaviorScript bhvGAttachedBlock[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
@@ -3508,19 +3536,6 @@ const BehaviorScript bhvGCutRock[] = {
     CALL_NATIVE(bhv_g_cut_rock_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_g_cut_rock_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvGCannon[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
-    LOAD_COLLISION_DATA(g_cannon_collision),
-    SET_FLOAT(oDrawingDistance, 16000),
-    CALL_NATIVE(bhv_g_cannon_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_cannon_loop),
         CALL_NATIVE(load_object_collision_model),
     END_LOOP(),
 };
@@ -3667,20 +3682,6 @@ const BehaviorScript bhvGMarxBlackHoleEffect[] = {
     SET_FLOAT(oDrawingDistance, 16000),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_g_marx_black_hole_effect_loop),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvGBrontoBurt[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_E__SG_ENEMY | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
-    LOAD_ANIMATIONS(oAnimations, g_bronto_burt_anims),
-    SET_HOME(),
-    SET_FLOAT(oDrawingDistance, 16000),
-    ANIMATE(0),
-    CALL_NATIVE(bhv_g_bronto_burt_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_bronto_burt_loop),
     END_LOOP(),
 };
 

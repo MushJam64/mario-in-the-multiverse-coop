@@ -41,12 +41,15 @@ local function act_enter_hub_pipe(m)
         m.pos.y = approach_f32_asymptotic(m.pos.y, m.interactObj.oPosY + 60.0, 0.1)
         m.actionTimer = m.actionTimer + 1
         if m.actionTimer > 20 then
-            if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE then
-                -- Enter a level
-                warp_to_warpnode(get_hub_level(m.interactObj.oBehParams2ndByte), get_hub_area(m.interactObj.oBehParams2ndByte), 0, 0x0A)
-            else
-                -- Exit a level
-                warp_to_warpnode(LEVEL_CASTLE, 0x01, 0, get_hub_return_id(hub_level_current_index))
+            if m.playerIndex == 0 then
+                if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE then
+                    -- Enter a level
+                    warp_to_warpnode(get_hub_level(m.interactObj.oBehParams2ndByte),
+                        get_hub_area(m.interactObj.oBehParams2ndByte), 0, 0x0A)
+                else
+                    -- Exit a level
+                    warp_to_warpnode(LEVEL_CASTLE, 0x01, 0, get_hub_return_id(hub_level_current_index))
+                end
             end
         end
     end

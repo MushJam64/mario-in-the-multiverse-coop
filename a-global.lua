@@ -1,83 +1,117 @@
 -- Global Constants --
 
-NULL                     = nil -- Defining NULL
+NULL                        = nil -- Defining NULL
 
 -- Level Nums
 
-LEVEL_INK_TEST           = 39
-LEVEL_X                  = 40
-LEVEL_G                  = 41
-LEVEL_B                  = 42
-LEVEL_A                  = 43
-LEVEL_F                  = 44
-LEVEL_E                  = 45
-LEVEL_I                  = 46
-LEVEL_J                  = 47
-LEVEL_M                  = 48
-LEVEL_O                  = 49
-LEVEL_D                  = 50
-LEVEL_N                  = 51
-LEVEL_H                  = 52
-LEVEL_C                  = 53
-LEVEL_BIRTHDAY           = 54
-LEVEL_L                  = 55
-LEVEL_BOWSER_COURSE      = 56
-LEVEL_K                  = 57
-LEVEL_SB                 = 58
-LEVEL_MC                 = 59
-LEVEL_BB                 = 60
+LEVEL_INK_TEST              = 39
+LEVEL_X                     = 40
+LEVEL_G                     = 41
+LEVEL_B                     = 42
+LEVEL_A                     = 43
+LEVEL_F                     = 44
+LEVEL_E                     = 45
+LEVEL_I                     = 46
+LEVEL_J                     = 47
+LEVEL_M                     = 48
+LEVEL_O                     = 49
+LEVEL_D                     = 50
+LEVEL_N                     = 51
+LEVEL_H                     = 52
+LEVEL_C                     = 53
+LEVEL_BIRTHDAY              = 54
+LEVEL_L                     = 55
+LEVEL_BOWSER_COURSE         = 56
+LEVEL_K                     = 57
+LEVEL_SB                    = 58
+LEVEL_MC                    = 59
+LEVEL_BB                    = 60
 
 -- Ability Enum
 
-ABILITY_DEFAULT          = 0
-ABILITY_CUTTER           = 1
-ABILITY_BUBBLE_HAT       = 2
-ABILITY_SQUID            = 3
-ABILITY_SHOCK_ROCKET     = 4
-ABILITY_PHASEWALK        = 5
-ABILITY_BIG_DADDY        = 6
-ABILITY_KNIGHT           = 7
-ABILITY_CHRONOS          = 8
-ABILITY_E_SHOTGUN        = 9
-ABILITY_GADGET_WATCH     = 10
-ABILITY_HM_FLY           = 11
-ABILITY_AKU              = 12
-ABILITY_ESTEEMED_MORTAL  = 13
-ABILITY_MARBLE           = 14
-ABILITY_DASH_BOOSTER     = 15
-ABILITY_UTIL_COMPASS     = 16
-ABILITY_UTIL_MILK        = 17
-ABILITY_UTIL_MIRROR      = 18
-ABILITY_NONE             = 19
+ABILITY_DEFAULT             = 0
+ABILITY_CUTTER              = 1
+ABILITY_BUBBLE_HAT          = 2
+ABILITY_SQUID               = 3
+ABILITY_SHOCK_ROCKET        = 4
+ABILITY_PHASEWALK           = 5
+ABILITY_BIG_DADDY           = 6
+ABILITY_KNIGHT              = 7
+ABILITY_CHRONOS             = 8
+ABILITY_E_SHOTGUN           = 9
+ABILITY_GADGET_WATCH        = 10
+ABILITY_HM_FLY              = 11
+ABILITY_AKU                 = 12
+ABILITY_ESTEEMED_MORTAL     = 13
+ABILITY_MARBLE              = 14
+ABILITY_DASH_BOOSTER        = 15
+ABILITY_UTIL_COMPASS        = 16
+ABILITY_UTIL_MILK           = 17
+ABILITY_UTIL_MIRROR         = 18
+ABILITY_NONE                = 19
 
 -- Menu
 
-LMENU_ABILITY_HUD        = 0
-LMENU_HUD_ALPHA          = 20
-LMENU_TITLE_CARD         = 21
-LMENU_DIALOG_OPEN        = 22
-LMENU_DIALOG_SCALE       = 23
-LMENU_TRANSITION         = 24
-LMENU_PAUSE              = 25
-LMENU_FILE_1             = 26
-LMENU_FILE_2             = 27
-LMENU_FILE_3             = 28
-LMENU_FILE_BACKCARD      = 29
-LMENU_COUNT              = 30
+LMENU_ABILITY_HUD           = 0
+LMENU_HUD_ALPHA             = 20
+LMENU_TITLE_CARD            = 21
+LMENU_DIALOG_OPEN           = 22
+LMENU_DIALOG_SCALE          = 23
+LMENU_TRANSITION            = 24
+LMENU_PAUSE                 = 25
+LMENU_FILE_1                = 26
+LMENU_FILE_2                = 27
+LMENU_FILE_3                = 28
+LMENU_FILE_BACKCARD         = 29
+LMENU_COUNT                 = 30
 
 -- Hud
-TEXT_PIPE_NOT_ENOUGH     = ("Needed ★: ....")
-TEXT_QUESTION            = ("???")
-TEXT_PIPE_ENTER          = (" :Enter   :Cancel")
-TEXT_PIPE_A              = (" A")
-TEXT_PIPE_B              = ("          B")
-TEXT_PIPE_Z              = ("[Z]")
+TEXT_PIPE_NOT_ENOUGH        = ("Needed ★: ....")
+TEXT_QUESTION               = ("???")
+TEXT_PIPE_ENTER             = (" :Enter   :Cancel")
+TEXT_PIPE_A                 = (" A")
+TEXT_PIPE_B                 = ("          B")
+TEXT_PIPE_Z                 = ("[Z]")
 
-pipe_string_not_enough   = TEXT_PIPE_NOT_ENOUGH
-pipe_string_enter        = TEXT_PIPE_ENTER
-pipe_string_a            = TEXT_PIPE_A
-pipe_string_b            = TEXT_PIPE_B
-pipe_string_z            = TEXT_PIPE_Z
+pipe_string_not_enough      = TEXT_PIPE_NOT_ENOUGH
+pipe_string_enter           = TEXT_PIPE_ENTER
+pipe_string_a               = TEXT_PIPE_A
+pipe_string_b               = TEXT_PIPE_B
+pipe_string_z               = TEXT_PIPE_Z
+
+-- Behavior
+MODEL_LEVEL_PIPE            = smlua_model_util_get_id("level_pipe_geo")
+MODEL_G_BANANA_DEE          = smlua_model_util_get_id("g_banana_dee_geo")
+MODEL_G_SPRING              = smlua_model_util_get_id("g_spring_geo")
+MODEL_G_WADDLE_DEE          = smlua_model_util_get_id("g_waddle_dee_geo")
+MODEL_ATTACHED_ROPE         = smlua_model_util_get_id("attached_rope_geo")
+MODEL_HUBPLATFORM           = smlua_model_util_get_id("hub_platform_geo")
+MODEL_G_BRONTO_BURT         = smlua_model_util_get_id("g_bronto_burt_geo")
+MODEL_G_CANNON              = smlua_model_util_get_id("g_cannon_geo")
+
+BP3_ATTACH_ROPE             = 0xF0
+
+OBJ_FLAG_ATTACHABLE_BY_ROPE = OBJ_FLAG_30 + 16
+
+local function BIT(i) return (1 << (i)) end
+local function BITMASK(size) return ((BIT(size)) - 1) end
+
+-- Number of bparams in oBehParams
+NUM_BPARAMS = 4
+-- Number of bits in one bparam
+BPARAM_SIZE = 8
+-- Number of bits in bparam bitmask
+local function BPARAM_MASK_SIZE(num) return (BPARAM_SIZE * (num)) end
+-- bparam bitmask ('num' 1 -> 0xFF, 'num' 2 -> 0xFFFF, etc.)
+local function BPARAM_MASK(num) return BITMASK(BPARAM_MASK_SIZE(num)) end
+-- Returns the amount of bits to shift a bparam value ('index' == bparam index)
+local function BPARAM_NSHIFT(index, num) return (((NUM_BPARAMS - ((num) - 1)) - (index)) * BPARAM_SIZE) end
+-- Returns the bparam(s) value from the index location in oBehParams
+local function GET_BPARAMS(behParams, index, num) return ((behParams >> BPARAM_NSHIFT((index), (num))) & BPARAM_MASK(num)) end
+
+-- Read 2 bparams as a single value
+
+function GET_BPARAM34(behParams) return GET_BPARAMS((behParams), 3, 2) end
 
 -- Dream Data
 
@@ -238,8 +272,12 @@ function dream_comet_unlocked()
 end
 
 --levels_unlocked = 1 means first course is open
-levels_unlocked = mod_storage_load_number("levels_unlocked_" .. (get_current_save_file_num() - 1)) or 1
-if save_file_get_flags() == 0 or levels_unlocked == 0 then -- has nothing
-    levels_unlocked = 1
-    mod_storage_save_number("levels_unlocked_" .. (get_current_save_file_num() - 1), levels_unlocked)
+if network_is_server() then
+    gGlobalSyncTable.levels_unlocked = mod_storage_load_number("levels_unlocked_" .. (get_current_save_file_num() - 1)) or
+        1
+    if save_file_get_flags() == 0 or gGlobalSyncTable.levels_unlocked == 0 then -- has nothing
+        gGlobalSyncTable.levels_unlocked = 1
+        mod_storage_save_number("levels_unlocked_" .. (get_current_save_file_num() - 1), gGlobalSyncTable
+            .levels_unlocked)
+    end
 end
