@@ -156,3 +156,6 @@ function geo_generate_attached_rope(n, m)
     --gSPDisplayList(dlHead++, mat_revert_attached_rope_f3dlite_material_013)
     --gSPEndDisplayList(dlHead++)
 end
+
+function geo_ability_material(n, m)
+end
