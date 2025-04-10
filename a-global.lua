@@ -288,6 +288,7 @@ function dream_comet_unlocked()
 end
 
 --levels_unlocked = 1 means first course is open
+gGlobalSyncTable.levels_unlocked = 1 ---default
 if network_is_server() then
     gGlobalSyncTable.levels_unlocked = mod_storage_load_number("levels_unlocked_" .. (get_current_save_file_num() - 1)) or
         1

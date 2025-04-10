@@ -51,11 +51,11 @@ end
 local function ability_functions_update(m)
     local f = gMarioStatesExt[m.playerIndex]
     if m.action == ACT_PUNCHING or m.action == ACT_MOVE_PUNCHING then
-        if f.abilityId == ABILITY_CUTTER then
+        --[[if f.abilityId == ABILITY_CUTTER then
             if (m.actionTimer == 2) then
                 --spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
             end
-        end
+        end]]
     end
 end
 

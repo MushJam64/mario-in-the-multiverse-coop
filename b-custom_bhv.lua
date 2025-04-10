@@ -706,13 +706,13 @@ function bhv_g_attached_rope_loop(o)
     for i = 1, o.numCollidedObjs - 1 do
         local other = o.collidedObjs[i]
         local marioHigherPos = gMarioState.pos.y + 100
-        if (obj_has_behavior_id(other, bhvCutterBlade) ~=0 and other.oPosY - 30 > o.oPosY) or
+        if (obj_has_behavior_id(other, bhvCutterBlade) ~= 0 and other.oPosY - 30 > o.oPosY) or
             (other == gMarioState.marioObj and marioHigherPos - 30 > o.oPosY and mario_can_cut_rope()) then
             local otherObjY = (other == gMarioState.marioObj) and marioHigherPos or other.oPosY
             --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
             local cutRope = spawn_object_relative(0, 0, otherObjY - o.oPosY, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
             o.oBehParams = (o.oBehParams & 0xFFFF0000) | (otherObjY - o.oPosY)
-            o.parentObj.oBehParams = (cutRope.oBehParams &~ (BP3_ATTACH_ROPE << 8))
+            o.parentObj.oBehParams = (cutRope.oBehParams & ~(BP3_ATTACH_ROPE << 8))
             cur_obj_become_intangible()
             o.oUpdateRopeSize = 1
             o.oAction = 1
@@ -962,6 +962,7 @@ local sSirKibbleAttackHandlers = {
 }
 
 function bhv_sir_kibble_init(o)
+    o.oFlags = (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW) --OR OBJ_FLAG_E__SG_CUSTOM also
     o.oAction = SIR_KIBBLE_ACT_CUTSCENE
     if o.oBehParams2ndByte == 1 then
         obj_set_hitbox(o, sBossSirKibbleHitbox)
@@ -971,7 +972,7 @@ function bhv_sir_kibble_init(o)
     end
     smlua_anim_util_set_animation(o, "sir_kibble_anim_idle")
     o.oGravity = -4.0
-    network_init_object(o, true, { "oAction", "oTimer", "oHealth" })
+    network_init_object(o, true, { "oAction", "oTimer", "oHealth", "oForwardVel", "oVelY", "oInteractStatus" })
 end
 
 -- sir_kibble_anim_throw and sir_kibble_anim_idle
@@ -993,7 +994,8 @@ function bhv_sir_kibble_loop(o)
             end
         elseif o.oAction == SIR_KIBBLE_ACT_THROWING then
             if o.oTimer == 17 then
-                spawn_object_relative2(0, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade)
+                spawn_object_relative2(0, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
+
                 --cutterblade.activeFlags = (cutterblade.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
             end
 
@@ -1021,6 +1023,8 @@ function bhv_sir_kibble_loop(o)
     end
 end
 
+bhvSirKibble = hook_behavior(nil, OBJ_LIST_GENACTOR, true, bhv_sir_kibble_init, bhv_sir_kibble_loop, "bhvSirKibble")
+
 -- cutter for ability and that guy above
 local sCutterBladeHitbox = {
     interactType = 0,
@@ -1035,7 +1039,7 @@ local sCutterBladeHitbox = {
 }
 
 local sEnemyCutterBladeHitbox = {
-    interactType = 0,
+    interactType = INTERACT_DAMAGE,
     downOffset = 50,
     damageOrCoinValue = 2,
     health = 0,
@@ -1057,7 +1061,7 @@ function bhv_cutter_blade_init(o)
     else
         obj_set_hitbox(o, sEnemyCutterBladeHitbox)
     end
-    network_init_object(o, true, {"oAction", "oTimer", "oForwardVel"})
+    -- network_init_object(o, true, { "oAction", "oTimer", "oForwardVel" })
 end
 
 ---@param o Object
@@ -1121,7 +1125,7 @@ function bhv_cutter_blade_loop(o)
     end]]
 
     -- floor check
-    raydir[2] = raydir[2] - 20.0
+    --[[ raydir[2] = raydir[2] - 20.0
     surf = collision_find_surface_on_ray(
         originPos[1], originPos[2], originPos[3],
         raydir[1], raydir[2], raydir[3]
@@ -1147,7 +1151,7 @@ function bhv_cutter_blade_loop(o)
             o.oForwardVel = o.oForwardVel * -0.05
         end
     end
-
+]]
     if object_step() & OBJ_COL_FLAG_HIT_WALL ~= 0 then
         o.oForwardVel = o.oForwardVel * -0.05
         o.oAngleVelYaw = 0x800
@@ -1176,9 +1180,11 @@ end
 function bhv_respawner_loop2(o)
     local spawnedObject
     if (is_point_within_radius_of_mario(o.oPosX, o.oPosY, o.oPosZ, o.oRespawnerMinSpawnDist) == 0) then
-        spawnedObject = spawn_object2(o, o.oRespawnerModelToRespawn, o.oHealth)
-        spawnedObject.oBehParams = o.oBehParams
-        o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+        if spawnedObject then
+            spawnedObject = spawn_object2(o, o.oRespawnerModelToRespawn, o.oHealth)
+            spawnedObject.oBehParams = o.oBehParams
+            o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+        end
     end
 end
 
@@ -1190,7 +1196,9 @@ function create_respawner(o, model, behToSpawn, minSpawnDist)
     respawner.oHealth = behToSpawn
 end
 
-bhvRespawner2 = hook_behavior(nil, OBJ_LIST_SPAWNER, true, nil, bhv_respawner_loop2)
+bhvRespawner2 = hook_behavior(nil, OBJ_LIST_SPAWNER, true, function(s)
+    network_init_object(s, true, { "oHealth", "oRespawnerMinSpawnDist", "oRespawnerModelToRespawn", "oBehParams" })
+end, bhv_respawner_loop2)
 
 local sStarProjectileHitbox = {
     interactType = INTERACT_GRABBABLE,
@@ -1325,16 +1333,18 @@ function bhv_level_g_cutscenes_loop(o)
         --o.activeFlags = (o.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
         --local sirKibble = obj_get_nearest_object_with_behavior_id(bhvSirKibble)
         --sirKibble.activeFlags = (sirKibble.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
-        local m = nearest_mario_state_to_object(o)
+        for mi = 0, MAX_PLAYERS - 1 do
+            local m = gMarioStates[mi]
 
-        m.area.camera.cutscene = 1
-        gLakituState.goalPos.x = 749
-        gLakituState.goalPos.y = 800
-        gLakituState.goalPos.z = 446
-        --if move_point_along_spline(gLakituState.goalFocus, (g_area_2_spline_KibbleFocus), sCutsceneSplineSegment, sCutsceneSplineSegmentProgress) then
-        m.area.camera.cutscene = 0
-        --clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS)
-        obj_mark_for_deletion(o)
+            --[[m.area.camera.cutscene = 1
+            gLakituState.goalPos.x = 749
+            gLakituState.goalPos.y = 800
+            gLakituState.goalPos.z = 446
+            --if move_point_along_spline(gLakituState.goalFocus, (g_area_2_spline_KibbleFocus), sCutsceneSplineSegment, sCutsceneSplineSegmentProgress) then
+            m.area.camera.cutscene = 0]]
+            --clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS)
+            obj_mark_for_deletion(o)
+        end
         -- end
     elseif o.oBehParams2ndByte == 1 then
         if o.oAction == 0 then
@@ -1354,7 +1364,7 @@ end
 
 --star drop
 function bhv_star_drop_init(o)
-    nearest_mario_state_to_object(o).area.camera.cutscene = 1
+   -- gMarioStates[0].area.camera.cutscene = 1
     stop_secondary_music(180)
     network_init_object(o, true, nil)
 end
@@ -1365,9 +1375,9 @@ function bhv_star_drop_loop(o)
     o.oFaceAnglePitch = o.oFaceAnglePitch + 0x800
 
     if o.oTimer >= 30 and o.oTimer < 90 then
-        gLakituState.goalFocus.x = o.oPosX
+        --[[gLakituState.goalFocus.x = o.oPosX
         gLakituState.goalFocus.y = o.oPosY
-        gLakituState.goalFocus.z = o.oPosZ
+        gLakituState.goalFocus.z = o.oPosZ]]
         o.oPosY = o.oPosY + 20 * coss(0x222 * (o.oTimer - 30))
         o.oPosX = approach_f32_asymptotic(o.oPosX, 0, 0.8)
         o.oPosZ = approach_f32_asymptotic(o.oPosZ, 0, 0.8)
@@ -1375,16 +1385,16 @@ function bhv_star_drop_loop(o)
         o.oPosY = o.oPosY + 4 * coss(0x222 * (o.oTimer - 90))
 
         if o.oTimer == 110 then
-            local abilityo = spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
+             spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
             cur_obj_hide()
             spawn_mist_particles()
             spawn_triangle_break_particles(20, 0x8B, 0.2, 3)
             create_sound_spawner(SOUND_GENERAL_SHORT_STAR)
         end
         if o.oTimer == 140 then
+            --gMarioStates[0].area.camera.cutscene = 0
             obj_mark_for_deletion(o)
             obj_mark_for_deletion(o.parentObj)
-            nearest_mario_state_to_object(o).area.camera.cutscene = 0
         end
     end
 end

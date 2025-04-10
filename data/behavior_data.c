@@ -117,18 +117,6 @@ const BehaviorScript bhvGAttachedBlock[] = {
     END_LOOP(),
 };
 
-const BehaviorScript bhvSirKibble[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW)), //OR OBJ_FLAG_E__SG_CUSTOM also
-    //LOAD_ANIMATIONS(oAnimations, sir_kibble_anims),
-    //SET_FLOAT(oDrawingDistance, 16000),
-    CALL_NATIVE(bhv_sir_kibble_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_sir_kibble_loop),
-    END_LOOP(),
-};
-
 const BehaviorScript bhvCutterBlade[] = {
     BEGIN(OBJ_LIST_DESTRUCTIVE),
     ID(id_bhvNewId),
