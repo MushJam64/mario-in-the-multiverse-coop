@@ -675,12 +675,12 @@ function bhv_g_attached_rope_init(o)
 
     obj_set_hitbox(o, sAttachedRopeHitbox)
     o.oUpdateRopeSize = 1
-    --TODO SYNC
+    --todo sync?
     --network_init_object(o, true, { "oUpdateRopeSize", "oBehParams", "oAction", "oTimer" })
 end
 
-local function mario_can_cut_rope()
-    --[[ if using_ability(ABILITY_CUTTER) then
+local function mario_can_cut_rope(gMarioState)
+     --[[if using_ability(ABILITY_CUTTER) then
         if gMarioState.action == ACT_FINAL_CUTTER_SEQUENCE or gMarioState.action == ACT_CUTTER_DASH or
             gMarioState.action == ACT_DIVE or gMarioState.action == ACT_DIVE_SLIDE then
             return true
@@ -695,24 +695,23 @@ local function mario_can_cut_rope()
         if gMarioState.action == ACT_ABILITY_AXE_JUMP then
             return true
         end
-    end
-]]
-    --return false
+    end]]
     return true
 end
 
 function bhv_g_attached_rope_loop(o)
     local gMarioState = nearest_mario_state_to_object(o)
-    for i = 1, o.numCollidedObjs - 1 do
-        local other = o.collidedObjs[i]
-        local marioHigherPos = gMarioState.pos.y + 100
-        if (obj_has_behavior_id(other, bhvCutterBlade) ~= 0 and other.oPosY - 30 > o.oPosY) or
-            (other == gMarioState.marioObj and marioHigherPos - 30 > o.oPosY and mario_can_cut_rope()) then
+
+    local other = obj_get_nearest_object_with_behavior_id(o, bhvCutterBlade)
+    local marioHigherPos = gMarioState.pos.y + 100
+    if other then
+        if (obj_check_hitbox_overlap(o, other) and other.oPosY - 30 > o.oPosY) or
+            (other == gMarioState.marioObj and marioHigherPos - 30 > o.oPosY and mario_can_cut_rope(gMarioState)) then
             local otherObjY = (other == gMarioState.marioObj) and marioHigherPos or other.oPosY
             --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
             local cutRope = spawn_object_relative(0, 0, otherObjY - o.oPosY, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
             o.oBehParams = (o.oBehParams & 0xFFFF0000) | (otherObjY - o.oPosY)
-            o.parentObj.oBehParams = (cutRope.oBehParams & ~(BP3_ATTACH_ROPE << 8))
+            o.parentObj.oBehParams = (o.parentObj.oBehParams & ~(BP3_ATTACH_ROPE << 8))
             cur_obj_become_intangible()
             o.oUpdateRopeSize = 1
             o.oAction = 1
@@ -1039,7 +1038,7 @@ local sCutterBladeHitbox = {
 }
 
 local sEnemyCutterBladeHitbox = {
-    interactType = INTERACT_DAMAGE,
+    interactType = 0,
     downOffset = 50,
     damageOrCoinValue = 2,
     health = 0,
@@ -1364,7 +1363,7 @@ end
 
 --star drop
 function bhv_star_drop_init(o)
-   -- gMarioStates[0].area.camera.cutscene = 1
+    -- gMarioStates[0].area.camera.cutscene = 1
     stop_secondary_music(180)
     network_init_object(o, true, nil)
 end
@@ -1385,7 +1384,7 @@ function bhv_star_drop_loop(o)
         o.oPosY = o.oPosY + 4 * coss(0x222 * (o.oTimer - 90))
 
         if o.oTimer == 110 then
-             spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
+            spawn_object_relative(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
             cur_obj_hide()
             spawn_mist_particles()
             spawn_triangle_break_particles(20, 0x8B, 0.2, 3)

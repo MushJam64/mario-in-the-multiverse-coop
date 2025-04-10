@@ -97,7 +97,7 @@ MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
 
 BP3_ATTACH_ROPE             = 0xF0
 
-OBJ_FLAG_ATTACHABLE_BY_ROPE = OBJ_FLAG_30 + 16
+OBJ_FLAG_ATTACHABLE_BY_ROPE = (OBJ_FLAG_30 + 16)
 
 local function BIT(i) return (1 << (i)) end
 local function BITMASK(size) return ((BIT(size)) - 1) end
@@ -182,6 +182,50 @@ mitm_levels                    = {
     --[[BB]] { name = "Big Blue",    author = "BroDute",                         author_abridged = "BroDute",         level = NULL,                course = COURSE_WMOTR, star_requirement = 0,  start_area = 0,        return_id = 36, star_count = 1, dream_data = NULL },
 };
 
+-- Ability struct
+ability_struct                 = {
+    --           HAND DISPLAY LIST        HAT DISPLAY LIST     MARIO MODEL ID     STRING
+    --Default
+    [0] = { hand = mario_right_hand_closed, hat = nil, model_id = nil, string = abstr_def },
+    --G
+    { hand = mario_right_hand_closed,                hat = cutter_hat_Circle_mesh_layer_1, model_id = nil,        string = abstr_g },
+    --A
+    { hand = net_hand_2_hand_mesh,                   hat = bubble_hat_bhat_mesh,           model_id = nil,        string = abstr_a },
+    --C
+    { hand = mario_right_hand_closed,                hat = squid_hat_lunette_mesh,         model_id = nil,        string = abstr_c },
+    --I
+    { hand = rocket_hand_RaymanMissile_mesh_layer_1, hat = nil,                            model_id = nil,        string = abstr_i },
+    --H
+    { hand = phasewalk_hand_hand_mesh,               hat = nil,                            model_id = nil,        string = abstr_h },
+    --B
+    { hand = bigdaddyhand_Plane_mesh,                hat = bigdaddyhat_bigdaddy_mesh,      model_id = nil,        string = abstr_b },
+    --L
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_KNIGHT_MARIO, string = abstr_l },
+    --K
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil_K,      string = abstr_k },
+    --E
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_E__MARIO,     string = abstr_e },
+    --F
+    { hand = hand_f_hand_mesh,                       hat = hat_f_hat_mesh,                 model_id = nil,        string = abstr_f },
+    --J
+    { hand = pokeball_hand_hand_mesh,                hat = nil,                            model_id = nil,        string = abstr_j },
+    --D
+    { hand = mario_right_hand_closed,                hat = ability_d_mask_hat_mesh,        model_id = nil,        string = abstr_d },
+    --O
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_SAWAXE_MARIO, string = abstr_o },
+    --N
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil,        string = abstr_n },
+    --M
+    { hand = hand_m_hand_mesh,                       hat = nil,                            model_id = nil,        string = abstr_m },
+
+    --Util1
+    { hand = compass_hand_hand_mesh,                 hat = nil,                            model_id = nil,        string = abstr_util_1 },
+    --Util2
+    { hand = milk_hand_hand_mesh,                    hat = nil,                            model_id = nil,        string = abstr_util_2 },
+    --Util3
+    { hand = mirror_hand_hand_mesh,                  hat = nil,                            model_id = nil,        string = abstr_util_3 },
+}
+
 title_card_data                = {
     [0] = get_texture_info("custom_titlecard_G.rgba16")
     ,
@@ -214,6 +258,75 @@ title_card_data                = {
     get_texture_info("custom_titlecard_M.rgba16")
 };
 
+ability_images                 = {
+    [0] = { --[[Default]]
+        get_texture_info("custom_ability_default.rgba16")
+    },
+    { --[[Ability G]]
+        get_texture_info("custom_ability_g.rgba16")
+    },
+    { --[[Ability A]]
+        get_texture_info("custom_ability_a.rgba16")
+    },
+    { --[[Ability C]]
+        get_texture_info("custom_ability_c.rgba16")
+    },
+    { --[[Ability I]]
+        get_texture_info("custom_ability_i.rgba16")
+    },
+    { --[[Ability H]]
+        get_texture_info("custom_ability_h.rgba16")
+    },
+    { --[[Ability B]]
+        get_texture_info("custom_ability_b.rgba16")
+    },
+    { --[[Ability L]]
+        get_texture_info("custom_ability_l.rgba16")
+    },
+    { --[[Ability K]]
+        get_texture_info("custom_ability_k.rgba16")
+    },
+    { --[[Ability E]]
+        get_texture_info("custom_ability_e.rgba16")
+    },
+    { --[[Ability F]]
+        get_texture_info("custom_ability_f.rgba16")
+    },
+    { --[[Ability J]]
+        get_texture_info("custom_ability_j.rgba16")
+    },
+    { --[[Ability D]]
+        get_texture_info("custom_ability_d.rgba16")
+    },
+    { --[[Ability O]]
+        get_texture_info("custom_ability_o.rgba16")
+    },
+    { --[[Ability N]]
+        get_texture_info("custom_ability_n.rgba16")
+    },
+    { --[[Ability M]]
+        get_texture_info("custom_ability_m.rgba16")
+    },
+    { --[[Utility 1]]
+        get_texture_info("custom_ability_u1.rgba16")
+    },
+    { --[[Utility 2]]
+        get_texture_info("custom_ability_u2.rgba16")
+    },
+    { --[[Utility 3]]
+        get_texture_info("custom_ability_u3.rgba16")
+    },
+    { --[[None]]
+        get_texture_info("custom_ability_default.rgba16")
+    },
+    { --[[Locked]]
+        get_texture_info("custom_ability_locked.rgba16")
+    },
+    { --[[Utility 2 Used]]
+        get_texture_info("custom_ability_u2_used.rgba16")
+    }
+};
+
 -- Variables
 
 queued_pipe_cutscene           = false
@@ -229,11 +342,10 @@ hub_star_string                = {}
 sCutsceneSplineSegment         = 0
 sCutsceneSplineSegmentProgress = 0
 
-gMarioStatesExt                = {}
+ability_slot                   = { [0] = ABILITY_NONE, ABILITY_NONE, ABILITY_NONE, ABILITY_NONE };
+
 for i = 0, (MAX_PLAYERS - 1) do
-    gMarioStatesExt[i] = {}
-    local f = gMarioStatesExt[i]
-    f.abilityId = false
+    gPlayerSyncTable[i].abilityId = 0
 end
 
 local courseToLevel = {
@@ -283,8 +395,34 @@ function get_hub_return_id(id)
     return mitm_levels[id].return_id
 end
 
+---@return boolean
 function dream_comet_unlocked()
     return false
+end
+
+function change_ability(picked_ability)
+    if (picked_ability == ABILITY_NONE) then return end;
+
+    -- Set Mario's Ability Variable
+    gPlayerSyncTable[0].abilityId = picked_ability;
+    local gMarioState = gMarioStates[0]
+
+    -- Hand Display List
+    --gSPDisplayList(&gfx_ability_hand[0], ability_struct[gPlayerSyncTable[0].abilityId].hand);
+    --gSPEndDisplayList(&gfx_ability_hand[1]);
+
+    --Hat Display List
+    local hat_dl_head = 0;
+    if (ability_struct[gPlayerSyncTable[0].abilityId].hat ~= NULL) then
+        --gSPDisplayList(&gfx_ability_hat[hat_dl_head++], ability_struct[gPlayerSyncTable[0].abilityId].hat);
+    end
+    if ((gNetworkPlayers[0].currLevelNum == LEVEL_F) and (gPlayerSyncTable[0].abilityId ~= ABILITY_GADGET_WATCH)) then
+        --  gSPDisplayList(&gfx_ability_hat[hat_dl_head++], &hat_f_hat_mesh);
+    end
+    --gSPEndDisplayList(&gfx_ability_hat[hat_dl_head++]);
+
+    --Mario Model
+    gPlayerSyncTable[0].modelId = ability_struct[gPlayerSyncTable[0].abilityId].model_id
 end
 
 --levels_unlocked = 1 means first course is open

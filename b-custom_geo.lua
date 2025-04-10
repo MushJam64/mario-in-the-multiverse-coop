@@ -95,7 +95,7 @@ function geo_update_mverse_pipe(n, m)
     gfx_parse(starsdl, function(dl, cmd)
         if cmd == G_VTX then
             shift_UV_NORMAL(dl,
-                31,     --VERTCOUNT - 1
+                31, --VERTCOUNT - 1
                 6,
                 SCROLL_UV_X,
                 1)
@@ -158,4 +158,10 @@ function geo_generate_attached_rope(n, m)
 end
 
 function geo_ability_material(n, m)
+    local obj = geo_get_current_object()
+    gfx_parse(cast_graph_node(n.next).displayList, function(dl, cmd)
+        if cmd == G_NOOP and dl.w1 == 69 then
+            gfx_set_texture_image(dl, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, ability_images[obj.oBehParams2ndByte][1].texture)
+        end
+    end)
 end
