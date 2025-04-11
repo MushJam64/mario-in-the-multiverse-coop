@@ -307,7 +307,7 @@ function level_pipe_loop(o)
             o.oOpacity = 0
             gGlobalSyncTable.levels_unlocked = gGlobalSyncTable.levels_unlocked | (1 << o.oBehParams2ndByte)
             if network_is_server() then
-                mod_storage_save_number("levels_unlocked_" .. gCurrSaveFileNumCorrect, gGlobalSyncTable.levels_unlocked) -- i think this should be per savefile
+                save_unlocked_levels()
                 -- gSaveFileModified = true
             end
         end
@@ -373,7 +373,7 @@ function level_pipe_loop(o)
             set_mario_action(gMarioState, ACT_IDLE, 0)
             save_file_do_save(gCurrSaveFileNum - 1, 1)
             if network_is_server() then
-                mod_storage_save_number("levels_unlocked_" .. gCurrSaveFileNumCorrect, gGlobalSyncTable.levels_unlocked)
+                save_unlocked_levels()
             end
         end
         return
@@ -652,6 +652,7 @@ local sAttachedRopeHitbox = {
 function bhv_g_attached_rope_init(o)
     o.oGravity = 2.0
     o.oVelY = 0
+  --  o.header.gfx.skipInViewCheck = true
 
     local surf
     local originPos = { o.oPosX, o.oPosY, o.oPosZ }
@@ -680,7 +681,7 @@ function bhv_g_attached_rope_init(o)
 end
 
 local function mario_can_cut_rope(gMarioState)
-     --[[if using_ability(ABILITY_CUTTER) then
+    --[[if using_ability(ABILITY_CUTTER) then
         if gMarioState.action == ACT_FINAL_CUTTER_SEQUENCE or gMarioState.action == ACT_CUTTER_DASH or
             gMarioState.action == ACT_DIVE or gMarioState.action == ACT_DIVE_SLIDE then
             return true
@@ -702,12 +703,12 @@ end
 function bhv_g_attached_rope_loop(o)
     local gMarioState = nearest_mario_state_to_object(o)
 
-    local other = obj_get_nearest_object_with_behavior_id(o, bhvCutterBlade)
-    local marioHigherPos = gMarioState.pos.y + 100
-    if other then
-        if (obj_check_hitbox_overlap(o, other) and other.oPosY - 30 > o.oPosY) or
+    for i = 1, o.numCollidedObjs - 1 do
+        local other = o.collidedObjs[i]
+        local marioHigherPos = gMarioState.pos.y + 100
+        if (obj_has_behavior_id(other, bhvCutterBlade) ~= 0 and other.oPosY - 30 > o.oPosY) or
             (other == gMarioState.marioObj and marioHigherPos - 30 > o.oPosY and mario_can_cut_rope(gMarioState)) then
-            local otherObjY = (other == gMarioState.marioObj) and marioHigherPos or other.oPosY
+            local otherObjY = (other == gMarioState.marioObj) and math.floor(marioHigherPos) or math.floor(other.oPosY)
             --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
             local cutRope = spawn_object_relative(0, 0, otherObjY - o.oPosY, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
             o.oBehParams = (o.oBehParams & 0xFFFF0000) | (otherObjY - o.oPosY)
@@ -965,7 +966,7 @@ function bhv_sir_kibble_init(o)
     o.oAction = SIR_KIBBLE_ACT_CUTSCENE
     if o.oBehParams2ndByte == 1 then
         obj_set_hitbox(o, sBossSirKibbleHitbox)
-        --play_secondary_music(SEQ_CUSTOM_KIRBY_BOSS, 0, 127, 5) this is boss
+        play_secondary_music(SEQ_CUSTOM_KIRBY_BOSS, 0, 127, 5)
     else
         o.oAction = SIR_KIBBLE_ACT_IDLE
     end
@@ -1332,25 +1333,27 @@ function bhv_level_g_cutscenes_loop(o)
         --o.activeFlags = (o.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
         --local sirKibble = obj_get_nearest_object_with_behavior_id(bhvSirKibble)
         --sirKibble.activeFlags = (sirKibble.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
-        for mi = 0, MAX_PLAYERS - 1 do
+        --[[for mi = 0, MAX_PLAYERS - 1 do
             local m = gMarioStates[mi]
 
-            --[[m.area.camera.cutscene = 1
+            m.area.camera.cutscene = 1
             gLakituState.goalPos.x = 749
             gLakituState.goalPos.y = 800
             gLakituState.goalPos.z = 446
             --if move_point_along_spline(gLakituState.goalFocus, (g_area_2_spline_KibbleFocus), sCutsceneSplineSegment, sCutsceneSplineSegmentProgress) then
-            m.area.camera.cutscene = 0]]
+            m.area.camera.cutscene = 0
             --clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS)
-            obj_mark_for_deletion(o)
-        end
+
+        end]]
         -- end
+        obj_mark_for_deletion(o)
     elseif o.oBehParams2ndByte == 1 then
         if o.oAction == 0 then
             local sirKibble = obj_get_nearest_object_with_behavior_id(o, bhvSirKibble)
 
             if not sirKibble or (sirKibble and (sirKibble.activeFlags & ACTIVE_FLAG_DEACTIVATED) ~= 0) then
-                spawn_sync_object(bhvStarDrop, MODEL_G_STAR_PROJECTILE, o.oHealth, o.oAnimState + 100, o.oDoorUnk100, nil)
+                spawn_non_sync_object(bhvStarDrop, MODEL_G_STAR_PROJECTILE, o.oHealth, o.oAnimState + 100, o.oDoorUnk100,
+                    nil)
                 o.oAction = 1
             else
                 o.oHealth = sirKibble.oPosX
@@ -1365,7 +1368,7 @@ end
 function bhv_star_drop_init(o)
     -- gMarioStates[0].area.camera.cutscene = 1
     stop_secondary_music(180)
-    network_init_object(o, true, nil)
+    --network_init_object(o, true, nil) no syncing
 end
 
 function bhv_star_drop_loop(o)
@@ -1394,6 +1397,25 @@ function bhv_star_drop_loop(o)
             --gMarioStates[0].area.camera.cutscene = 0
             obj_mark_for_deletion(o)
             obj_mark_for_deletion(o.parentObj)
+        end
+    end
+end
+
+function bhv_g_cut_rock_init(o)
+    o.oGravity = 2.0
+    o.oBounciness = 2.0
+    o.hookRender = 1
+    network_init_object(o, true, {"oAction", "oTimer"})
+end
+
+function bhv_g_cut_rock_loop(o)
+    o.oAction = 1
+
+    if o.oAction == 1 then
+        object_step()
+
+        if o.oTimer == 120 then
+            o.oAction = 2
         end
     end
 end

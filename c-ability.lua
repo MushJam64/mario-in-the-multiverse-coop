@@ -14,7 +14,7 @@ UNLOCK_ABILITIES_DEBUG = false
 
 function bhv_ability(o)
     if o.oAction == 0 then
-        --[[   if save_file_check_ability_unlocked(o.oBehParams2ndByte) then
+        --[[   =if save_file_check_ability_unlocked(o.oBehParams2ndByte) then
             -- When debugging, you should always be able to test ability collection
             if UNLOCK_ABILITIES_DEBUG then
                 o.oAction = 1
@@ -35,29 +35,105 @@ function bhv_ability(o)
             for i = 0, 3 do
                 if ability_slot[i] == ABILITY_NONE then
                     ability_slot[i] = o.oBehParams2ndByte
+                    if i == 0 then
+                        gGlobalSyncTable.ability_slot0 = o.oBehParams2ndByte
+                    elseif i == 1 then
+                        gGlobalSyncTable.ability_slot1 = o.oBehParams2ndByte
+                    elseif i == 2 then
+                        gGlobalSyncTable.ability_slot2 = o.oBehParams2ndByte
+                    elseif i == 3 then
+                        gGlobalSyncTable.ability_slot3 = o.oBehParams2ndByte
+                    end
                     break
                 end
             end
+            --gGlobalSyncTable.ability_slot0 = o.oBehParams2ndByte
             if o.oBehParams2ndByte ~= ABILITY_MARBLE then -- hamsterball is a weird one
                 change_ability(o.oBehParams2ndByte)
             end
             --save_file_set_ability_dpad()
+            save_ability_slots()
             o.oAction = 2
         end
     end
 end
+
+local function save_abilities()
+    --reduce stress
+    if get_global_timer() % 32 ~= 0 then return end
+  --[[djui_chat_message_create("0: " .. gGlobalSyncTable.ability_slot0)
+    djui_chat_message_create("1: " .. gGlobalSyncTable.ability_slot1)
+    djui_chat_message_create("2: " .. gGlobalSyncTable.ability_slot2)
+    djui_chat_message_create("3: " .. gGlobalSyncTable.ability_slot3)]]
+    ability_slot[0] = gGlobalSyncTable.ability_slot0
+    ability_slot[1] = gGlobalSyncTable.ability_slot1
+    ability_slot[2] = gGlobalSyncTable.ability_slot2
+    ability_slot[3] = gGlobalSyncTable.ability_slot3
+    save_ability_slots()
+end
+
+hook_event(HOOK_UPDATE, save_abilities)
+
+function control_ability_dpad(m)
+    if m.playerIndex ~= 0 then return end
+    local gPlayer1Controller = m.controller
+    local picked_ability = -1
+
+    if (gPlayer1Controller.buttonPressed & U_JPAD) ~= 0 then
+        picked_ability = 0
+    end
+    if (gPlayer1Controller.buttonPressed & R_JPAD) ~= 0 then
+        picked_ability = 1
+    end
+    if (gPlayer1Controller.buttonPressed & D_JPAD) ~= 0 then
+        picked_ability = 2
+    end
+    if (gPlayer1Controller.buttonPressed & L_JPAD) ~= 0 then
+        picked_ability = 3
+    end
+    if (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
+        if picked_ability > -1 then
+            --if check_if_swap_ability_allowed() then
+                -- Animate image on DPad HUD
+                --ability_y_offset[picked_ability] = 5
+               -- ability_gravity[picked_ability] = 2
+
+                change_ability(ability_slot[picked_ability])
+
+                -- Equip Sound Effect
+                if ability_slot[picked_ability] == ABILITY_AKU then
+                   -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
+                   -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
+                  --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_NONE then
+                    -- Do nothing
+                else
+                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+                end
+           --[[ else
+                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
+            end]]
+        end
+    end
+end
+
+hook_event(HOOK_MARIO_UPDATE, control_ability_dpad)
+
+local thrownCutter = false
 
 ---@param m MarioState
 local function ability_functions_update(m)
     local f = gPlayerSyncTable[m.playerIndex]
     if m.playerIndex == 0 then
         if m.action == ACT_PUNCHING or m.action == ACT_MOVE_PUNCHING or m.action == ACT_JUMP_KICK then
-            if f.abilityId == ABILITY_CUTTER then
-               if (m.actionTimer == 1) then
-                    spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
-                    
-                end
+            if f.abilityId == ABILITY_CUTTER and not thrownCutter then
+                spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
+                thrownCutter = true
             end
+        else
+            thrownCutter = false
         end
     end
 end

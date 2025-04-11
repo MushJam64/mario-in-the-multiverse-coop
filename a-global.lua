@@ -94,10 +94,16 @@ MODEL_CUTTER_BLADE          = smlua_model_util_get_id("cutter_blade_geo")
 MODEL_G_STAR_PROJECTILE     = smlua_model_util_get_id("star_projectile_geo")
 MODEL_G_STAR_BLOCK          = smlua_model_util_get_id("star_block_geo")
 MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
+MODEL_G_CUT_ROCK = smlua_model_util_get_id("g_cut_rock_geo")
+MODEL_G_CUT_ROCK2 = smlua_model_util_get_id("g_cut_rock2_geo")
+MODEL_G_CUT_ROCK3 = smlua_model_util_get_id("g_cut_rock3_geo")
 
 BP3_ATTACH_ROPE             = 0xF0
 
 OBJ_FLAG_ATTACHABLE_BY_ROPE = (OBJ_FLAG_30 + 16)
+
+-- Music
+SEQ_CUSTOM_KIRBY_BOSS       = 0x26
 
 local function BIT(i) return (1 << (i)) end
 local function BITMASK(size) return ((BIT(size)) - 1) end
@@ -188,42 +194,42 @@ ability_struct                 = {
     --Default
     [0] = { hand = mario_right_hand_closed, hat = nil, model_id = nil, string = abstr_def },
     --G
-    { hand = mario_right_hand_closed,                hat = cutter_hat_Circle_mesh_layer_1, model_id = nil,        string = abstr_g },
+    { hand = mario_right_hand_closed,                hat = cutter_hat_Circle_mesh_layer_1, model_id = nil,                string = abstr_g },
     --A
-    { hand = net_hand_2_hand_mesh,                   hat = bubble_hat_bhat_mesh,           model_id = nil,        string = abstr_a },
+    { hand = net_hand_2_hand_mesh,                   hat = bubble_hat_bhat_mesh,           model_id = nil,                string = abstr_a },
     --C
-    { hand = mario_right_hand_closed,                hat = squid_hat_lunette_mesh,         model_id = nil,        string = abstr_c },
+    { hand = mario_right_hand_closed,                hat = squid_hat_lunette_mesh,         model_id = nil,                string = abstr_c },
     --I
-    { hand = rocket_hand_RaymanMissile_mesh_layer_1, hat = nil,                            model_id = nil,        string = abstr_i },
+    { hand = rocket_hand_RaymanMissile_mesh_layer_1, hat = nil,                            model_id = nil,                string = abstr_i },
     --H
-    { hand = phasewalk_hand_hand_mesh,               hat = nil,                            model_id = nil,        string = abstr_h },
+    { hand = phasewalk_hand_hand_mesh,               hat = nil,                            model_id = nil,                string = abstr_h },
     --B
-    { hand = bigdaddyhand_Plane_mesh,                hat = bigdaddyhat_bigdaddy_mesh,      model_id = nil,        string = abstr_b },
+    { hand = bigdaddyhand_Plane_mesh,                hat = bigdaddyhat_bigdaddy_mesh,      model_id = nil,                string = abstr_b },
     --L
     { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_KNIGHT_MARIO, string = abstr_l },
     --K
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil_K,      string = abstr_k },
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil_K,              string = abstr_k },
     --E
     { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_E__MARIO,     string = abstr_e },
     --F
-    { hand = hand_f_hand_mesh,                       hat = hat_f_hat_mesh,                 model_id = nil,        string = abstr_f },
+    { hand = hand_f_hand_mesh,                       hat = hat_f_hat_mesh,                 model_id = nil,                string = abstr_f },
     --J
-    { hand = pokeball_hand_hand_mesh,                hat = nil,                            model_id = nil,        string = abstr_j },
+    { hand = pokeball_hand_hand_mesh,                hat = nil,                            model_id = nil,                string = abstr_j },
     --D
-    { hand = mario_right_hand_closed,                hat = ability_d_mask_hat_mesh,        model_id = nil,        string = abstr_d },
+    { hand = mario_right_hand_closed,                hat = ability_d_mask_hat_mesh,        model_id = nil,                string = abstr_d },
     --O
     { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_SAWAXE_MARIO, string = abstr_o },
     --N
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil,        string = abstr_n },
+    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil,                string = abstr_n },
     --M
-    { hand = hand_m_hand_mesh,                       hat = nil,                            model_id = nil,        string = abstr_m },
+    { hand = hand_m_hand_mesh,                       hat = nil,                            model_id = nil,                string = abstr_m },
 
     --Util1
-    { hand = compass_hand_hand_mesh,                 hat = nil,                            model_id = nil,        string = abstr_util_1 },
+    { hand = compass_hand_hand_mesh,                 hat = nil,                            model_id = nil,                string = abstr_util_1 },
     --Util2
-    { hand = milk_hand_hand_mesh,                    hat = nil,                            model_id = nil,        string = abstr_util_2 },
+    { hand = milk_hand_hand_mesh,                    hat = nil,                            model_id = nil,                string = abstr_util_2 },
     --Util3
-    { hand = mirror_hand_hand_mesh,                  hat = nil,                            model_id = nil,        string = abstr_util_3 },
+    { hand = mirror_hand_hand_mesh,                  hat = nil,                            model_id = nil,                string = abstr_util_3 },
 }
 
 title_card_data                = {
@@ -342,8 +348,6 @@ hub_star_string                = {}
 sCutsceneSplineSegment         = 0
 sCutsceneSplineSegmentProgress = 0
 
-ability_slot                   = { [0] = ABILITY_NONE, ABILITY_NONE, ABILITY_NONE, ABILITY_NONE };
-
 for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].abilityId = 0
 end
@@ -425,14 +429,53 @@ function change_ability(picked_ability)
     gPlayerSyncTable[0].modelId = ability_struct[gPlayerSyncTable[0].abilityId].model_id
 end
 
+-- Saving
+
 --levels_unlocked = 1 means first course is open
+
 gGlobalSyncTable.levels_unlocked = 1 ---default
-if network_is_server() then
+
+ability_slot                     = { [0] = ABILITY_NONE, ABILITY_NONE, ABILITY_NONE, ABILITY_NONE };
+gGlobalSyncTable.ability_slot0   = ABILITY_NONE
+gGlobalSyncTable.ability_slot1   = ABILITY_NONE
+gGlobalSyncTable.ability_slot2   = ABILITY_NONE
+gGlobalSyncTable.ability_slot3   = ABILITY_NONE
+
+function save_unlocked_levels()
+    mod_storage_save_number("levels_unlocked_" .. (get_current_save_file_num() - 1), gGlobalSyncTable.levels_unlocked)
+end
+
+function load_unlocked_levels()
     gGlobalSyncTable.levels_unlocked = mod_storage_load_number("levels_unlocked_" .. (get_current_save_file_num() - 1)) or
-        1
+    1
+    return gGlobalSyncTable.levels_unlocked
+end
+
+function save_ability_slots()
+    local currSave = get_current_save_file_num() - 1
+    mod_storage_save_number("ability_slot0" .. (currSave), gGlobalSyncTable.ability_slot0)
+    mod_storage_save_number("ability_slot1" .. (currSave), gGlobalSyncTable.ability_slot1)
+    mod_storage_save_number("ability_slot2" .. (currSave), gGlobalSyncTable.ability_slot2)
+    mod_storage_save_number("ability_slot3" .. (currSave), gGlobalSyncTable.ability_slot3)
+end
+
+function load_ability_slots()
+    local currSave = get_current_save_file_num() - 1
+    gGlobalSyncTable.ability_slot0 = mod_storage_load_number("ability_slot0" .. (currSave)) or ABILITY_NONE
+    gGlobalSyncTable.ability_slot1 = mod_storage_load_number("ability_slot1" .. (currSave)) or ABILITY_NONE
+    gGlobalSyncTable.ability_slot2 = mod_storage_load_number("ability_slot2" .. (currSave)) or ABILITY_NONE
+    gGlobalSyncTable.ability_slot3 = mod_storage_load_number("ability_slot3" .. (currSave)) or ABILITY_NONE
+    ability_slot[0] = gGlobalSyncTable.ability_slot0
+    ability_slot[1] = gGlobalSyncTable.ability_slot1
+    ability_slot[2] = gGlobalSyncTable.ability_slot2
+    ability_slot[3] = gGlobalSyncTable.ability_slot3
+end
+
+if network_is_server() then
+    load_unlocked_levels()
+    load_ability_slots()
     if save_file_get_flags() == 0 or gGlobalSyncTable.levels_unlocked == 0 then -- has nothing
         gGlobalSyncTable.levels_unlocked = 1
-        mod_storage_save_number("levels_unlocked_" .. (get_current_save_file_num() - 1), gGlobalSyncTable
-            .levels_unlocked)
+        save_unlocked_levels()
     end
 end

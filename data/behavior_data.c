@@ -173,6 +173,19 @@ const BehaviorScript bhvAbilityUnlock[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvGCutRock[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | (OBJ_FLAG_30 + 16))), //OR OBJ_FLAG_ATTACHABLE_BY_ROPE also
+    LOAD_COLLISION_DATA(g_cut_rock_collision),
+    SET_FLOAT(oDrawingDistance, 16000),
+    CALL_NATIVE(bhv_g_cut_rock_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_cut_rock_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
 
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
@@ -3512,19 +3525,6 @@ const BehaviorScript bhvGStarDoor[] = {
     CALL_NATIVE(bhv_g_star_door_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_g_star_door_loop),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvGCutRock[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_ATTACHABLE_BY_ROPE)),
-    LOAD_COLLISION_DATA(g_cut_rock_collision),
-    SET_FLOAT(oDrawingDistance, 16000),
-    CALL_NATIVE(bhv_g_cut_rock_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_cut_rock_loop),
-        CALL_NATIVE(load_object_collision_model),
     END_LOOP(),
 };
 
