@@ -1,5 +1,5 @@
 -- name: [WIP] \\#0865de\\Mario \\#ffffff\\In The \\#3b348a\\Multiverse
--- description: this is, elon musk \n\nPorted By:\n\\#00ff00\\I'mYourCat\\#FF0000\\2 (Creator)\n\\#dcdcdc\\x\\#00FF00\\Luigi\\#434343\\Gamer\\#dcdcdc\\x (Programmer)\n\\#FFC0CB\\MaiskX3 (Music Porter, Tester)\n\\#105009\\Emeraldsniper (Tester)
+-- description: this is, elon musk \n\nPorted By:\n\\#00ff00\\I'mYourCat\\#FF0000\\2 (Creator)\n\\#dcdcdc\\x\\#00FF00\\Luigi\\#434343\\Gamer\\#dcdcdc\\x (Programmer)\n\\#FFC0CB\\MaiskX3 (Music Porter, Tester)\n\\#105009\\Emeraldsniper (Tester)\n\\#FF004C\\CitraDreamPainter (Tester)
 -- incompatible: romhack
 
 gLevelValues.entryLevel = LEVEL_CASTLE --LEVEL CASTLE and bob if no stars
