@@ -141,7 +141,7 @@ function geo_generate_attached_rope(node, m)
     t = startT - ((offsetT * 32) * 32)
     graphNode.flags = (graphNode.flags & 0xFF) | (LAYER_ALPHA << 8);
     dlHead = gfx_get_from_name("mitm_g" .. ptr)
-    vertexBuffer = vtx_get_from_name("mitm_v" ..ptr)
+    vertexBuffer = vtx_get_from_name("mitm_v" .. ptr)
 
     if not dlHead then
         dlHead = gfx_create("mitm_g" .. ptr, 128)
@@ -166,6 +166,18 @@ function geo_generate_attached_rope(node, m)
 
     cast_graph_node(graphNode.next).displayList = dlHead
 end
+
+local function delete_mod_data(obj)
+    local ptr = obj._pointer
+
+    local gfx = gfx_get_from_name("mitm_g" .. ptr)
+    if gfx then gfx_delete(gfx) end
+
+    local vtx = vtx_get_from_name("mitm_v" .. ptr)
+    if vtx then vtx_delete(vtx) end
+end
+
+hook_event(HOOK_ON_OBJECT_UNLOAD, delete_mod_data)
 
 function geo_ability_material(n, m)
     local obj = geo_get_current_object()
