@@ -12,9 +12,13 @@ local sCollectAbilityHitbox = {
 
 UNLOCK_ABILITIES_DEBUG = false
 
+function bhv_ability_init(o)
+    network_init_object(o, true, { "oAction", "oBehParams2ndByte" })
+end
+
 function bhv_ability(o)
     if o.oAction == 0 then
-        --[[   =if save_file_check_ability_unlocked(o.oBehParams2ndByte) then
+        if save_file_check_ability_unlocked(o.oBehParams2ndByte) then
             -- When debugging, you should always be able to test ability collection
             if UNLOCK_ABILITIES_DEBUG then
                 o.oAction = 1
@@ -23,12 +27,12 @@ function bhv_ability(o)
                 cur_obj_hide()
                 o.oAction = 2
             end
-        else]]
-        o.oAction = 1
-        obj_set_hitbox(o, sCollectAbilityHitbox)
-        -- end
+        else
+            o.oAction = 1
+            obj_set_hitbox(o, sCollectAbilityHitbox)
+        end
     elseif o.oAction == 1 then
-        if obj_check_hitbox_overlap(o, gMarioStates[0].marioObj) then
+        if obj_check_hitbox_overlap(o, nearest_player_to_object(o)) then
             --save_file_unlock_song(SEQ_MITM_GET_ABILITY)
 
             cur_obj_hide()
@@ -51,8 +55,9 @@ function bhv_ability(o)
             if o.oBehParams2ndByte ~= ABILITY_MARBLE then -- hamsterball is a weird one
                 change_ability(o.oBehParams2ndByte)
             end
-            --save_file_set_ability_dpad()
-            save_ability_slots()
+            if network_is_server() then
+                save_file_set_ability_dpad()
+            end
             o.oAction = 2
         end
     end
@@ -61,20 +66,18 @@ end
 local function save_abilities()
     --reduce stress
     if get_global_timer() % 32 ~= 0 then return end
-  --[[djui_chat_message_create("0: " .. gGlobalSyncTable.ability_slot0)
-    djui_chat_message_create("1: " .. gGlobalSyncTable.ability_slot1)
-    djui_chat_message_create("2: " .. gGlobalSyncTable.ability_slot2)
-    djui_chat_message_create("3: " .. gGlobalSyncTable.ability_slot3)]]
     ability_slot[0] = gGlobalSyncTable.ability_slot0
     ability_slot[1] = gGlobalSyncTable.ability_slot1
     ability_slot[2] = gGlobalSyncTable.ability_slot2
     ability_slot[3] = gGlobalSyncTable.ability_slot3
-    save_ability_slots()
+    if network_is_server() then
+        save_file_set_ability_dpad()
+    end
 end
 
 hook_event(HOOK_UPDATE, save_abilities)
 
-function control_ability_dpad(m)
+local function control_ability_dpad(m)
     if m.playerIndex ~= 0 then return end
     local gPlayer1Controller = m.controller
     local picked_ability = -1
@@ -94,25 +97,25 @@ function control_ability_dpad(m)
     if (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
         if picked_ability > -1 then
             --if check_if_swap_ability_allowed() then
-                -- Animate image on DPad HUD
-                --ability_y_offset[picked_ability] = 5
-               -- ability_gravity[picked_ability] = 2
+            -- Animate image on DPad HUD
+            --ability_y_offset[picked_ability] = 5
+            -- ability_gravity[picked_ability] = 2
 
-                change_ability(ability_slot[picked_ability])
+            change_ability(ability_slot[picked_ability])
 
-                -- Equip Sound Effect
-                if ability_slot[picked_ability] == ABILITY_AKU then
-                   -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
-                   -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
-                  --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_NONE then
-                    -- Do nothing
-                else
-                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
-                end
-           --[[ else
+            -- Equip Sound Effect
+            if ability_slot[picked_ability] == ABILITY_AKU then
+                -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
+            elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
+                -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
+            elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
+                --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
+            elseif ability_slot[picked_ability] == ABILITY_NONE then
+                -- Do nothing
+            else
+                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+            end
+            --[[ else
                 play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
             end]]
         end
@@ -129,7 +132,7 @@ local function ability_functions_update(m)
     if m.playerIndex == 0 then
         if m.action == ACT_PUNCHING or m.action == ACT_MOVE_PUNCHING or m.action == ACT_JUMP_KICK then
             if f.abilityId == ABILITY_CUTTER and not thrownCutter then
-                spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
+                spawn_object_relative(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
                 thrownCutter = true
             end
         else
@@ -147,4 +150,37 @@ hook_event(HOOK_OBJECT_SET_MODEL, function(o)
     end
 end)
 
+local function interact_ability_star(m, obj, t)
+    if obj_has_behavior_id(obj, bhvAbilityUnlock) ~=0 then
+        -- ability
+        save_file_unlock_ability(obj.oBehParams2ndByte)
+        --starGrabAction = ACT_ABILITY_DANCE
+        if (m.action & ACT_FLAG_AIR) ~= 0 then
+            --starGrabAction = ACT_FALL_AFTER_STAR_GRAB
+           -- m.actionArg = 2
+        end
+        --ability_get_confirm = false
+    --[[elseif obj_has_behavior_id(obj, bhvCollectablePainting) ~= 0 then
+        painting unlock
+        local slot = gCurrSaveFileNum - 1
+        local paintingByte = obj.oBehParams2ndByte
+        gSaveBuffer.files[slot][1].paintings_unlocked =
+            gSaveBuffer.files[slot][1].paintings_unlocked | (1 << paintingByte)
+        gSaveFileModified = true]]
+    else
+       --[[ if not level_in_dream_comet_mode() then
+            -- power star
+            p_rank_stars = p_rank_stars + 1
+            save_file_collect_star_or_key(m.numCoins, starIndex)
+            m.numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1)
+            ability_get_confirm = true
+        else
+            -- dream catalyst
+            set_dream_star(obj.oBehParams2ndByte)
+            m.numDreamCatalysts = get_dream_star_count()
+        end]]
+    end
+end
+
+hook_event(HOOK_ON_INTERACT, interact_ability_star)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)

@@ -652,7 +652,7 @@ local sAttachedRopeHitbox = {
 function bhv_g_attached_rope_init(o)
     o.oGravity = 2.0
     o.oVelY = 0
-  --  o.header.gfx.skipInViewCheck = true
+    o.header.gfx.skipInViewCheck = true
 
     local surf
     local originPos = { o.oPosX, o.oPosY, o.oPosZ }
@@ -681,22 +681,22 @@ function bhv_g_attached_rope_init(o)
 end
 
 local function mario_can_cut_rope(gMarioState)
-    --[[if using_ability(ABILITY_CUTTER) then
-        if gMarioState.action == ACT_FINAL_CUTTER_SEQUENCE or gMarioState.action == ACT_CUTTER_DASH or
-            gMarioState.action == ACT_DIVE or gMarioState.action == ACT_DIVE_SLIDE then
+    if using_ability(gMarioState, ABILITY_CUTTER) then
+        --if gMarioState.action == ACT_FINAL_CUTTER_SEQUENCE or gMarioState.action == ACT_CUTTER_DASH or
+        if gMarioState.action == ACT_DIVE or gMarioState.action == ACT_DIVE_SLIDE then
             return true
         end
     end
-    if using_ability(ABILITY_CHRONOS) then
+    if using_ability(gMarioState, ABILITY_CHRONOS) then
         if gMarioState.action == ACT_MOVE_PUNCHING or gMarioState.action == ACT_PUNCHING then
             return true
         end
     end
-    if using_ability(ABILITY_ESTEEMED_MORTAL) then
+    if using_ability(gMarioState, ABILITY_ESTEEMED_MORTAL) then
         if gMarioState.action == ACT_ABILITY_AXE_JUMP then
             return true
         end
-    end]]
+    end
     return true
 end
 
@@ -994,7 +994,7 @@ function bhv_sir_kibble_loop(o)
             end
         elseif o.oAction == SIR_KIBBLE_ACT_THROWING then
             if o.oTimer == 17 then
-                spawn_object_relative2(0, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
+                spawn_object_relative(2, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
 
                 --cutterblade.activeFlags = (cutterblade.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
             end
@@ -1039,7 +1039,7 @@ local sCutterBladeHitbox = {
 }
 
 local sEnemyCutterBladeHitbox = {
-    interactType = 0,
+    interactType = INTERACT_DAMAGE,
     downOffset = 50,
     damageOrCoinValue = 2,
     health = 0,
@@ -1056,17 +1056,19 @@ function bhv_cutter_blade_init(o)
     o.oGravity = 0.0
 
     --play_sound(SOUND_ABILITY_CUTTER_THROW, o.header.gfx.cameraToObject)
-    if o.parentObj == gMarioObject then
-        obj_set_hitbox(o, sCutterBladeHitbox)
-    else
-        obj_set_hitbox(o, sEnemyCutterBladeHitbox)
-    end
+
     -- network_init_object(o, true, { "oAction", "oTimer", "oForwardVel" })
 end
 
 ---@param o Object
 function bhv_cutter_blade_loop(o)
     local gMarioObject = nearest_player_to_object(o)
+    --djui_chat_message_create("" .. o.oBehParams2ndByte)
+    if o.oBehParams2ndByte == 0 then
+        obj_set_hitbox(o, sCutterBladeHitbox)
+    else
+        obj_set_hitbox(o, sEnemyCutterBladeHitbox)
+    end
     if o.oAction == 0 then
         o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000
         o.oForwardVel = o.oForwardVel - 3.0
@@ -1405,7 +1407,7 @@ function bhv_g_cut_rock_init(o)
     o.oGravity = 2.0
     o.oBounciness = 2.0
     o.hookRender = 1
-    network_init_object(o, true, {"oAction", "oTimer"})
+    network_init_object(o, true, { "oAction", "oTimer" })
 end
 
 function bhv_g_cut_rock_loop(o)

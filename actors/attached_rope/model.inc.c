@@ -515,19 +515,25 @@ u8 attached_rope_happy_eorpe_rgba16[] = {
 	
 };
 
-Vtx attached_rope_Cube_001_mesh_layer_4_vtx_0[4] = {
-	{{ {0, 0, 0}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {0, 0, 0}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {0, 0, 0}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {0, 0, 0}, 0, {0, 0}, {0, 0, 0, 0} }},
+Vtx attached_rope_Cube_001_mesh_layer_4_vtx_0[8] = {
+	{{ {12, 100, 0}, 0, {-16, -2695}, {0, 0, 129, 255} }},
+	{{ {12, 0, 0}, 0, {-16, 4080}, {0, 0, 129, 255} }},
+	{{ {-12, 0, 0}, 0, {490, 4080}, {0, 0, 129, 255} }},
+	{{ {-12, 100, 0}, 0, {490, -2695}, {0, 0, 129, 255} }},
+	{{ {0, 100, -12}, 0, {-16, -2695}, {129, 0, 0, 255} }},
+	{{ {0, 0, -12}, 0, {-16, 4080}, {129, 0, 0, 255} }},
+	{{ {0, 0, 12}, 0, {490, 4080}, {129, 0, 0, 255} }},
+	{{ {0, 100, 12}, 0, {490, -2695}, {129, 0, 0, 255} }},
 };
 
 Gfx attached_rope_Cube_001_mesh_layer_4_tri_0[] = {
-	gsSPVertex(attached_rope_Cube_001_mesh_layer_4_vtx_0 + 0, 4, 0),
-	gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
+	gsSPVertex(attached_rope_Cube_001_mesh_layer_4_vtx_0 + 0, 8, 0),
+	gsSP1Triangle(0, 1, 2, 0),
+	gsSP1Triangle(0, 2, 3, 0),
+	gsSP1Triangle(4, 5, 6, 0),
+	gsSP1Triangle(4, 6, 7, 0),
 	gsSPEndDisplayList(),
 };
-
 
 Gfx mat_attached_rope_f3dlite_material_013[] = {
 	gsDPPipeSync(),
@@ -549,10 +555,25 @@ Gfx mat_revert_attached_rope_f3dlite_material_013[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx attached_rope_Cube_001_mesh_layer_4[] = {
+Gfx attached_rope_Cube_001_mesh_layer_4FAKE[] = {
 	gsSPDisplayList(mat_attached_rope_f3dlite_material_013),
-	gsSPDisplayList(attached_rope_Cube_001_mesh_layer_4_tri_0),
+	//gsSPDisplayList(attached_rope_Cube_001_mesh_layer_4_tri_0),
 	gsSPDisplayList(mat_revert_attached_rope_f3dlite_material_013),
+	gsSPEndDisplayList(),
+};
+
+Gfx attached_rope_Cube_001_mesh_layer_4[] = {
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
+	gsDPNoOp(),
 	gsSPEndDisplayList(),
 };
 

@@ -1,21 +1,21 @@
 -- Custom Geo ASMs and Switch Functions --
 
 local function make_vertex(gfx, n, x, y, z, tx, ty, r, g, b, a)
-    local vtx = gfx_get_vtx(gfx, n)
+    local vtx = vtx_get_vertex(gfx, n)
     if vtx then
-        vtx.ob[1] = x;
-        vtx.ob[2] = y;
-        vtx.ob[3] = z;
+        vtx.x = x;
+        vtx.y = y;
+        vtx.z = z;
 
         vtx.flag = 0;
 
-        vtx.tc[1] = tx;
-        vtx.tc[2] = ty;
+        vtx.tu = tx;
+        vtx.tv = ty;
 
-        vtx.cn[1] = r;
-        vtx.cn[2] = g;
-        vtx.cn[3] = b;
-        vtx.cn[4] = a;
+        vtx.nx = r;
+        vtx.ny = g;
+        vtx.nz = b;
+        vtx.a = a;
     end
 end
 
@@ -30,10 +30,10 @@ local MODE_SCROLL_SINE = 1
 local MODE_SCROLL_JUMP = 2
 
 local function shift_UV_NORMAL(gfx, vertcount, speed, bhv, cycle)
-    local overflownum = 0x1000;
+    --[[local overflownum = 0x1000;
     --Vtx* *verts = get_scroll_targets(vtxIndex);
     local correction = 0;
-    local vtx0 = gfx_get_vtx(gfx, 0)
+    local vtx0 = gfx_get_vertex_buffer(gfx)
 
     if (bhv < SCROLL_UV_X) then
         if (vtx0.flag >= cycle) then
@@ -56,7 +56,7 @@ local function shift_UV_NORMAL(gfx, vertcount, speed, bhv, cycle)
         end
         local infix = 1
         for i = 0, vertcount do
-            local vtxi = gfx_get_vtx(gfx, i)
+            local vtxi = gfx_get_vertex_buffer(gfx)
             if (correction == 0) then
                 vtxi.tc[math.min(bhv - SCROLL_UV_X, 1) + (infix)] = vtxi.tc
                     [math.min(bhv - SCROLL_UV_X, 1) + (infix)] + speed;
@@ -64,12 +64,13 @@ local function shift_UV_NORMAL(gfx, vertcount, speed, bhv, cycle)
                 vtxi.tc[math.min(bhv - SCROLL_UV_X, 1) + (infix)] = vtxi.tc
                     [math.min(bhv - SCROLL_UV_X, 1) + (infix)] - correction;
             end
+            vtx_get_vertex(vtxi, i)
         end
     end
 
     if (correction == 0) then
         vtx0.flag = vtx0.flag + 1;
-    end
+    end]]
 end
 
 function geo_update_mverse_pipe(n, m)
@@ -83,7 +84,7 @@ function geo_update_mverse_pipe(n, m)
         local b = 120 + sins(timer * 0x300 + 0xAAAA) * 55.0 * grade
         gfx_parse(gfx, function(dl, cmd)
             if cmd == G_SETENVCOLOR then
-                gfx_set_command(dl, "gsDPSetEnvColor", r, g, b, 255)
+                gfx_set_command(dl, "gsDPSetEnvColor(%i, %i, %i, 255)", r, g, b)
             end
         end)
     end
@@ -113,20 +114,23 @@ function geo_update_hub_sky(n, m)
 
 end
 
-function geo_generate_attached_rope(n, m)
+local mat1 = gfx_get_from_name("mat_attached_rope_f3dlite_material_013")
+local mat2 = gfx_get_from_name("mat_revert_attached_rope_f3dlite_material_013")
+function geo_generate_attached_rope(node, m)
     local vertexBuffer
-    local dlStart, dlHead
+    local dlHead
     local obj
-    local objDispX
+    local graphNode
     local objDispY
     local s, t
     local startS, startT
     local offsetS
     local offsetT
-
-    local dl = cast_graph_node(n.next).displayList
+    graphNode = node
+    local ptr
 
     obj = geo_get_current_object()
+    ptr = obj._pointer
 
     objDispY = GET_BPARAM34(obj.oBehParams)
     startS = 0
@@ -135,33 +139,40 @@ function geo_generate_attached_rope(n, m)
     offsetT = -objDispY / 100
     s = startS - ((offsetS * 16) * 32)
     t = startT - ((offsetT * 32) * 32)
-    --graphNode.flags = (graphNode.flags & 0xFF) | (LAYER_ALPHA << 8)
+    graphNode.flags = (graphNode.flags & 0xFF) | (LAYER_ALPHA << 8);
+    dlHead = gfx_get_from_name("mitm_g" .. ptr)
+    vertexBuffer = vtx_get_from_name("mitm_v" ..ptr)
 
-    gfx_parse(dl, function(dls, op)
-        if op == G_VTX then
-            make_vertex(dls, 0, -20, objDispY, 0, startS, t, 0xFF, 0xE8, 0xBE, 0xFF)
-            make_vertex(dls, 1, 20, objDispY, 0, s, t, 0xFF, 0xE8, 0xBE, 0xFF)
-            make_vertex(dls, 2, 20, 0, 0, s, startT, 0xFF, 0xE8, 0xBE, 0xFF)
-            make_vertex(dls, 3, -20, 0, 0, startS, startT, 0xFF, 0xE8, 0xBE, 0xFF)
-        end
-    end)
+    if not dlHead then
+        dlHead = gfx_create("mitm_g" .. ptr, 128)
+    end
+    if not vertexBuffer then
+        vertexBuffer = vtx_create("mitm_v" .. ptr, 128)
+    end
 
-    --dlHead = alloc_display_list(sizeof(Gfx) * (32 + 4))
-    --dlStart = dlHead
+    make_vertex(vertexBuffer, 0, -20, objDispY, 0, startS, t, 0xFF, 0xE8, 0xBE, 0xFF)
+    make_vertex(vertexBuffer, 1, 20, objDispY, 0, s, t, 0xFF, 0xE8, 0xBE, 0xFF)
+    make_vertex(vertexBuffer, 2, 20, 0, 0, s, startT, 0xFF, 0xE8, 0xBE, 0xFF)
+    make_vertex(vertexBuffer, 3, -20, 0, 0, startS, startT, 0xFF, 0xE8, 0xBE, 0xFF)
 
-    --gSPDisplayList(dlHead++, mat_attached_rope_f3dlite_material_013)
-    --gSPVertex(dlHead++, VIRTUAL_TO_PHYSICAL(vertexBuffer), 4, 0)
+    local gfx_mat1 = gfx_get_command(dlHead, 0)
+    gfx_set_command(gfx_mat1, "gsSPDisplayList(%g)", mat1)
+    local gfx_vtx2 = gfx_get_command(dlHead, 1)
+    gfx_set_command(gfx_vtx2, "gsSPVertex(%v, 4, 0)", vertexBuffer)
+    local gfx_tri3 = gfx_get_command(dlHead, 2)
+    gfx_set_command(gfx_tri3, "gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0)")
+    local gfx_mat4 = gfx_get_command(dlHead, 3)
+    gfx_set_command(gfx_mat4, "gsSPDisplayList(%g)", mat2)
 
-    --gSP2Triangles(dlHead++, 0, 1, 2, 0, 0, 2, 3, 0)
-    --gSPDisplayList(dlHead++, mat_revert_attached_rope_f3dlite_material_013)
-    --gSPEndDisplayList(dlHead++)
+    cast_graph_node(graphNode.next).displayList = dlHead
 end
 
 function geo_ability_material(n, m)
     local obj = geo_get_current_object()
     gfx_parse(cast_graph_node(n.next).displayList, function(dl, cmd)
         if cmd == G_NOOP and dl.w1 == 69 then
-            gfx_set_texture_image(dl, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, ability_images[obj.oBehParams2ndByte][1].texture)
+            gfx_set_command(dl, "gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, %t)",
+                ability_images[obj.oBehParams2ndByte][1].texture)
         end
     end)
 end

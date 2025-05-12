@@ -146,25 +146,25 @@ local function render_mitm_hub_hud()
         local xposmul = 11
         local xposoffset = 95
         if (mitm_levels[hub_dma_index].star_requirement <= gMarioState.numStars) then
-        for ih = 0, star_count do
-            hub_star_string[ih] = ""; -- star
-            if (star_flags & (1 << ih) ~= 0) then
-                djui_hud_set_color(255, 255, 0, hub_titlecard_alpha)
-                djui_hud_print_text_anchored(hub_star_string[ih],
-                    get_middle_x_pos(pipe_string_b, scale) + xposoffset - 24 - (ih * xposmul),
-                    33 + yoff,
-                    scale,
-                    ANCHOR_LEFT, ANCHOR_BOTTOM)
-            else -- no star
-                djui_hud_set_color(130, 130, 130, hub_titlecard_alpha)
-                djui_hud_print_text_anchored(hub_star_string[ih],
-                    get_middle_x_pos(pipe_string_b, scale) + xposoffset - 24 - (ih * xposmul),
-                    33 + yoff,
-                    scale,
-                    ANCHOR_LEFT, ANCHOR_BOTTOM)
+            for ih = 0, star_count do
+                hub_star_string[ih] = ""; -- star
+                if (star_flags & (1 << ih) ~= 0) then
+                    djui_hud_set_color(255, 255, 0, hub_titlecard_alpha)
+                    djui_hud_print_text_anchored(hub_star_string[ih],
+                        get_middle_x_pos(pipe_string_b, scale) + xposoffset - 24 - (ih * xposmul),
+                        33 + yoff,
+                        scale,
+                        ANCHOR_LEFT, ANCHOR_BOTTOM)
+                else -- no star
+                    djui_hud_set_color(130, 130, 130, hub_titlecard_alpha)
+                    djui_hud_print_text_anchored(hub_star_string[ih],
+                        get_middle_x_pos(pipe_string_b, scale) + xposoffset - 24 - (ih * xposmul),
+                        33 + yoff,
+                        scale,
+                        ANCHOR_LEFT, ANCHOR_BOTTOM)
+                end
             end
         end
-    end
         if texture then
             djui_hud_set_color(255, 255, 255, hub_titlecard_alpha)
             djui_hud_render_texture(texture, get_middle_x_pos("", 1) - 125, 33 + yoff - 52, 1, 1)

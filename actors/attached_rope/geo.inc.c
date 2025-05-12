@@ -5,6 +5,7 @@ const GeoLayout attached_rope_geo[] = {
 	GEO_OPEN_NODE(),
 		GEO_ASM(0, geo_generate_attached_rope),
 		GEO_DISPLAY_LIST(4, attached_rope_Cube_001_mesh_layer_4),
+		GEO_DISPLAY_LIST(1, attached_rope_Cube_001_mesh_layer_4FAKE),
 	GEO_CLOSE_NODE(),
 	GEO_END(),
 };

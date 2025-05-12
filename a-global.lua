@@ -94,9 +94,9 @@ MODEL_CUTTER_BLADE          = smlua_model_util_get_id("cutter_blade_geo")
 MODEL_G_STAR_PROJECTILE     = smlua_model_util_get_id("star_projectile_geo")
 MODEL_G_STAR_BLOCK          = smlua_model_util_get_id("star_block_geo")
 MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
-MODEL_G_CUT_ROCK = smlua_model_util_get_id("g_cut_rock_geo")
-MODEL_G_CUT_ROCK2 = smlua_model_util_get_id("g_cut_rock2_geo")
-MODEL_G_CUT_ROCK3 = smlua_model_util_get_id("g_cut_rock3_geo")
+MODEL_G_CUT_ROCK            = smlua_model_util_get_id("g_cut_rock_geo")
+MODEL_G_CUT_ROCK2           = smlua_model_util_get_id("g_cut_rock2_geo")
+MODEL_G_CUT_ROCK3           = smlua_model_util_get_id("g_cut_rock3_geo")
 
 BP3_ATTACH_ROPE             = 0xF0
 
@@ -404,6 +404,10 @@ function dream_comet_unlocked()
     return false
 end
 
+function using_ability(gMarioState, ability_id)
+    return (gPlayerSyncTable[gMarioState.playerIndex].abilityId == ability_id);
+end
+
 function change_ability(picked_ability)
     if (picked_ability == ABILITY_NONE) then return end;
 
@@ -436,6 +440,7 @@ end
 gGlobalSyncTable.levels_unlocked = 1 ---default
 
 ability_slot                     = { [0] = ABILITY_NONE, ABILITY_NONE, ABILITY_NONE, ABILITY_NONE };
+gGlobalSyncTable.abilities       = 0
 gGlobalSyncTable.ability_slot0   = ABILITY_NONE
 gGlobalSyncTable.ability_slot1   = ABILITY_NONE
 gGlobalSyncTable.ability_slot2   = ABILITY_NONE
@@ -447,16 +452,35 @@ end
 
 function load_unlocked_levels()
     gGlobalSyncTable.levels_unlocked = mod_storage_load_number("levels_unlocked_" .. (get_current_save_file_num() - 1)) or
-    1
+        1
     return gGlobalSyncTable.levels_unlocked
 end
 
-function save_ability_slots()
+function save_file_set_ability_dpad()
     local currSave = get_current_save_file_num() - 1
     mod_storage_save_number("ability_slot0" .. (currSave), gGlobalSyncTable.ability_slot0)
     mod_storage_save_number("ability_slot1" .. (currSave), gGlobalSyncTable.ability_slot1)
     mod_storage_save_number("ability_slot2" .. (currSave), gGlobalSyncTable.ability_slot2)
     mod_storage_save_number("ability_slot3" .. (currSave), gGlobalSyncTable.ability_slot3)
+end
+
+function save_file_check_ability_unlocked(ability_id)
+    if not UNLOCK_ABILITIES_DEBUG then
+        return gGlobalSyncTable.abilities & (1 << (ability_id - 1)) ~= 0;
+    else
+        return true;
+    end
+end
+
+function save_file_unlock_ability(ability_id)
+    local currSave = get_current_save_file_num() - 1
+    gGlobalSyncTable.abilities = gGlobalSyncTable.abilities | (1 << (ability_id - 1));
+    mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
+end
+
+function load_abilities()
+    local currSave = get_current_save_file_num() - 1
+    gGlobalSyncTable.abilities = mod_storage_load_number("abilities" .. (currSave))
 end
 
 function load_ability_slots()
@@ -474,8 +498,16 @@ end
 if network_is_server() then
     load_unlocked_levels()
     load_ability_slots()
+    load_abilities()
     if save_file_get_flags() == 0 or gGlobalSyncTable.levels_unlocked == 0 then -- has nothing
         gGlobalSyncTable.levels_unlocked = 1
         save_unlocked_levels()
+        gGlobalSyncTable.ability_slot0 = ABILITY_NONE
+        gGlobalSyncTable.ability_slot1 = ABILITY_NONE
+        gGlobalSyncTable.ability_slot2 = ABILITY_NONE
+        gGlobalSyncTable.ability_slot3 = ABILITY_NONE
+        save_file_set_ability_dpad()
+        gGlobalSyncTable.abilities = 0
+        save_file_unlock_ability(0)
     end
 end
