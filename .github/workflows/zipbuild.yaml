@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  webhook: https://discord.com/api/webhooks/1240425552700248176/8cIEptH9zF_Guhn3qmG5RgaidwlNTks0JDanM6sgt6jDgc4Bv6TRikuhf1QKWuWrO-uN
+  webhook: https://discord.com/api/webhooks/1371574464155881613/SwDfv7rxQNJHoY1VEPOMZAD_fq59TCF-jtU7UFF1yT4IlJaUTdohDp6v3iSBBiglq8Tm
   commit: ${{github.run_number}}
 
 permissions:
