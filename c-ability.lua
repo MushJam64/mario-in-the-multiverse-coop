@@ -151,16 +151,18 @@ hook_event(HOOK_OBJECT_SET_MODEL, function(o)
 end)
 
 local function interact_ability_star(m, obj, t)
-    if obj_has_behavior_id(obj, bhvAbilityUnlock) ~=0 then
+    if obj_has_behavior_id(obj, bhvAbilityUnlock) ~= 0 then
         -- ability
-        save_file_unlock_ability(obj.oBehParams2ndByte)
+        if network_is_server() then
+            save_file_unlock_ability(obj.oBehParams2ndByte)
+        end
         --starGrabAction = ACT_ABILITY_DANCE
         if (m.action & ACT_FLAG_AIR) ~= 0 then
             --starGrabAction = ACT_FALL_AFTER_STAR_GRAB
-           -- m.actionArg = 2
+            -- m.actionArg = 2
         end
         --ability_get_confirm = false
-    --[[elseif obj_has_behavior_id(obj, bhvCollectablePainting) ~= 0 then
+        --[[elseif obj_has_behavior_id(obj, bhvCollectablePainting) ~= 0 then
         painting unlock
         local slot = gCurrSaveFileNum - 1
         local paintingByte = obj.oBehParams2ndByte
@@ -168,7 +170,7 @@ local function interact_ability_star(m, obj, t)
             gSaveBuffer.files[slot][1].paintings_unlocked | (1 << paintingByte)
         gSaveFileModified = true]]
     else
-       --[[ if not level_in_dream_comet_mode() then
+        --[[ if not level_in_dream_comet_mode() then
             -- power star
             p_rank_stars = p_rank_stars + 1
             save_file_collect_star_or_key(m.numCoins, starIndex)

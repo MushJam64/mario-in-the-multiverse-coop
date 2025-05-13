@@ -260,6 +260,7 @@ function level_pipe_init(o)
     if (gGlobalSyncTable.levels_unlocked & (1 << o.oBehParams2ndByte) ~= 0) then
         o.oOpacity = 250
     end
+    --o.header.gfx.skipInViewCheck = true
 end
 
 local function level_pipe_in_level_loop(o, m)

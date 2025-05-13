@@ -1,5 +1,12 @@
 -- Custom Geo ASMs and Switch Functions --
 
+local cast_graph_node = cast_graph_node
+local vtx_get_vertex = vtx_get_vertex
+local gfx_parse = gfx_parse
+local gfx_get_from_name = gfx_get_from_name
+local vtx_get_from_name = vtx_get_from_name
+local gfx_set_command = gfx_set_command
+
 local function make_vertex(gfx, n, x, y, z, tx, ty, r, g, b, a)
     local vtx = vtx_get_vertex(gfx, n)
     if vtx then
@@ -88,20 +95,6 @@ function geo_update_mverse_pipe(n, m)
             end
         end)
     end
-
-    -- custom for coop stuff
-    local starsdl = cast_graph_node(n.next.next).displayList
-    -- for some reason, coop makes this run more than once if theres more than 1 pipe,
-    -- the more pipes you look at, the more faster it scrolls
-    gfx_parse(starsdl, function(dl, cmd)
-        if cmd == G_VTX then
-            shift_UV_NORMAL(dl,
-                31, --VERTCOUNT - 1
-                6,
-                SCROLL_UV_X,
-                1)
-        end
-    end)
 end
 
 ---!TODO
@@ -114,8 +107,8 @@ function geo_update_hub_sky(n, m)
 
 end
 
-local mat1 = gfx_get_from_name("mat_attached_rope_f3dlite_material_013")
-local mat2 = gfx_get_from_name("mat_revert_attached_rope_f3dlite_material_013")
+local rope_mat1 = gfx_get_from_name("mat_attached_rope_f3dlite_material_013")
+local rope_mat2 = gfx_get_from_name("mat_revert_attached_rope_f3dlite_material_013")
 function geo_generate_attached_rope(node, m)
     local vertexBuffer
     local dlHead
@@ -144,10 +137,10 @@ function geo_generate_attached_rope(node, m)
     vertexBuffer = vtx_get_from_name("mitm_v" .. ptr)
 
     if not dlHead then
-        dlHead = gfx_create("mitm_g" .. ptr, 128)
+        dlHead = gfx_create("mitm_g" .. ptr, 32)
     end
     if not vertexBuffer then
-        vertexBuffer = vtx_create("mitm_v" .. ptr, 128)
+        vertexBuffer = vtx_create("mitm_v" .. ptr, 32)
     end
 
     make_vertex(vertexBuffer, 0, -20, objDispY, 0, startS, t, 0xFF, 0xE8, 0xBE, 0xFF)
@@ -156,13 +149,13 @@ function geo_generate_attached_rope(node, m)
     make_vertex(vertexBuffer, 3, -20, 0, 0, startS, startT, 0xFF, 0xE8, 0xBE, 0xFF)
 
     local gfx_mat1 = gfx_get_command(dlHead, 0)
-    gfx_set_command(gfx_mat1, "gsSPDisplayList(%g)", mat1)
+    gfx_set_command(gfx_mat1, "gsSPDisplayList(%g)", rope_mat1)
     local gfx_vtx2 = gfx_get_command(dlHead, 1)
     gfx_set_command(gfx_vtx2, "gsSPVertex(%v, 4, 0)", vertexBuffer)
     local gfx_tri3 = gfx_get_command(dlHead, 2)
     gfx_set_command(gfx_tri3, "gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0)")
     local gfx_mat4 = gfx_get_command(dlHead, 3)
-    gfx_set_command(gfx_mat4, "gsSPDisplayList(%g)", mat2)
+    gfx_set_command(gfx_mat4, "gsSPDisplayList(%g)", rope_mat2)
 
     cast_graph_node(graphNode.next).displayList = dlHead
 end
@@ -187,4 +180,16 @@ function geo_ability_material(n, m)
                 ability_images[obj.oBehParams2ndByte][1].texture)
         end
     end)
+end
+
+function geo_ability_hand(n, m)
+    cast_graph_node(n.next).displayList = ability_struct[gPlayerSyncTable[geo_get_mario_state().playerIndex].abilityId]
+        .hand
+end
+
+function geo_ability_hat(n, m)
+    local abilityHat = ability_struct[gPlayerSyncTable[geo_get_mario_state().playerIndex].abilityId].hat
+    if abilityHat then
+        cast_graph_node(n.next).displayList = abilityHat
+    end
 end
