@@ -61,7 +61,7 @@ end
 
 local currentX_pipe = 0
 local verticesPipe = vtx_get_from_name("level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1")
-function scroll_level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1()
+local function scroll_level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1()
     local count = 256
     local width = 128 * 0x20
     local deltaX = math_floor(0.2 * 0x20) % width

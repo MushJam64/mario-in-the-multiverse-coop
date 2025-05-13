@@ -166,7 +166,7 @@ local function render_mitm_hub_hud()
             end
         else
             djui_hud_set_color(255, 0, 0, hub_titlecard_alpha)
-            djui_hud_print_text_anchored(TEXT_PIPE_NOT_ENOUGH .. mitm_levels[hub_dma_index].star_requirement, get_middle_x_pos(authorname, scale), 33 + yoff, scale,
+            djui_hud_print_text_anchored(TEXT_PIPE_NOT_ENOUGH .. mitm_levels[hub_dma_index].star_requirement, get_middle_x_pos(TEXT_PIPE_NOT_ENOUGH, scale), 33 + yoff, scale,
                 ANCHOR_LEFT, ANCHOR_BOTTOM)
         end
         if texture then

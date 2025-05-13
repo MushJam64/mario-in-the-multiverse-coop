@@ -187,6 +187,22 @@ const BehaviorScript bhvGCutRock[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvGCannonSwitch[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    // Floor switch - common:
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),//DO OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_ABILITY_CHRONOS_SMOOTH_SLOW
+    LOAD_COLLISION_DATA(purple_switch_seg8_collision_0800C7A8),
+    SET_FLOAT(oDrawingDistance, 16000),
+    SET_INT(oIntangibleTimer, 0),//--E
+    SET_HITBOX(/*Radius*/ 160, /*Height*/ 100),//--E
+    CALL_NATIVE(bhv_g_cannon_switch_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_g_cannon_switch_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
 
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);

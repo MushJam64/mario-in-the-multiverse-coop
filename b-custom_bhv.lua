@@ -1422,3 +1422,69 @@ function bhv_g_cut_rock_loop(o)
         end
     end
 end
+
+function bhv_g_cannon_switch_init(o)
+    network_init_object(o, true, { "oAction", "oTimer", "oShotByShotgun" })
+end
+
+function bhv_g_cannon_switch_loop(o)
+    local dist
+    local rock, cannon
+    local gMarioObject = nearest_player_to_object(o)
+
+    if o.oAction == 0 then
+        obj_set_model_extended(o, E_MODEL_PURPLE_SWITCH)
+        cur_obj_scale(1.5)
+
+        --rock, dist = cur_obj_find_nearest_object_with_behavior(get_behavior_from_id(bhvGCutRock))
+        rock = obj_get_nearest_object_with_behavior_id(o, bhvGCutRock)
+        if (rock and (rock.oPosY - o.oPosY) < 100 and lateral_dist_between_objects(o, rock) < 127.5)
+            or (o.oShotByShotgun == 2) then
+            o.oAction = 1
+            cannon = obj_get_nearest_object_with_behavior_id(o, (bhvGCannon))
+            if cannon then
+                cannon.oNumSwitchesLeft = cannon.oNumSwitchesLeft - 1
+            end
+        end
+
+    elseif o.oAction == 1 then
+        cur_obj_scale_over_time(2, 3, 1.5, 0.2)
+        if o.oTimer == 3 then
+            cur_obj_play_sound_2(SOUND_GENERAL2_PURPLE_SWITCH)
+            o.oAction = 2
+            cur_obj_shake_screen(SHAKE_POS_SMALL)
+            -- #ifdef ENABLE_RUMBLE
+            queue_rumble_data(5, 80)
+            -- #endif
+        end
+
+    elseif o.oAction == 2 then
+        if o.oBehParams2ndByte ~= 0 then
+            if o.oBehParams2ndByte == 1 and gMarioObject.platform ~= o then
+                o.oAction = o.oAction + 1
+            else
+                if o.oTimer < 360 then
+                    play_sound(SOUND_GENERAL2_SWITCH_TICK_FAST, gGlobalSoundSource)
+                else
+                    play_sound(SOUND_GENERAL2_SWITCH_TICK_SLOW, gGlobalSoundSource)
+                end
+                if o.oTimer > 400 then
+                    o.oAction = 4
+                end
+            end
+        end
+
+    elseif o.oAction == 3 then
+        cur_obj_scale_over_time(2, 3, 0.2, 1.5)
+        if o.oTimer == 3 then
+            o.oAction = 0
+        end
+
+    elseif o.oAction == 4 then
+        if cur_obj_is_any_player_on_platform() ~= 0 then
+            o.oAction = 3
+        end
+    end
+
+    o.oShotByShotgun = 0
+end
