@@ -1,6 +1,11 @@
 -- Global Variables --
 
-NULL                        = nil -- Defining NULL
+-- Custom Mod
+TEX_DPAD                    = get_texture_info("dpad_texture")
+
+-- Defining NULL
+
+NULL                        = nil
 
 -- Level Nums
 
@@ -49,6 +54,7 @@ ABILITY_UTIL_COMPASS        = 16
 ABILITY_UTIL_MILK           = 17
 ABILITY_UTIL_MIRROR         = 18
 ABILITY_NONE                = 19
+ABILITY_LOCK_IMAGE_INDEX    = 20
 
 -- Menu
 
@@ -190,6 +196,8 @@ mitm_levels                          = {
 
 local mario_right_hand_closed        = gfx_get_from_name("mario_right_hand_closed")
 local cutter_hat_Circle_mesh_layer_1 = gfx_get_from_name("cutter_hat_Circle_mesh_layer_1")
+local net_hand_2_hand_mesh           = gfx_get_from_name("net_hand_2_hand_mesh")
+local bubble_hat_bhat_mesh           = gfx_get_from_name("bubble_hat_bhat_mesh")
 
 -- Ability struct
 ability_struct                       = {
@@ -350,6 +358,12 @@ hub_star_string                      = {}
 
 sCutsceneSplineSegment               = 0
 sCutsceneSplineSegmentProgress       = 0
+
+milk_drunk                           = false
+
+ability_y_offset                     = { [0] = 0, 0, 0, 0 };
+ability_gravity                      = { [0] = 0, 0, 0, 0 };
+ability_dpad_locked                  = false
 
 for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].abilityId = 0

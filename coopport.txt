@@ -3,4 +3,5 @@
 
 //      OG LEVEL         COOP LEVEL
 level g (kirby level) -> level bob
+level a  (spongebob lvl)   -> level wf
 castle inside (hub)   -> castle inside

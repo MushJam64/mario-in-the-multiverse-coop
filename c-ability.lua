@@ -98,8 +98,8 @@ local function control_ability_dpad(m)
         if picked_ability > -1 then
             --if check_if_swap_ability_allowed() then
             -- Animate image on DPad HUD
-            --ability_y_offset[picked_ability] = 5
-            -- ability_gravity[picked_ability] = 2
+            ability_y_offset[picked_ability] = 5
+            ability_gravity[picked_ability] = 2
 
             change_ability(ability_slot[picked_ability])
 

@@ -166,7 +166,8 @@ local function render_mitm_hub_hud()
             end
         else
             djui_hud_set_color(255, 0, 0, hub_titlecard_alpha)
-            djui_hud_print_text_anchored(TEXT_PIPE_NOT_ENOUGH .. mitm_levels[hub_dma_index].star_requirement, get_middle_x_pos(TEXT_PIPE_NOT_ENOUGH, scale), 33 + yoff, scale,
+            djui_hud_print_text_anchored(TEXT_PIPE_NOT_ENOUGH .. mitm_levels[hub_dma_index].star_requirement,
+                get_middle_x_pos(TEXT_PIPE_NOT_ENOUGH, scale), 33 + yoff, scale,
                 ANCHOR_LEFT, ANCHOR_BOTTOM)
         end
         if texture then
@@ -237,15 +238,91 @@ local function render_mitm_return_to_hub_hud()
     end
 end
 
+local lerp_ability_icons = false
+
+local function render_ability_icon(x, y, alpha, index)
+    if index == ABILITY_NONE then return end
+
+    if index == ABILITY_UTIL_MILK and milk_drunk then
+        index = 21
+    end
+
+    --[[if ability_is_cooling_down(index) then
+        alpha = 100 + math.sin(get_global_timer() * 0x600) * 30
+    end
+
+    gDPSetEnvColor(gDisplayListHead, 255, 255, 255, alpha)]]
+
+    djui_hud_set_color(255, 255, 255, 255)
+    --if ability_images[index] then
+    djui_hud_render_texture(ability_images[index][1], x + 8, y - 50, 0.8, 0.8)
+    --end
+
+    local new_y = y
+    --[[if lerp_ability_icons and index ~= ABILITY_LOCK_IMAGE_INDEX then
+        new_y = lerp_menu_lotolerance(y, LMENU_ABILITY_HUD + index)
+    end
+
+    create_dl_translation_matrix(MENU_MTX_PUSH, x, new_y, 0)
+
+    gDPPipeSync(gDisplayListHead)
+    gDPSetTextureFilter(gDisplayListHead, G_TF_POINT)
+    gDPSetTextureImage(gDisplayListHead, G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, ability_images[index])
+    gDPSetTile(gDisplayListHead, G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0,
+               G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0)
+    gDPLoadBlock(gDisplayListHead, 7, 0, 0, 1023, 256)
+
+    gSPDisplayList(gDisplayListHead, ability_ability_mesh)
+
+    gDPSetTextureFilter(gDisplayListHead, G_TF_BILERP)
+    gSPPopMatrix(gDisplayListHead, G_MTX_MODELVIEW)]]
+end
+
+
+local function render_ability_dpad(x, y, alpha)
+    djui_hud_set_color(255, 255, 255, alpha)
+    djui_hud_render_texture(TEX_DPAD, x, y, 0.08, 0.08)
+
+    -- Render the lock icon if the D-pad is locked
+    if ability_dpad_locked then
+        render_ability_icon(x, y, alpha, ABILITY_LOCK_IMAGE_INDEX)
+    end
+
+    -- Render ability icons at their directional positions
+    render_ability_icon(x, (y + 30 - ability_y_offset[0]), alpha, ability_slot[0])
+    render_ability_icon(x + 30, (y + 55 - ability_y_offset[1]), alpha, ability_slot[1])
+    render_ability_icon(x, (y + 85 - ability_y_offset[2]), alpha, ability_slot[2])
+    render_ability_icon(x - 30, (y + 55 - ability_y_offset[3]), alpha, ability_slot[3])
+
+    -- Animate ability icon bounce
+    for i = 0, 3 do
+        if ability_y_offset[i] > 0 then
+            --if not _60fps_midframe then
+            ability_y_offset[i] = ability_y_offset[i] + ability_gravity[i]
+            ability_gravity[i] = ability_gravity[i] - 1
+            -- end
+        end
+
+        if ability_y_offset[i] <= 0 then
+            ability_gravity[i] = 0
+            ability_y_offset[i] = 0
+        end
+    end
+end
+
+
 local function all_huds()
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_font(FONT_NORMAL)
     djui_hud_set_color(255, 255, 255, 255)
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
     if (gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE) then
         render_mitm_hub_hud();
     else
         render_mitm_return_to_hub_hud();
     end
+    local hud_alpha = 230
+    render_ability_dpad(60, 265 - 240, hud_alpha);
 end
 
 hook_event(HOOK_ON_HUD_RENDER_BEHIND, all_huds)
