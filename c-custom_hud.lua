@@ -310,6 +310,55 @@ local function render_ability_dpad(x, y, alpha)
     end
 end
 
+local ability_get_timer = 0
+
+local function render_ability_get_hud()
+    if display_ability_hud.display then
+        ability_get_alpha = approach_f32_asymptotic(ability_get_alpha, 255.0, 0.1)
+        ability_get_box_alpha = approach_f32_asymptotic(ability_get_box_alpha, 170.0, 0.1)
+    end
+    if ability_get_timer > 160 then
+        ability_get_alpha = approach_f32_asymptotic(ability_get_alpha, 0.0, 0.1)
+        ability_get_box_alpha = approach_f32_asymptotic(ability_get_box_alpha, 0.0, 0.1)
+    end
+
+    if math.floor(ability_get_alpha) == 0 then
+        ability_get_timer = 0
+    end
+
+    if ability_get_alpha > 0.1 then
+        ability_get_timer = ability_get_timer + 1
+        djui_hud_set_color(0, 0, 0, ability_get_box_alpha)
+        djui_hud_render_rect(80, 33 + 123, 7 * 43, 7 * 8)
+        djui_hud_set_color(255, 255, 255, ability_get_alpha)
+        --[[gDPSetEnvColor(gDisplayListHead, 255, 255, 255, math.floor(ability_get_alpha))
+        create_dl_translation_matrix(MENU_MTX_PUSH, 160, 120, 0)
+        gDPSetRenderMode(gDisplayListHead, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2)
+        gSPDisplayList(gDisplayListHead, desconly_onlybox_mesh)
+        gSPPopMatrix(gDisplayListHead, G_MTX_MODELVIEW)
+
+        gSPDisplayList(gDisplayListHead, dl_ia_text_begin)
+        gDPSetEnvColor(gDisplayListHead, 255, 255, 255, math.floor(ability_get_alpha))
+        print_generic_string(43, 58, ability_string(gMarioStates[0].usedObj.oBehParams2ndByte))
+        gSPDisplayList(gDisplayListHead, dl_ia_text_end)]]
+        local scale = 0.6
+        if display_ability_hud.str then
+            for id = 1, #display_ability_hud.str do
+                local cStr = display_ability_hud.str[id]
+                djui_hud_print_text_anchored(cStr, 85,
+                    49 + 35 - (id * 14) + 10,
+                    scale,
+                    ANCHOR_LEFT, ANCHOR_BOTTOM)
+            end
+        end
+        if ability_get_alpha < 0 then
+            ability_get_alpha = 0
+        end
+        if math.ceil(ability_get_alpha) == 255 then
+            display_ability_hud.display = false
+        end
+    end
+end
 
 local function all_huds()
     djui_hud_set_resolution(RESOLUTION_N64)
@@ -323,6 +372,7 @@ local function all_huds()
     end
     local hud_alpha = 230
     render_ability_dpad(60, 265 - 240, hud_alpha);
+    render_ability_get_hud()
 end
 
 hook_event(HOOK_ON_HUD_RENDER_BEHIND, all_huds)

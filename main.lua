@@ -7,6 +7,8 @@ else
     gLevelValues.entryLevel = LEVEL_BOB
 end
 gLevelValues.disableActs = true
+gBehaviorValues.ShowStarMilestones = false
+gBehaviorValues.ShowStarDialog = false 
 
 smlua_audio_utils_replace_sequence(0x25, 42, 80, "25_custom_peanut_plains")
 smlua_audio_utils_replace_sequence(SEQ_CUSTOM_KIRBY_BOSS, 42, 80, "26_custom_kirby_boss")

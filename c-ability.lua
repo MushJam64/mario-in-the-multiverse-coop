@@ -10,9 +10,10 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
 
 function bhv_ability_init(o)
+    o.oBehParams = (12 << 24) | (o.oBehParams2ndByte << 16)
     network_init_object(o, true, { "oAction", "oBehParams2ndByte" })
 end
 
@@ -36,6 +37,10 @@ function bhv_ability(o)
             --save_file_unlock_song(SEQ_MITM_GET_ABILITY)
 
             cur_obj_hide()
+            if nearest_mario_state_to_object(o).playerIndex == 0 then
+                display_ability_hud.display = true
+                display_ability_hud.str = ability_struct[o.oBehParams2ndByte].string
+            end
             for i = 0, 3 do
                 if ability_slot[i] == ABILITY_NONE then
                     ability_slot[i] = o.oBehParams2ndByte
@@ -64,6 +69,7 @@ function bhv_ability(o)
 end
 
 local function save_abilities()
+    local currSave = get_current_save_file_num() - 1
     --reduce stress
     if get_global_timer() % 32 ~= 0 then return end
     ability_slot[0] = gGlobalSyncTable.ability_slot0
@@ -72,6 +78,7 @@ local function save_abilities()
     ability_slot[3] = gGlobalSyncTable.ability_slot3
     if network_is_server() then
         save_file_set_ability_dpad()
+        mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
     end
 end
 
@@ -153,9 +160,9 @@ end)
 local function interact_ability_star(m, obj, t)
     if obj_has_behavior_id(obj, bhvAbilityUnlock) ~= 0 then
         -- ability
-        if network_is_server() then
-            save_file_unlock_ability(obj.oBehParams2ndByte)
-        end
+
+        save_file_unlock_ability(obj.oBehParams2ndByte)
+
         --starGrabAction = ACT_ABILITY_DANCE
         if (m.action & ACT_FLAG_AIR) ~= 0 then
             --starGrabAction = ACT_FALL_AFTER_STAR_GRAB
@@ -183,6 +190,13 @@ local function interact_ability_star(m, obj, t)
         end]]
     end
 end
+
+local function celeb_star_override(o)
+    obj_set_model_extended(o, MODEL_ABILITY)
+    o.oBehParams2ndByte = nearest_mario_state_to_object(o).usedObj.oBehParams2ndByte
+end
+
+hook_behavior(id_bhvCelebrationStar, OBJ_LIST_DEFAULT, false, nil, celeb_star_override)
 
 hook_event(HOOK_ON_INTERACT, interact_ability_star)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)

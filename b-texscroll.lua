@@ -79,12 +79,11 @@ local function scroll_level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1()
 end
 
 local function scroll_all()
+    scroll_level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1();
     if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE then
         scroll_castle_inside_dl_Map_mesh_layer_1_vtx_0();
         scroll_castle_inside_dl_Map_mesh_layer_5_vtx_0();
         scroll_castle_inside_dl_Map_mesh_layer_5_vtx_1();
-
-        scroll_level_pipe_Level_Pipe_Visual_mesh_layer_1_vtx_1();
     end
 end
 

@@ -2,89 +2,224 @@
 
 -- Custom Mod
 
-TEX_DPAD                    = get_texture_info("dpad_texture")
+TEX_DPAD                 = get_texture_info("dpad_texture")
+display_ability_hud      = { str = nil, display = false }
 
 -- Defining NULL
 
-NULL                        = nil
+NULL                     = nil
 
 -- Level Nums
 
-LEVEL_INK_TEST              = 39
-LEVEL_X                     = 40
-LEVEL_G                     = 41
-LEVEL_B                     = 42
-LEVEL_A                     = 43
-LEVEL_F                     = 44
-LEVEL_E                     = 45
-LEVEL_I                     = 46
-LEVEL_J                     = 47
-LEVEL_M                     = 48
-LEVEL_O                     = 49
-LEVEL_D                     = 50
-LEVEL_N                     = 51
-LEVEL_H                     = 52
-LEVEL_C                     = 53
-LEVEL_BIRTHDAY              = 54
-LEVEL_L                     = 55
-LEVEL_BOWSER_COURSE         = 56
-LEVEL_K                     = 57
-LEVEL_SB                    = 58
-LEVEL_MC                    = 59
-LEVEL_BB                    = 60
+LEVEL_INK_TEST           = 39
+LEVEL_X                  = 40
+LEVEL_G                  = 41
+LEVEL_B                  = 42
+LEVEL_A                  = 43
+LEVEL_F                  = 44
+LEVEL_E                  = 45
+LEVEL_I                  = 46
+LEVEL_J                  = 47
+LEVEL_M                  = 48
+LEVEL_O                  = 49
+LEVEL_D                  = 50
+LEVEL_N                  = 51
+LEVEL_H                  = 52
+LEVEL_C                  = 53
+LEVEL_BIRTHDAY           = 54
+LEVEL_L                  = 55
+LEVEL_BOWSER_COURSE      = 56
+LEVEL_K                  = 57
+LEVEL_SB                 = 58
+LEVEL_MC                 = 59
+LEVEL_BB                 = 60
 
 -- Ability Enum
 
-ABILITY_DEFAULT             = 0
-ABILITY_CUTTER              = 1
-ABILITY_BUBBLE_HAT          = 2
-ABILITY_SQUID               = 3
-ABILITY_SHOCK_ROCKET        = 4
-ABILITY_PHASEWALK           = 5
-ABILITY_BIG_DADDY           = 6
-ABILITY_KNIGHT              = 7
-ABILITY_CHRONOS             = 8
-ABILITY_E_SHOTGUN           = 9
-ABILITY_GADGET_WATCH        = 10
-ABILITY_HM_FLY              = 11
-ABILITY_AKU                 = 12
-ABILITY_ESTEEMED_MORTAL     = 13
-ABILITY_MARBLE              = 14
-ABILITY_DASH_BOOSTER        = 15
-ABILITY_UTIL_COMPASS        = 16
-ABILITY_UTIL_MILK           = 17
-ABILITY_UTIL_MIRROR         = 18
-ABILITY_NONE                = 19
-ABILITY_LOCK_IMAGE_INDEX    = 20
+ABILITY_DEFAULT          = 0
+ABILITY_CUTTER           = 1
+ABILITY_BUBBLE_HAT       = 2
+ABILITY_SQUID            = 3
+ABILITY_SHOCK_ROCKET     = 4
+ABILITY_PHASEWALK        = 5
+ABILITY_BIG_DADDY        = 6
+ABILITY_KNIGHT           = 7
+ABILITY_CHRONOS          = 8
+ABILITY_E_SHOTGUN        = 9
+ABILITY_GADGET_WATCH     = 10
+ABILITY_HM_FLY           = 11
+ABILITY_AKU              = 12
+ABILITY_ESTEEMED_MORTAL  = 13
+ABILITY_MARBLE           = 14
+ABILITY_DASH_BOOSTER     = 15
+ABILITY_UTIL_COMPASS     = 16
+ABILITY_UTIL_MILK        = 17
+ABILITY_UTIL_MIRROR      = 18
+ABILITY_NONE             = 19
+ABILITY_LOCK_IMAGE_INDEX = 20
 
 -- Menu
 
-LMENU_ABILITY_HUD           = 0
-LMENU_HUD_ALPHA             = 20
-LMENU_TITLE_CARD            = 21
-LMENU_DIALOG_OPEN           = 22
-LMENU_DIALOG_SCALE          = 23
-LMENU_TRANSITION            = 24
-LMENU_PAUSE                 = 25
-LMENU_FILE_1                = 26
-LMENU_FILE_2                = 27
-LMENU_FILE_3                = 28
-LMENU_FILE_BACKCARD         = 29
-LMENU_COUNT                 = 30
+LMENU_ABILITY_HUD        = 0
+LMENU_HUD_ALPHA          = 20
+LMENU_TITLE_CARD         = 21
+LMENU_DIALOG_OPEN        = 22
+LMENU_DIALOG_SCALE       = 23
+LMENU_TRANSITION         = 24
+LMENU_PAUSE              = 25
+LMENU_FILE_1             = 26
+LMENU_FILE_2             = 27
+LMENU_FILE_3             = 28
+LMENU_FILE_BACKCARD      = 29
+LMENU_COUNT              = 30
 
 -- Hud
-TEXT_PIPE_NOT_ENOUGH        = ("Needed : ")
-TEXT_QUESTION               = ("???")
-TEXT_PIPE_ENTER             = (" :Enter   :Cancel")
-TEXT_PIPE_A                 = (" A")
-TEXT_PIPE_B                 = ("          B")
-TEXT_PIPE_Z                 = ("[Z]")
+TEXT_PIPE_NOT_ENOUGH     = ("Needed : ")
+TEXT_QUESTION            = ("???")
+TEXT_PIPE_ENTER          = (" :Enter   :Cancel")
+TEXT_PIPE_A              = (" A")
+TEXT_PIPE_B              = ("          B")
+TEXT_PIPE_Z              = ("[Z]")
 
-pipe_string_not_enough      = TEXT_PIPE_NOT_ENOUGH
-pipe_string_enter           = TEXT_PIPE_ENTER
-pipe_string_a               = TEXT_PIPE_A
-pipe_string_b               = TEXT_PIPE_B
-pipe_string_z               = TEXT_PIPE_Z
+TEXT_ABILITY_DEFAULT     = {
+    "Mario's Cap:",
+    "Mario's basic moveset as you know it."
+}
+
+TEXT_ABILITY_A           = {
+    "Bubble Hat & Net: Spongebob's prized toolset.",
+    "Lets you catch jellyfish & break tiki boxes.",
+    "Press [A] midair to do a bubble glide!"
+}
+
+TEXT_ABILITY_B           = {
+    "Helmet & Drill: From a deceased Big Daddy.",
+    "The drill can break cement blocks.",
+    "While underwater you maintain normal movement."
+}
+
+TEXT_ABILITY_C           = {
+    "Inkling: You're a kid now, you're a squid now!",
+    "Press [L] to transform to and from squid form.",
+    "Can swim in ink puddles, but water kills you."
+}
+
+TEXT_ABILITY_D           = {
+    "Aku Aku: A mask with a spirit inside.",
+    "Press [L] to spend 10 coins and activate 10",
+    "seconds of invincibility. Can walk on lava."
+}
+
+TEXT_ABILITY_E           = {
+    "Doom Shotgun:  Press [L] to fire!",
+    "On ground, Mario will fire forward. In the air,",
+    "he'll fire downward. Toggle aim mode with [R]."
+}
+
+TEXT_ABILITY_F           = {
+    "Gadget Watch: Belongs to James Bond.",
+    "Will target switches and breakable objects.",
+    "Once targeted, press [L] to zap the object."
+}
+
+TEXT_ABILITY_G           = {
+    "Cutter: A set of cut-based abilities.",
+    "[B] - Cutter Throw, [B](moving) - Cutter Dash",
+    "[B](near enemy) - Final Cutter"
+}
+
+TEXT_ABILITY_H           = {
+    "Phasewalk: Press [L] to activate. Mario will",
+    "become invisible and get an increase in running",
+    "speed, and get a jump boost at the end."
+}
+
+TEXT_ABILITY_I           = {
+    "Shock Rocket: A guided exploding rocket.",
+    "Press [L] while static to aim, then [B] to fire.",
+    "Once launched, guide it with the analog stick."
+}
+
+TEXT_ABILITY_J           = {
+    "HM Fly: Call upon your Pokemon pal to soar",
+    "high into the sky.",
+    "Press [A] while in the air to begin flying."
+}
+
+TEXT_ABILITY_K           = {
+    "Chronos: A dangerous precognitive drug,",
+    "alongside an even deadlier katana.",
+    "Press [B] to slash, and hold [L] to slow time."
+}
+
+TEXT_ABILITY_L           = {
+    "Pizza Knight: A heavy suit of knight armor.",
+    "Limits Mario's move set, but lets him slide off",
+    "slopes to break metal blocks and double jump."
+}
+
+TEXT_ABILITY_M           = {
+    "Dash Booster: Allows Mario to air dash.",
+    "Press [Z] to go up, [L] to go horizontal.",
+    "Limit of 3 dashes per jump."
+}
+
+TEXT_ABILITY_N           = {
+    "Hamster Ball: A hollow ball that Mario can",
+    "enter. Use the analog stick to roll around",
+    "with sphere physics!"
+}
+
+TEXT_ABILITY_O           = {
+    "Esteemed Mortal: A walker slaying saw-axe.",
+    "Replaces your dive with an axe jump.",
+    "Hold [B] to hop and hold [A] to jump higher."
+}
+
+TEXT_ABILITY_UTIL_1      = {
+    "Compass: Powered by Redstone!",
+    "When held, will point to the nearest red coin or",
+    "star mission specific object."
+}
+
+TEXT_ABILITY_UTIL_2      = {
+    "Lon Lon Milk: Highly nutritious!",
+    "Press [L] to drink and restore 5 HP.",
+    "Refills between levels and after deaths."
+}
+
+TEXT_ABILITY_UTIL_3      = {
+    "Magic Mirror: Gaze in the mirror to return home.",
+    "Press [L] to warp to the last checkpoint."
+}
+
+pipe_string_not_enough   = TEXT_PIPE_NOT_ENOUGH
+pipe_string_enter        = TEXT_PIPE_ENTER
+pipe_string_a            = TEXT_PIPE_A
+pipe_string_b            = TEXT_PIPE_B
+pipe_string_z            = TEXT_PIPE_Z
+
+abstr_def                = TEXT_ABILITY_DEFAULT
+abstr_a                  = TEXT_ABILITY_A
+abstr_b                  = TEXT_ABILITY_B
+abstr_c                  = TEXT_ABILITY_C
+abstr_d                  = TEXT_ABILITY_D
+abstr_e                  = TEXT_ABILITY_E
+abstr_f                  = TEXT_ABILITY_F
+abstr_g                  = TEXT_ABILITY_G
+abstr_h                  = TEXT_ABILITY_H
+abstr_i                  = TEXT_ABILITY_I
+abstr_j                  = TEXT_ABILITY_J
+abstr_k                  = TEXT_ABILITY_K
+abstr_l                  = TEXT_ABILITY_L
+abstr_m                  = TEXT_ABILITY_M
+abstr_n                  = TEXT_ABILITY_N
+abstr_o                  = TEXT_ABILITY_O
+
+abstr_util_1             = TEXT_ABILITY_UTIL_1
+abstr_util_2             = TEXT_ABILITY_UTIL_2
+abstr_util_3             = TEXT_ABILITY_UTIL_3
+
 
 -- Behavior
 MODEL_LEVEL_PIPE            = smlua_model_util_get_id("level_pipe_geo")
@@ -370,6 +505,8 @@ hub_level_current_index                  = 0
 hub_level_index                          = -1
 hub_titlecard_alpha                      = 0
 hub_returnback_box_alpha                 = 0
+ability_get_alpha                        = 0
+ability_get_box_alpha                    = 0
 hub_dma_index                            = -1
 hub_star_string                          = {}
 
@@ -509,9 +646,7 @@ function save_file_check_ability_unlocked(ability_id)
 end
 
 function save_file_unlock_ability(ability_id)
-    local currSave = get_current_save_file_num() - 1
     gGlobalSyncTable.abilities = gGlobalSyncTable.abilities | (1 << (ability_id - 1));
-    mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
 end
 
 function load_abilities()
@@ -532,6 +667,7 @@ function load_ability_slots()
 end
 
 if network_is_server() then
+    local currSave = get_current_save_file_num() - 1
     load_unlocked_levels()
     load_ability_slots()
     load_abilities()
@@ -545,5 +681,6 @@ if network_is_server() then
         save_file_set_ability_dpad()
         gGlobalSyncTable.abilities = 0
         save_file_unlock_ability(0)
+        mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
     end
 end

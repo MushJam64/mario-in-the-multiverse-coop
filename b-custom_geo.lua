@@ -160,10 +160,12 @@ function geo_generate_attached_rope(node, m)
     cast_graph_node(graphNode.next).displayList = dlHead
 end
 
+local ability_mat = gfx_get_from_name("mat_ability_unlock_ability")
+
 function geo_ability_material(n, m)
     local obj = geo_get_current_object()
-    gfx_parse(cast_graph_node(n.next).displayList, function(dl, cmd)
-        if cmd == G_NOOP and dl.w1 == 69 then
+    gfx_parse(ability_mat, function(dl, cmd)
+        if cmd == G_SETTIMG then
             gfx_set_command(dl, "gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, %t)",
                 ability_images[obj.oBehParams2ndByte][1].texture)
         end
