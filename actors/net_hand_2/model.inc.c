@@ -558,18 +558,20 @@ Gfx mat_net_hand_2_Gloves[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsSPTexture(65535, 65535, 0, 0, 1),
-    gsSPLightColor(LIGHT_1, 0xffffffff),
-    gsSPLightColor(LIGHT_2, 0x7f7f7fff),
+    gsSPCopyLightsPlayerPart(GLOVES),
 	gsSPEndDisplayList(),
 };
+
+Lights1 mat_net_hand_2_f3dlite_material_lightZ = gdSPDefLights1(
+	0x7f, 0x7f, 0x7f,
+	0xff, 0xff, 0xff, 0x28, 0x28, 0x28);
 
 Gfx mat_net_hand_2_f3dlite_material[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT),
 	gsDPSetTextureLUT(G_TT_RGBA16),
 	gsSPTexture(65535, 65535, 0, 0, 1),
-    gsSPLightColor(LIGHT_1, 0xffffffff),
-    gsSPLightColor(LIGHT_2, 0x7f7f7fff),
+    gsSPSetLights1(mat_net_hand_2_f3dlite_material_lightZ),
 	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, net_hand_2_tex1_128x128_m_ca2f657301a5572d_14_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 76),

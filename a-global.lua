@@ -1,6 +1,7 @@
 -- Global Variables --
 
 -- Custom Mod
+
 TEX_DPAD                    = get_texture_info("dpad_texture")
 
 -- Defining NULL
@@ -111,6 +112,21 @@ OBJ_FLAG_ATTACHABLE_BY_ROPE = (OBJ_FLAG_30 + 16)
 -- Music
 SEQ_CUSTOM_KIRBY_BOSS       = 0x26
 
+function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
+    local o = m.marioObj
+
+    if o.header.gfx.animInfo.animID ~= targetAnimID then
+        o.header.gfx.animInfo.animID = targetAnimID
+        smlua_anim_util_set_animation(o, a)
+
+        o.header.gfx.animInfo.animFrame = o.header.gfx.animInfo.animFrameAccelAssist >> 16
+    end
+
+    o.header.gfx.animInfo.animAccel = accel
+
+    return o.header.gfx.animInfo.animFrame
+end
+
 local function BIT(i) return (1 << (i)) end
 local function BITMASK(size) return ((BIT(size)) - 1) end
 
@@ -133,21 +149,21 @@ function GET_BPARAM34(behParams) return GET_BPARAMS((behParams), 3, 2) end
 
 -- Dream Data
 
-mitmdd_a                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_MARBLE, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 5 } ---@type mitm_dream_data
-mitmdd_b                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_BIG_DADDY, ABILITY_NONE }, dream_star_ct = 6 } ---@type mitm_dream_data
-mitmdd_c                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_PHASEWALK, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 5 } ---@type mitm_dream_data
-mitmdd_d                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_AKU, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_e                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_E_SHOTGUN, ABILITY_NONE }, dream_star_ct = 8 } ---@type mitm_dream_data
-mitmdd_f                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_GADGET_WATCH, ABILITY_PHASEWALK, ABILITY_NONE }, dream_star_ct = 6 } ---@type mitm_dream_data
-mitmdd_g                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_h                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_PHASEWALK, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_i                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_CUTTER, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_j                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_BUBBLE_HAT, ABILITY_SQUID, ABILITY_NONE }, dream_star_ct = 8 } ---@type mitm_dream_data
-mitmdd_k                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_CHRONOS, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_l                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_KNIGHT, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 4 } ---@type mitm_dream_data
-mitmdd_m                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_PHASEWALK, ABILITY_KNIGHT }, dream_star_ct = 8 } ---@type mitm_dream_data
-mitmdd_n                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_E_SHOTGUN, ABILITY_BUBBLE_HAT, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
-mitmdd_o                             = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_HM_FLY, ABILITY_GADGET_WATCH }, dream_star_ct = 8 } ---@type mitm_dream_data
+mitmdd_a                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_MARBLE, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 5 } ---@type mitm_dream_data
+mitmdd_b                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_BIG_DADDY, ABILITY_NONE }, dream_star_ct = 6 } ---@type mitm_dream_data
+mitmdd_c                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_PHASEWALK, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 5 } ---@type mitm_dream_data
+mitmdd_d                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_AKU, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_e                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_E_SHOTGUN, ABILITY_NONE }, dream_star_ct = 8 } ---@type mitm_dream_data
+mitmdd_f                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_GADGET_WATCH, ABILITY_PHASEWALK, ABILITY_NONE }, dream_star_ct = 6 } ---@type mitm_dream_data
+mitmdd_g                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_h                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_PHASEWALK, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_i                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_CUTTER, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_j                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_BUBBLE_HAT, ABILITY_SQUID, ABILITY_NONE }, dream_star_ct = 8 } ---@type mitm_dream_data
+mitmdd_k                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_CHRONOS, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_l                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_KNIGHT, ABILITY_NONE, ABILITY_NONE }, dream_star_ct = 4 } ---@type mitm_dream_data
+mitmdd_m                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_PHASEWALK, ABILITY_KNIGHT }, dream_star_ct = 8 } ---@type mitm_dream_data
+mitmdd_n                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_E_SHOTGUN, ABILITY_BUBBLE_HAT, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
+mitmdd_o                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_HM_FLY, ABILITY_GADGET_WATCH }, dream_star_ct = 8 } ---@type mitm_dream_data
 
 ---@class mitm_dream_data
 ---@field public ability_lock integer[]
@@ -168,7 +184,7 @@ mitmdd_o                             = { ability_lock = { ABILITY_DEFAULT, ABILI
 --In course order, not alphabetical!
 --Only mess with --[[ Level ]] entry, everything else is pre-configured
 ---@type mitm_level_data[]
-mitm_levels                          = {
+mitm_levels                              = {
     --[[ Name, Author(s)]]
     --[[Level     StarFlags     StarReq  StartArea  ReturnWarp  StarCt DreamData]]
     [0] = { name = "MARIO SUPER STAR ULTRA", author = "CowQuack", author_abridged = "CowQuack", level = LEVEL_G, course = COURSE_BOB, star_requirement = 0, start_area = 3, return_id = 20, star_count = 8, dream_data = mitmdd_g },
@@ -194,13 +210,14 @@ mitm_levels                          = {
     --[[BB]] { name = "Big Blue",    author = "BroDute",                         author_abridged = "BroDute",         level = NULL,                course = COURSE_WMOTR, star_requirement = 0,  start_area = 0,        return_id = 36, star_count = 1, dream_data = NULL },
 };
 
-local mario_right_hand_closed        = gfx_get_from_name("mario_right_hand_closed")
-local cutter_hat_Circle_mesh_layer_1 = gfx_get_from_name("cutter_hat_Circle_mesh_layer_1")
-local net_hand_2_hand_mesh           = gfx_get_from_name("net_hand_2_hand_mesh")
-local bubble_hat_bhat_mesh           = gfx_get_from_name("bubble_hat_bhat_mesh")
+mario_right_hand_closed                  = gfx_get_from_name("mario_right_hand_closed")
+local cutter_hat_Circle_mesh_layer_1     = gfx_get_from_name("cutter_hat_Circle_mesh_layer_1")
+local net_hand_2_hand_mesh               = gfx_get_from_name("net_hand_2_hand_mesh")
+local bubble_hat_bhat_mesh               = gfx_get_from_name("bubble_hat_bhat_mesh")
+cutter_hand_right_hand_open_mesh_layer_1 = gfx_get_from_name("cutter_hand_right_hand_open_mesh_layer_1")
 
 -- Ability struct
-ability_struct                       = {
+ability_struct                           = {
     --           HAND DISPLAY LIST        HAT DISPLAY LIST     MARIO MODEL ID     STRING
     --Default
     [0] = { hand = mario_right_hand_closed, hat = nil, model_id = nil, string = abstr_def },
@@ -243,7 +260,7 @@ ability_struct                       = {
     { hand = mirror_hand_hand_mesh,                  hat = nil,                            model_id = nil,                string = abstr_util_3 },
 }
 
-title_card_data                      = {
+title_card_data                          = {
     [0] = get_texture_info("custom_titlecard_G.rgba16")
     ,
     get_texture_info("custom_titlecard_A.rgba16")
@@ -275,7 +292,7 @@ title_card_data                      = {
     get_texture_info("custom_titlecard_M.rgba16")
 };
 
-ability_images                       = {
+ability_images                           = {
     [0] = { --[[Default]]
         get_texture_info("custom_ability_default.rgba16")
     },
@@ -346,24 +363,26 @@ ability_images                       = {
 
 -- Variables
 
-queued_pipe_cutscene                 = false
-dream_comet_enabled                  = false
+queued_pipe_cutscene                     = false
+dream_comet_enabled                      = false
 
-hub_level_current_index              = 0
-hub_level_index                      = -1
-hub_titlecard_alpha                  = 0
-hub_returnback_box_alpha             = 0
-hub_dma_index                        = -1
-hub_star_string                      = {}
+hub_level_current_index                  = 0
+hub_level_index                          = -1
+hub_titlecard_alpha                      = 0
+hub_returnback_box_alpha                 = 0
+hub_dma_index                            = -1
+hub_star_string                          = {}
 
-sCutsceneSplineSegment               = 0
-sCutsceneSplineSegmentProgress       = 0
+sCutsceneSplineSegment                   = 0
+sCutsceneSplineSegmentProgress           = 0
 
-milk_drunk                           = false
+milk_drunk                               = false
 
-ability_y_offset                     = { [0] = 0, 0, 0, 0 };
-ability_gravity                      = { [0] = 0, 0, 0, 0 };
-ability_dpad_locked                  = false
+ability_y_offset                         = { [0] = 0, 0, 0, 0 };
+ability_gravity                          = { [0] = 0, 0, 0, 0 };
+ability_dpad_locked                      = false
+
+fb_bowser_phase                          = 0
 
 for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].abilityId = 0

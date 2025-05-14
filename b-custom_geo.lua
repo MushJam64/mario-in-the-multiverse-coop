@@ -170,9 +170,26 @@ function geo_ability_material(n, m)
     end)
 end
 
-function geo_ability_hand(n, m)
-    cast_graph_node(n.next).displayList = ability_struct[gPlayerSyncTable[geo_get_mario_state().playerIndex].abilityId]
-        .hand
+function geo_ability_hand(n, mi)
+    local m = geo_get_mario_state()
+    local cNode = cast_graph_node(n.next)
+
+
+    --[[if gPlayerSyncTable[m.playerIndex].abilityId == ABILITY_BUBBLE_HAT then
+        n.flags = (n.flags & 0xFF) | (LAYER_ALPHA << 8);
+    end]]
+
+    cNode.displayList = ability_struct[gPlayerSyncTable[m.playerIndex].abilityId].hand
+
+    if using_ability(m, ABILITY_CUTTER) then
+        if m.action == ACT_MOVE_PUNCHING then
+            m.actionTimer = m.actionTimer + 1
+        end
+
+        if m.actionTimer <= 3 and m.action == ACT_CUTTER_THROW_AIR or (m.actionTimer >= 3 and m.action == ACT_PUNCHING or m.actionTimer >= 3 and m.actionTimer < 6 and m.action == ACT_MOVE_PUNCHING) or m.action == ACT_CUTTER_DASH then
+            cNode.displayList = cutter_hand_right_hand_open_mesh_layer_1
+        end
+    end
 end
 
 function geo_ability_hat(n, m)
@@ -180,6 +197,10 @@ function geo_ability_hat(n, m)
     if abilityHat then
         cast_graph_node(n.next).displayList = abilityHat
     end
+end
+
+function geo_override_handscale(n, mi)
+   
 end
 
 local function delete_mod_data(obj)
