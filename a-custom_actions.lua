@@ -61,7 +61,7 @@ end
 
 local function act_cutter_throw_air(m)
     if m.actionState == 0 then
-        play_sound_if_no_flag(m, SOUND_MARIO_PUNCH_HOO, MARIO_ACTION_SOUND_PLAYED)
+        play_character_sound_if_no_flag(m, CHAR_SOUND_PUNCH_HOO, MARIO_ACTION_SOUND_PLAYED)
         m.marioObj.header.gfx.animInfo.animID = -1
         set_mario_animation(m, MARIO_ANIM_FIRST_PUNCH)
         m.actionState = 1
