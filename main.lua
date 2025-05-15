@@ -7,13 +7,17 @@ else
     gLevelValues.entryLevel = LEVEL_BOB
 end
 gLevelValues.disableActs = true
+gLevelValues.fixCollisionBugs = true
+gLevelValues.fixCollisionBugsPickBestWall = true
 gBehaviorValues.ShowStarMilestones = false
 gBehaviorValues.ShowStarDialog = false
 
 smlua_audio_utils_replace_sequence(0x25, 42, 80, "25_custom_peanut_plains")
-smlua_audio_utils_replace_sequence(SEQ_CUSTOM_KIRBY_BOSS, 42, 80, "26_custom_kirby_boss")
-smlua_audio_utils_replace_sequence(0x4e, 42, 80, "4E_mitm_hub")
 smlua_audio_utils_replace_sequence(0x27, 42, 80, "27_custom_save_hut")
+smlua_audio_utils_replace_sequence(SEQ_CUSTOM_KIRBY_BOSS, 42, 80, "26_custom_kirby_boss")
+smlua_audio_utils_replace_sequence(0x39, 19, 80, "39_jellyfish_fields")
+smlua_audio_utils_replace_sequence(0x4e, 42, 80, "4E_mitm_hub")
+smlua_audio_utils_replace_sequence(0x50, 42, 80, "50_mitm_ability_get")
 
 local function mario_update(m)
     if (gPlayerSyncTable[0].abilityId == ABILITY_CUTTER) or using_ability(m, ABILITY_GADGET_WATCH) then

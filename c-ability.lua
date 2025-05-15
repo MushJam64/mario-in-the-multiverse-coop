@@ -192,11 +192,23 @@ local function interact_ability_star(m, obj, t)
 end
 
 local function celeb_star_override(o)
-    obj_set_model_extended(o, MODEL_ABILITY)
-    o.oBehParams2ndByte = nearest_mario_state_to_object(o).usedObj.oBehParams2ndByte
+    local mario = nearest_mario_state_to_object(o)
+    if mario and obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
+        obj_set_model_extended(o, MODEL_ABILITY)
+        o.oBehParams2ndByte = nearest_mario_state_to_object(o).usedObj.oBehParams2ndByte
+    end
+end
+
+local function ability_override_sound(p, s)
+    if s == SEQ_EVENT_CUTSCENE_COLLECT_STAR then
+        if obj_has_behavior_id(gMarioStates[0].usedObj, bhvAbilityUnlock) ~= 0 then
+            return 0x50
+        end
+    end
 end
 
 hook_behavior(id_bhvCelebrationStar, OBJ_LIST_DEFAULT, false, nil, celeb_star_override)
 
+hook_event(HOOK_ON_SEQ_LOAD, ability_override_sound)
 hook_event(HOOK_ON_INTERACT, interact_ability_star)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)
