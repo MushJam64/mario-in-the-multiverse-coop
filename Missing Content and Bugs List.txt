@@ -6,9 +6,7 @@ Area 2 (OP Segment after opening cutscene):
 
 Area 3:
 - Checkpoint flags missing
-- Painting collectible on last hill isn't in yet
 - Skybox is weird? (I might be tripping)
-- A rope close to 2 red coins near the pipe isn't there (The one that holds the blue coin)
 
 Area 4:
 - Checkpoint flags missing

@@ -1,3 +1,18 @@
+local function for_each_object_with_behavior(behavior, func) --* function by Isaac
+    local o = obj_get_first_with_behavior_id(behavior)
+    if o == nil then return end
+    while o ~= nil do
+        func(o)
+        o = obj_get_next_with_same_behavior_id(o)
+    end
+end
+
+local function update_coin_attach(o)
+   o.oFlags = o.oFlags | OBJ_FLAG_ATTACHABLE_BY_ROPE o.hookRender = 1
+end
+
+hook_behavior(id_bhvBlueCoinJumping, OBJ_LIST_LEVEL, false, update_coin_attach, nil)
+
 --we cant add new o fields that are objs for oRopeObject, so here ill use oHiddenBlueCoinSwitch
 local function on_objects(o)
     if ((o.oFlags & OBJ_FLAG_ATTACHABLE_BY_ROPE ~= 0) and ((o.oBehParams >> 8) & 0xff) == BP3_ATTACH_ROPE) then

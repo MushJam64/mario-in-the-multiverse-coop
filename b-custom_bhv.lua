@@ -670,7 +670,7 @@ function bhv_g_attached_rope_init(o)
     end
 
     if rayResult == 3 then
-        o.oBehParams = (o.oBehParams & 0xFFFF0000) | (surf.hitPos.y - o.oPosY)
+        o.oBehParams = (o.oBehParams & 0xFFFF0000) | math.floor(surf.hitPos.y - o.oPosY)
     else
         obj_mark_for_deletion(o)
     end
@@ -1446,7 +1446,6 @@ function bhv_g_cannon_switch_loop(o)
                 cannon.oNumSwitchesLeft = cannon.oNumSwitchesLeft - 1
             end
         end
-
     elseif o.oAction == 1 then
         cur_obj_scale_over_time(2, 3, 1.5, 0.2)
         if o.oTimer == 3 then
@@ -1457,7 +1456,6 @@ function bhv_g_cannon_switch_loop(o)
             queue_rumble_data(5, 80)
             -- #endif
         end
-
     elseif o.oAction == 2 then
         if o.oBehParams2ndByte ~= 0 then
             if o.oBehParams2ndByte == 1 and gMarioObject.platform ~= o then
@@ -1473,13 +1471,11 @@ function bhv_g_cannon_switch_loop(o)
                 end
             end
         end
-
     elseif o.oAction == 3 then
         cur_obj_scale_over_time(2, 3, 0.2, 1.5)
         if o.oTimer == 3 then
             o.oAction = 0
         end
-
     elseif o.oAction == 4 then
         if cur_obj_is_any_player_on_platform() ~= 0 then
             o.oAction = 3
@@ -1487,4 +1483,52 @@ function bhv_g_cannon_switch_loop(o)
     end
 
     o.oShotByShotgun = 0
+end
+
+local sCollectablePaintingHitbox = {
+    interactType = INTERACT_STAR_OR_KEY,
+    downOffset = 0,
+    damageOrCoinValue = 0,
+    health = 0,
+    numLootCoins = 0,
+    radius = 80,
+    height = 50,
+    hurtboxRadius = 0,
+    hurtboxHeight = 0,
+}
+
+function bhv_collectable_painting(obj)
+    local paintingIndex = obj.oBehParams2ndByte
+
+    if obj.oAction == 0 then
+        -- active at all times in port
+        -- Decide if the painting should be active
+        --if gSaveBuffer.files[gCurrSaveFileNum - 1][1].paintings_unlocked & (1 << paintingIndex) ~= 0 then
+           -- mark_obj_for_deletion(obj)
+       -- else
+            obj.oAction = 1
+        --end
+
+    elseif obj.oAction == 1 then
+        -- Initialization
+        --[[local texture = segmented_to_virtual(collectable_painting_painting_rgba16)
+        local rom_location = painting_data + paintingIndex * 2048
+        dma_read(texture, rom_location, rom_location + 2048)
+
+        obj.header.gfx.sharedChild = gLoadedGraphNodes[MODEL_PAINTING]]
+        obj_set_model_extended(obj, MODEL_PAINTING)
+        obj_set_hitbox(obj, sCollectablePaintingHitbox)
+        obj.oAction = 2
+
+    elseif obj.oAction == 2 then
+        -- Behavior loop
+        obj.oFaceAngleYaw = obj.oFaceAngleYaw + 0x800
+
+        if (obj.oInteractStatus & INT_STATUS_INTERACTED) ~= 0 then
+            cur_obj_become_intangible()
+            cur_obj_hide()
+            obj.oInteractStatus = 0
+            obj.oAction = 3
+        end
+    end
 end

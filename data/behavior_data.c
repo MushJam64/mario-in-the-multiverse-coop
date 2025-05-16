@@ -203,6 +203,14 @@ const BehaviorScript bhvGCannonSwitch[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvCollectablePainting[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_collectable_painting),
+    END_LOOP(),
+};
 
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
@@ -3535,16 +3543,6 @@ const BehaviorScript bhvStarDoorStar[] = {
     END_LOOP(),
 };
 
-const BehaviorScript bhvGStarDoor[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    CALL_NATIVE(bhv_g_star_door_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_g_star_door_loop),
-    END_LOOP(),
-};
-
 const BehaviorScript bhvGreatCaveOffensiveController[] = {
     BEGIN(OBJ_LIST_GENACTOR),
     ID(id_bhvNewId),
@@ -4062,14 +4060,6 @@ const BehaviorScript bhvDreamCatalyst[] = {
 };
 
 extern void bhv_collectable_painting(void);
-const BehaviorScript bhvCollectablePainting[] = {
-    BEGIN(OBJ_LIST_LEVEL),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_collectable_painting),
-    END_LOOP(),
-};
 
 extern void bhv_cardstar_init(void);
 extern void bhv_cardstar(void);

@@ -239,6 +239,7 @@ MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
 MODEL_G_CUT_ROCK            = smlua_model_util_get_id("g_cut_rock_geo")
 MODEL_G_CUT_ROCK2           = smlua_model_util_get_id("g_cut_rock2_geo")
 MODEL_G_CUT_ROCK3           = smlua_model_util_get_id("g_cut_rock3_geo")
+MODEL_PAINTING              = smlua_model_util_get_id("collectable_painting_geo")
 
 BP3_ATTACH_ROPE             = 0xF0
 
@@ -350,12 +351,13 @@ local cutter_hat_Circle_mesh_layer_1     = gfx_get_from_name("cutter_hat_Circle_
 local net_hand_2_hand_mesh               = gfx_get_from_name("net_hand_2_hand_mesh")
 local bubble_hat_bhat_mesh               = gfx_get_from_name("bubble_hat_bhat_mesh")
 cutter_hand_right_hand_open_mesh_layer_1 = gfx_get_from_name("cutter_hand_right_hand_open_mesh_layer_1")
+local gfx_empty                          = gfx_get_from_name("GFXEMPTY")
 
 -- Ability struct
 ability_struct                           = {
     --           HAND DISPLAY LIST        HAT DISPLAY LIST     MARIO MODEL ID     STRING
     --Default
-    [0] = { hand = mario_right_hand_closed, hat = nil, model_id = nil, string = abstr_def },
+    [0] = { hand = mario_right_hand_closed, hat = gfx_empty, model_id = nil, string = abstr_def },
     --G
     { hand = mario_right_hand_closed,                hat = cutter_hat_Circle_mesh_layer_1, model_id = nil,                string = abstr_g },
     --A
@@ -363,36 +365,36 @@ ability_struct                           = {
     --C
     { hand = mario_right_hand_closed,                hat = squid_hat_lunette_mesh,         model_id = nil,                string = abstr_c },
     --I
-    { hand = rocket_hand_RaymanMissile_mesh_layer_1, hat = nil,                            model_id = nil,                string = abstr_i },
+    { hand = rocket_hand_RaymanMissile_mesh_layer_1, hat = gfx_empty,                      model_id = nil,                string = abstr_i },
     --H
-    { hand = phasewalk_hand_hand_mesh,               hat = nil,                            model_id = nil,                string = abstr_h },
+    { hand = phasewalk_hand_hand_mesh,               hat = gfx_empty,                      model_id = nil,                string = abstr_h },
     --B
     { hand = bigdaddyhand_Plane_mesh,                hat = bigdaddyhat_bigdaddy_mesh,      model_id = nil,                string = abstr_b },
     --L
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_KNIGHT_MARIO, string = abstr_l },
+    { hand = mario_right_hand_closed,                hat = gfx_empty,                      model_id = MODEL_KNIGHT_MARIO, string = abstr_l },
     --K
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil_K,              string = abstr_k },
+    { hand = mario_right_hand_closed,                hat = gfx_empty,                      model_id = nil_K,              string = abstr_k },
     --E
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_E__MARIO,     string = abstr_e },
+    { hand = mario_right_hand_closed,                hat = gfx_empty,                      model_id = MODEL_E__MARIO,     string = abstr_e },
     --F
     { hand = hand_f_hand_mesh,                       hat = hat_f_hat_mesh,                 model_id = nil,                string = abstr_f },
     --J
-    { hand = pokeball_hand_hand_mesh,                hat = nil,                            model_id = nil,                string = abstr_j },
+    { hand = pokeball_hand_hand_mesh,                hat = gfx_empty,                      model_id = nil,                string = abstr_j },
     --D
     { hand = mario_right_hand_closed,                hat = ability_d_mask_hat_mesh,        model_id = nil,                string = abstr_d },
     --O
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = MODEL_SAWAXE_MARIO, string = abstr_o },
+    { hand = mario_right_hand_closed,                hat = gfx_empty,                      model_id = MODEL_SAWAXE_MARIO, string = abstr_o },
     --N
-    { hand = mario_right_hand_closed,                hat = nil,                            model_id = nil,                string = abstr_n },
+    { hand = mario_right_hand_closed,                hat = gfx_empty,                      model_id = nil,                string = abstr_n },
     --M
-    { hand = hand_m_hand_mesh,                       hat = nil,                            model_id = nil,                string = abstr_m },
+    { hand = hand_m_hand_mesh,                       hat = gfx_empty,                      model_id = nil,                string = abstr_m },
 
     --Util1
-    { hand = compass_hand_hand_mesh,                 hat = nil,                            model_id = nil,                string = abstr_util_1 },
+    { hand = compass_hand_hand_mesh,                 hat = gfx_empty,                      model_id = nil,                string = abstr_util_1 },
     --Util2
-    { hand = milk_hand_hand_mesh,                    hat = nil,                            model_id = nil,                string = abstr_util_2 },
+    { hand = milk_hand_hand_mesh,                    hat = gfx_empty,                      model_id = nil,                string = abstr_util_2 },
     --Util3
-    { hand = mirror_hand_hand_mesh,                  hat = nil,                            model_id = nil,                string = abstr_util_3 },
+    { hand = mirror_hand_hand_mesh,                  hat = gfx_empty,                      model_id = nil,                string = abstr_util_3 },
 }
 
 title_card_data                          = {
@@ -521,11 +523,9 @@ ability_dpad_locked                      = false
 
 fb_bowser_phase                          = 0
 
-for i = 0, (MAX_PLAYERS - 1) do
-    gPlayerSyncTable[i].abilityId = 0
-end
+gPlayerSyncTable[0].abilityId            = 0
 
-local courseToLevel = {
+local courseToLevel                      = {
     [COURSE_NONE] = LEVEL_NONE,
     [COURSE_BOB] = LEVEL_BOB,
     [COURSE_WF] = LEVEL_WF,
@@ -680,7 +680,6 @@ if network_is_server() then
         gGlobalSyncTable.ability_slot3 = ABILITY_NONE
         save_file_set_ability_dpad()
         gGlobalSyncTable.abilities = 0
-        save_file_unlock_ability(0)
         mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
     end
 end

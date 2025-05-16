@@ -10,7 +10,7 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = true
+UNLOCK_ABILITIES_DEBUG = false
 
 function bhv_ability_init(o)
     o.oBehParams = (12 << 24) | (o.oBehParams2ndByte << 16)
@@ -169,8 +169,8 @@ local function interact_ability_star(m, obj, t)
             -- m.actionArg = 2
         end
         --ability_get_confirm = false
-        --[[elseif obj_has_behavior_id(obj, bhvCollectablePainting) ~= 0 then
-        painting unlock
+    elseif obj_has_behavior_id(obj, bhvCollectablePainting) ~= 0 then
+        --[[painting unlock
         local slot = gCurrSaveFileNum - 1
         local paintingByte = obj.oBehParams2ndByte
         gSaveBuffer.files[slot][1].paintings_unlocked =
@@ -193,15 +193,18 @@ end
 
 local function celeb_star_override(o)
     local mario = nearest_mario_state_to_object(o)
-    if mario and obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
+    if obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
         obj_set_model_extended(o, MODEL_ABILITY)
-        o.oBehParams2ndByte = nearest_mario_state_to_object(o).usedObj.oBehParams2ndByte
+        o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
+    elseif obj_has_behavior_id(mario.usedObj, bhvCollectablePainting) ~= 0 then
+        obj_set_model_extended(o, MODEL_PAINTING)
+        o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
     end
 end
 
 local function ability_override_sound(p, s)
     if s == SEQ_EVENT_CUTSCENE_COLLECT_STAR then
-        if obj_has_behavior_id(gMarioStates[0].usedObj, bhvAbilityUnlock) ~= 0 then
+        if gMarioStates[0].usedObj and obj_has_behavior_id(gMarioStates[0].usedObj, bhvAbilityUnlock) ~= 0 then
             return 0x50
         end
     end

@@ -160,16 +160,28 @@ function geo_generate_attached_rope(node, m)
     cast_graph_node(graphNode.next).displayList = dlHead
 end
 
-local ability_mat = gfx_get_from_name("mat_ability_unlock_ability")
+local ability_mat = gfx_get_from_name("ability_unlock_ability_unlock_mesh_layer_4")
 
 function geo_ability_material(n, m)
+    local ptr
+
     local obj = geo_get_current_object()
-    gfx_parse(ability_mat, function(dl, cmd)
+    ptr = obj._pointer
+
+    local dlHead = gfx_get_from_name("mitm_g" .. ptr)
+
+    if not dlHead then
+        dlHead = gfx_create("mitm_g" .. ptr, 32)
+        gfx_copy(dlHead, ability_mat, gfx_get_length(ability_mat))
+    end
+
+    gfx_parse(dlHead, function(dl, cmd)
         if cmd == G_SETTIMG then
             gfx_set_command(dl, "gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, %t)",
                 ability_images[obj.oBehParams2ndByte][1].texture)
         end
     end)
+    cast_graph_node(n.next).displayList = dlHead
 end
 
 function geo_ability_hand(n, mi)
@@ -195,14 +207,13 @@ function geo_ability_hand(n, mi)
 end
 
 function geo_ability_hat(n, m)
-    local abilityHat = ability_struct[gPlayerSyncTable[geo_get_mario_state().playerIndex].abilityId].hat
-    if abilityHat then
-        cast_graph_node(n.next).displayList = abilityHat
-    end
+    local mid = geo_get_mario_state().playerIndex
+    local abilityHat = ability_struct[gPlayerSyncTable[mid].abilityId].hat
+    cast_graph_node(n.next).displayList = abilityHat
 end
 
 function geo_override_handscale(n, mi)
-   
+
 end
 
 local function delete_mod_data(obj)
