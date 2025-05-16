@@ -23,6 +23,7 @@ CUTTER ABILITY:
 - Final Cutter not implemented yet
 - A Pose desync issue when hit by other players
 - Cutter-rangs can desync sometimes with other players
+- Sparkles that appear when Mario retrives the cutter-rangs are too high
 
 BUBBLE HAT & NET:
 - Glide behavior not in yet
