@@ -2,7 +2,6 @@ MITM Course 1: MARIO SUPER STAR ULTRA
 
 Area 2 (OP Segment after opening cutscene):
 - Music isn't syncing properly upon first entry sometimes
-- Cavern exit to Area 3 isn't set yet
 
 Area 3:
 - Checkpoint flags missing
@@ -21,7 +20,6 @@ Area 4:
 - Marx fight not in yet
 
 CUTTER ABILITY:
-- Sparkle effect when the cutters return to Mario aren't there
 - Final Cutter not implemented yet
 
 BUBBLE HAT & NET:

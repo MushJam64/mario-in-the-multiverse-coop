@@ -78,7 +78,7 @@ local function act_cutter_throw_air(m)
     end
 
     if m.actionTimer == 3 then
-        spawn_object_relative(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade)
+        spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade)
     end
 
     m.actionTimer = m.actionTimer + 1

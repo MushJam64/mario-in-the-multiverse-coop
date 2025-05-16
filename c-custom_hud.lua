@@ -313,7 +313,7 @@ end
 local ability_get_timer = 0
 
 local function render_ability_get_hud()
-    if display_ability_hud.display then
+    if ability_util.display then
         ability_get_alpha = approach_f32_asymptotic(ability_get_alpha, 255.0, 0.1)
         ability_get_box_alpha = approach_f32_asymptotic(ability_get_box_alpha, 170.0, 0.1)
     end
@@ -342,9 +342,9 @@ local function render_ability_get_hud()
         print_generic_string(43, 58, ability_string(gMarioStates[0].usedObj.oBehParams2ndByte))
         gSPDisplayList(gDisplayListHead, dl_ia_text_end)]]
         local scale = 0.6
-        if display_ability_hud.str then
-            for id = 1, #display_ability_hud.str do
-                local cStr = display_ability_hud.str[id]
+        if ability_util.str then
+            for id = 1, #ability_util.str do
+                local cStr = ability_util.str[id]
                 djui_hud_print_text_anchored(cStr, 85,
                     49 + 35 - (id * 14) + 10,
                     scale,
@@ -355,7 +355,7 @@ local function render_ability_get_hud()
             ability_get_alpha = 0
         end
         if math.ceil(ability_get_alpha) == 255 then
-            display_ability_hud.display = false
+            ability_util.display = false
         end
     end
 end

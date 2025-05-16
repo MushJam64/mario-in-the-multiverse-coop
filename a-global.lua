@@ -3,7 +3,7 @@
 -- Custom Mod
 
 TEX_DPAD                 = get_texture_info("dpad_texture")
-display_ability_hud      = { str = nil, display = false }
+ability_util             = { str = nil, display = false, seq = false }
 
 -- Defining NULL
 
@@ -522,10 +522,11 @@ ability_gravity                          = { [0] = 0, 0, 0, 0 };
 ability_dpad_locked                      = false
 
 fb_bowser_phase                          = 0
+for i = 0, (MAX_PLAYERS - 1) do
+    gPlayerSyncTable[i].abilityId = 0
+end
 
-gPlayerSyncTable[0].abilityId            = 0
-
-local courseToLevel                      = {
+local courseToLevel = {
     [COURSE_NONE] = LEVEL_NONE,
     [COURSE_BOB] = LEVEL_BOB,
     [COURSE_WF] = LEVEL_WF,

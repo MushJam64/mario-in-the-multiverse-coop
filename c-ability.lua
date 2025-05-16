@@ -10,7 +10,7 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
 
 function bhv_ability_init(o)
     o.oBehParams = (12 << 24) | (o.oBehParams2ndByte << 16)
@@ -38,8 +38,9 @@ function bhv_ability(o)
 
             cur_obj_hide()
             if nearest_mario_state_to_object(o).playerIndex == 0 then
-                display_ability_hud.display = true
-                display_ability_hud.str = ability_struct[o.oBehParams2ndByte].string
+                ability_util.display = true
+                ability_util.str = ability_struct[o.oBehParams2ndByte].string
+                ability_util.seq = true
             end
             for i = 0, 3 do
                 if ability_slot[i] == ABILITY_NONE then
@@ -139,7 +140,7 @@ local function ability_functions_update(m)
     if m.playerIndex == 0 then
         if m.action == ACT_PUNCHING or m.action == ACT_MOVE_PUNCHING or m.action == ACT_JUMP_KICK then
             if f.abilityId == ABILITY_CUTTER and not thrownCutter then
-                spawn_object_relative(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
+                spawn_object_relative2(0, 0, 100, 0, m.marioObj, MODEL_CUTTER_BLADE, bhvCutterBlade);
                 thrownCutter = true
             end
         else
@@ -193,20 +194,22 @@ end
 
 local function celeb_star_override(o)
     local mario = nearest_mario_state_to_object(o)
-    if mario.usedObj then
-        if obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
+    local usobj = mario.usedObj
+    if usobj then
+        if obj_has_behavior_id(usobj, bhvAbilityUnlock) ~= 0 then
             obj_set_model_extended(o, MODEL_ABILITY)
-            o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
-        elseif obj_has_behavior_id(mario.usedObj, bhvCollectablePainting) ~= 0 then
+            o.oBehParams2ndByte = usobj.oBehParams2ndByte
+        elseif obj_has_behavior_id(usobj, bhvCollectablePainting) ~= 0 then
             obj_set_model_extended(o, MODEL_PAINTING)
-            o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
+            o.oBehParams2ndByte = usobj.oBehParams2ndByte
         end
     end
 end
 
 local function ability_override_sound(p, s)
     if s == SEQ_EVENT_CUTSCENE_COLLECT_STAR then
-        if gMarioStates[0].usedObj and obj_has_behavior_id(gMarioStates[0].usedObj, bhvAbilityUnlock) ~= 0 then
+        if ability_util.seq then
+            ability_util.seq = false
             return 0x50
         end
     end

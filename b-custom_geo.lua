@@ -164,7 +164,6 @@ local ability_mat = gfx_get_from_name("ability_unlock_ability_unlock_mesh_layer_
 
 function geo_ability_material(n, m)
     local ptr
-
     local obj = geo_get_current_object()
     ptr = obj._pointer
 

@@ -1052,13 +1052,12 @@ local sEnemyCutterBladeHitbox = {
 }
 
 function bhv_cutter_blade_init(o)
-    local gMarioObject = nearest_player_to_object(o)
     o.oForwardVel = 70.0
     o.oGravity = 0.0
 
     --play_sound(SOUND_ABILITY_CUTTER_THROW, o.header.gfx.cameraToObject)
 
-    -- network_init_object(o, true, { "oAction", "oTimer", "oForwardVel" })
+    network_init_object(o, true, { "oAction", "oTimer", "oForwardVel", "oFaceAngleYaw" })
 end
 
 ---@param o Object
@@ -1085,7 +1084,7 @@ function bhv_cutter_blade_loop(o)
     elseif o.oAction == 2 then
         o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000
         o.oForwardVel = o.oForwardVel - 2.0
-        if o.oTimer >= 50 or o.oDistanceToMario > 2000 then
+        if o.oTimer >= 50 or dist_between_objects(o, gMarioObject) > 2000 then
             o.oAngleVelYaw = 0x800
             o.oAngleVelPitch = random_u16() / 64
             o.oAngleVelRoll = random_u16() / 64
@@ -1109,13 +1108,13 @@ function bhv_cutter_blade_loop(o)
         end
     end
 
-    local surf
+    --[[local surf
     local originPos = { o.oPosX, o.oPosY, o.oPosZ }
     local hitpos = { 0.0, 0.0, 0.0 }
     local raydir = { math.sin(o.oMoveAngleYaw) * o.oForwardVel, 0.0, math.cos(o.oMoveAngleYaw) * o.oForwardVel }
     local rayResult = 0
 
-    --[[ wall check
+     wall check
     find_surface_on_ray(originPos, raydir, surf, hitpos, 2)
     if surf ~= nil then
         rayResult = 1
@@ -1170,11 +1169,13 @@ function bhv_cutter_blade_loop(o)
             if other ~= gMarioObject then
                 attack_object(other, 2)
             end
-        elseif o.oAction >= 2 then
-            --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
-            spawn_object_relative(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
-            obj_mark_for_deletion(o)
         end
+    end
+
+    if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) then
+        --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
+        spawn_object_relative(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
+        obj_mark_for_deletion(o)
     end
 end
 
@@ -1504,11 +1505,10 @@ function bhv_collectable_painting(obj)
         -- active at all times in port
         -- Decide if the painting should be active
         --if gSaveBuffer.files[gCurrSaveFileNum - 1][1].paintings_unlocked & (1 << paintingIndex) ~= 0 then
-           -- mark_obj_for_deletion(obj)
-       -- else
-            obj.oAction = 1
+        -- mark_obj_for_deletion(obj)
+        -- else
+        obj.oAction = 1
         --end
-
     elseif obj.oAction == 1 then
         -- Initialization
         --[[local texture = segmented_to_virtual(collectable_painting_painting_rgba16)
@@ -1519,7 +1519,6 @@ function bhv_collectable_painting(obj)
         obj_set_model_extended(obj, MODEL_PAINTING)
         obj_set_hitbox(obj, sCollectablePaintingHitbox)
         obj.oAction = 2
-
     elseif obj.oAction == 2 then
         -- Behavior loop
         obj.oFaceAngleYaw = obj.oFaceAngleYaw + 0x800
