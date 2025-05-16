@@ -1,0 +1,30 @@
+MITM Course 1: MARIO SUPER STAR ULTRA
+
+Area 2 (OP Segment after opening cutscene):
+- Music isn't syncing properly upon first entry sometimes
+- Cavern exit to Area 3 isn't set yet
+
+Area 3:
+- Checkpoint flags missing
+- Painting collectible on last hill isn't in yet
+- Skybox is weird? (I might be tripping)
+- A rope close to 2 red coins near the pipe isn't there (The one that holds the blue coin)
+
+Area 4:
+- Checkpoint flags missing
+- Pipe to warp back to Area 3 isn't there
+- Music not implemented yet
+- Star Piece block with behavior isn't implemented
+- Hidden buttons for one of the stars isn't implemented yet
+- Signs representing the proper powerups needed on certain paths aren't in
+- Ink blobs and stains toward the left area aren't there
+- Moving platform going toward Marx fight entry isn't there
+- Moving platforms toward a few stars to the left side aren't fully implemented
+- Marx fight not in yet
+
+CUTTER ABILITY:
+- Sparkle effect when the cutters return to Mario aren't there
+- Final Cutter not implemented yet
+
+BUBBLE HAT & NET:
+- Glide behavior not in yet
