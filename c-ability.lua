@@ -193,12 +193,14 @@ end
 
 local function celeb_star_override(o)
     local mario = nearest_mario_state_to_object(o)
-    if obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
-        obj_set_model_extended(o, MODEL_ABILITY)
-        o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
-    elseif obj_has_behavior_id(mario.usedObj, bhvCollectablePainting) ~= 0 then
-        obj_set_model_extended(o, MODEL_PAINTING)
-        o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
+    if mario.usedObj then
+        if obj_has_behavior_id(mario.usedObj, bhvAbilityUnlock) ~= 0 then
+            obj_set_model_extended(o, MODEL_ABILITY)
+            o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
+        elseif obj_has_behavior_id(mario.usedObj, bhvCollectablePainting) ~= 0 then
+            obj_set_model_extended(o, MODEL_PAINTING)
+            o.oBehParams2ndByte = mario.usedObj.oBehParams2ndByte
+        end
     end
 end
 
