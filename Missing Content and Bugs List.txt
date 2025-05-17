@@ -1,4 +1,4 @@
-MITM Course 1: MARIO SUPER STAR ULTRA
+MITM Course 1: MARIO SUPER STAR ULTRA (Use /w 9 and then either 2, 3 or 4 for area index)
 
 Area 2 (OP Segment after opening cutscene):
 - Music isn't syncing properly upon first entry sometimes
@@ -20,6 +20,9 @@ Area 4:
 
 CUTTER ABILITY:
 - Final Cutter not implemented yet
+- A Pose desync issue when hit by other players
+- Cutter-rangs can desync sometimes with other players
+- Sparkles that appear when Mario retrives the cutter-rangs are too high
 
 BUBBLE HAT & NET:
 - Glide behavior not in yet
