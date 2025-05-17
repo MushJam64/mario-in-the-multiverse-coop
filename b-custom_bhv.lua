@@ -995,7 +995,7 @@ function bhv_sir_kibble_loop(o)
             end
         elseif o.oAction == SIR_KIBBLE_ACT_THROWING then
             if o.oTimer == 17 then
-                spawn_object_relative(2, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
+                spawn_object_relative2(2, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
 
                 --cutterblade.activeFlags = (cutterblade.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
             end
@@ -1174,7 +1174,7 @@ function bhv_cutter_blade_loop(o)
 
     if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) then
         --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
-        spawn_object_relative(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
+        spawn_object_relative2(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
         obj_mark_for_deletion(o)
     end
 end
@@ -1391,7 +1391,7 @@ function bhv_star_drop_loop(o)
         o.oPosY = o.oPosY + 4 * coss(0x222 * (o.oTimer - 90))
 
         if o.oTimer == 110 then
-            spawn_object_relative(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
+            spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
             cur_obj_hide()
             spawn_mist_particles()
             spawn_triangle_break_particles(20, 0x8B, 0.2, 3)

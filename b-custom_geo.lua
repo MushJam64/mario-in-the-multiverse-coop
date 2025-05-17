@@ -139,6 +139,7 @@ function geo_generate_attached_rope(node, m)
     if not dlHead then
         dlHead = gfx_create("mitm_g" .. ptr, 32)
     end
+
     if not vertexBuffer then
         vertexBuffer = vtx_create("mitm_v" .. ptr, 32)
     end

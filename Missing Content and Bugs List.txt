@@ -10,7 +10,6 @@ Area 3:
 Area 4:
 - Checkpoint flags missing
 - Pipe to warp back to Area 3 isn't there
-- Music not implemented yet
 - Star Piece block with behavior isn't implemented
 - Hidden buttons for one of the stars isn't implemented yet
 - Signs representing the proper powerups needed on certain paths aren't in
