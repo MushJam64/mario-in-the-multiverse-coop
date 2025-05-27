@@ -710,7 +710,7 @@ function bhv_g_attached_rope_loop(o)
         if (obj_has_behavior_id(other, bhvCutterBlade) ~= 0 and other.oPosY - 30 > o.oPosY) or
             (other == gMarioState.marioObj and marioHigherPos - 30 > o.oPosY and mario_can_cut_rope(gMarioState)) then
             local otherObjY = (other == gMarioState.marioObj) and math.floor(marioHigherPos) or math.floor(other.oPosY)
-            --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
+            audio_stream_play(SOUND_ABILITY_CUTTER_CATCH, false, 1)
             local cutRope = spawn_object_relative(0, 0, otherObjY - o.oPosY, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
             o.oBehParams = (o.oBehParams & 0xFFFF0000) | (otherObjY - o.oPosY)
             o.parentObj.oBehParams = (o.parentObj.oBehParams & ~(BP3_ATTACH_ROPE << 8))
@@ -1055,7 +1055,7 @@ function bhv_cutter_blade_init(o)
     o.oForwardVel = 70.0
     o.oGravity = 0.0
 
-    --play_sound(SOUND_ABILITY_CUTTER_THROW, o.header.gfx.cameraToObject)
+    audio_sample_play(SOUND_ABILITY_CUTTER_THROW, { x = o.oPosX, y = o.oPosY, z = o.oPosZ }, 1)
 
     network_init_object(o, true, { "oAction", "oTimer", "oForwardVel", "oFaceAngleYaw" })
 end
@@ -1173,7 +1173,7 @@ function bhv_cutter_blade_loop(o)
     end
 
     if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) then
-        --play_sound(SOUND_ABILITY_CUTTER_CATCH, o.header.gfx.cameraToObject)
+        audio_stream_play(SOUND_ABILITY_CUTTER_CATCH, false, 1)
         spawn_object_relative2(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
         obj_mark_for_deletion(o)
     end

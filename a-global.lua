@@ -248,18 +248,15 @@ OBJ_FLAG_ATTACHABLE_BY_ROPE = (OBJ_FLAG_30 + 16)
 
 -- Music
 SEQ_CUSTOM_KIRBY_BOSS       = 0x26
+SOUND_ABILITY_CUTTER_CATCH  = audio_stream_load("ability_cutter_catch.aiff")
+SOUND_ABILITY_CUTTER_DASH   = audio_stream_load("ability_cutter_dash.aiff")
+SOUND_ABILITY_CUTTER_THROW  = audio_sample_load("ability_cutter_throw.aiff")
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
 
-    if o.header.gfx.animInfo.animID ~= targetAnimID then
-        o.header.gfx.animInfo.animID = targetAnimID
-        smlua_anim_util_set_animation(o, a)
-
-        o.header.gfx.animInfo.animFrame = o.header.gfx.animInfo.animFrameAccelAssist >> 16
-    end
-
-    o.header.gfx.animInfo.animAccel = accel
+    o.header.gfx.animInfo.animID = targetAnimID
+    smlua_anim_util_set_animation(o, a)
 
     return o.header.gfx.animInfo.animFrame
 end

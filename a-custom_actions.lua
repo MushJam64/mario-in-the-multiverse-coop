@@ -110,6 +110,7 @@ local function act_cutter_dash(m)
     -- gSPEndDisplayList(gfx_ability_hand[1])
 
     if m.actionTimer == 0 then
+        set_mario_animation(m, MARIO_ANIM_A_POSE)
         set_custom_mario_animation_with_accel(m, 5, 0x30000, "mario_anim_cutter_dash")
     end
 
@@ -160,7 +161,7 @@ local function cutter_ability_overrides(m, inc)
 
         if inc == ACT_DIVE and m.floorHeight == m.pos.y then
             m.forwardVel = 100.0
-            --play_sound(SOUND_ABILITY_CUTTER_DASH, m.marioObj.header.gfx.cameraToObject)
+            audio_stream_play(SOUND_ABILITY_CUTTER_DASH, false, 1)
             return ACT_CUTTER_DASH
         end
     end
