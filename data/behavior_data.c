@@ -225,6 +225,18 @@ const BehaviorScript bhvGMovingPlatform[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvJelly[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)), //OR OBJ_FLAG_E__SG_ENEMY also
+    //LOAD_ANIMATIONS(oAnimations, jelly_anims),
+    CALL_NATIVE(jelly_init),
+    //ANIMATE(0),
+    BEGIN_LOOP(),
+        CALL_NATIVE(jelly_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -948,17 +960,6 @@ const BehaviorScript bhvSynthesizer[] = {
 
 /* GROUP A START *\
 extern const struct Animation *const jelly_anims[];
-const BehaviorScript bhvJelly[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_E__SG_ENEMY)),
-    LOAD_ANIMATIONS(oAnimations, jelly_anims),
-    CALL_NATIVE(jelly_init),
-    ANIMATE(0),
-    BEGIN_LOOP(),
-        CALL_NATIVE(jelly_loop),
-    END_LOOP(),
-};
 
 extern const Collision jfplatform_collision[];
 const BehaviorScript bhvJellyfishFieldsPlatform[] = {

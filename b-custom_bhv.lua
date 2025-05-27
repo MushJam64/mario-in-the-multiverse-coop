@@ -1541,3 +1541,142 @@ function bhv_g_moving_platform_loop(o)
     o.oForwardVel = o.oBehParams2ndByte * sins(o.oTimer * 0x88 * ((o.oBehParams >> 24) & 0xff));
     cur_obj_move_xz_using_fvel_and_yaw();
 end
+
+local function is_punching(m)
+    local action = m.action
+    return action == ACT_MOVE_PUNCHING or action == ACT_PUNCHING
+end
+
+local function using_bubble_hat(m)
+    return using_ability(m, ABILITY_BUBBLE_HAT)
+end
+
+function jelly_check_dmg(m, o)
+    local punchstate = is_punching(m)
+    o.oInteractType = INTERACT_SHOCK
+
+    --[[if m.action == ACT_KNIGHT_SLIDE or aku_invincibility > 0 then
+        o.oInteractType = INTERACT_BOUNCE_TOP
+    end]] --todo maniscat2
+
+    o.oNumLootCoins = 1
+    o.hitboxRadius = 80
+
+    if m.vel.y >= 0.0 and punchstate and using_bubble_hat(m) then
+        o.oInteractType = INTERACT_BOUNCE_TOP
+        o.oNumLootCoins = 3
+        o.hitboxRadius = 150
+    end
+
+    local cutter = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvCutterBlade))
+    if cutter and dist_between_objects(o, cutter) < 150.0 then
+        o.oInteractType = INTERACT_BOUNCE_TOP
+        o.oNumLootCoins = 1
+    end
+
+    if (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
+        return true
+    end
+
+    return false
+end
+
+-- Initialize jelly object
+function jelly_init(o)
+    o.oGravity = 0.0
+    o.oFriction = 0.999
+    o.header.gfx.pos.y = 5 -- Y position in Lua (1-based)
+    obj_set_hitbox(o, {
+        interactType      = INTERACT_SHOCK,
+        downOffset        = 50,
+        damageOrCoinValue = 1,
+        health            = 1,
+        numLootCoins      = 1,
+        radius            = 80,
+        height            = 90,
+        hurtboxRadius     = 70,
+        hurtboxHeight     = 80
+    })
+    smlua_anim_util_set_animation(o, "jelly_anim_jelly_geoAction")
+    network_init_object(o, true, {"oAction", "oTimer", "oGravity", "oForwardVel", "oInteractStatus", "oBehParams2ndByte", "oFaceAngleYaw"})
+end
+
+-- Main jelly loop
+function jelly_loop(o)
+    object_step()
+    local nm = nearest_mario_state_to_object(o)
+
+    if o.oAction == 0 then
+        o.oForwardVel = 0
+        if dist_between_objects(o, nm.marioObj) < 1000.0 then
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        o.oGravity = 0
+
+        cur_obj_rotate_yaw_toward(obj_angle_to_object(o, nm.marioObj), 0x250)
+
+        if cur_obj_check_anim_frame(1) ~= 0 then o.oForwardVel = 5.2 end
+        if cur_obj_check_anim_frame(30) ~= 0 then o.oForwardVel = 0 end
+        if cur_obj_check_anim_frame(32) ~= 0 then o.oForwardVel = 4.8 end
+        if cur_obj_check_anim_frame(35) ~= 0 then o.oForwardVel = 3.9 end
+
+        if dist_between_objects(o, nm.marioObj) > 1000.0 then
+            o.oAction = 0
+        end
+
+        if jelly_check_dmg(nm, o) then
+            o.oAction = 2
+        end
+
+        if o.oTimer >= 2 then
+            o.oInteractStatus = 0
+        end
+    elseif o.oAction == 2 then
+        if o.oTimer >= 1 then
+            obj_mark_for_deletion(o)
+            if o.oNumLootCoins == 3 then
+                cur_obj_play_sound_2(SOUND_ACTION_SPIN)
+            else
+                cur_obj_play_sound_2(SOUND_OBJ_ENEMY_DEATH_HIGH)
+            end
+            spawn_mist_particles()
+            if o.oBehParams2ndByte ~= 5 then
+                obj_spawn_loot_yellow_coins(o, o.oNumLootCoins, 10)
+            end
+        end
+    elseif o.oAction == 3 then
+        if o.oTimer > 15 then
+            o.oBehParams2ndByte = 5
+            o.oAction = 1
+        end
+    end
+
+    -- Squish/stretch animation
+    if o.oTimer >= 0 then
+        obj_scale_xyz(
+            o,
+            1.0 + ((0.25 - (0.25 * o.oTimer / 20.0)) * sins(o.oTimer * 0x1000)),
+            1.0 + ((0.4 - (0.4 * o.oTimer / 20.0)) * coss(o.oTimer * 0x1000 + 0x4000)),
+            1.0 + ((0.25 - (0.25 * o.oTimer / 20.0)) * sins(o.oTimer * 0x1000))
+        )
+    end
+
+    if o.oTimer >= 22.5 then
+        obj_scale_xyz(
+            o,
+            1.0 + ((0.2 - (0.2 * o.oTimer / 30.0)) * sins(o.oTimer * 0x1000)),
+            1.0 + ((0.3 - (0.3 * o.oTimer / 30.0)) * coss(o.oTimer * 0x1000 + 0x4000)),
+            1.0 + ((0.25 - (0.25 * o.oTimer / 30.0)) * sins(o.oTimer * 0x1000))
+        )
+    end
+
+    if o.oTimer >= 45 then
+        o.oTimer = 0
+    end
+
+    -- Set model if in specific level
+    if gNetworkPlayers[0].currLevelNum == LEVEL_A then
+        obj_set_model_extended(o, MODEL_JELLY)
+    end
+end

@@ -241,6 +241,7 @@ MODEL_G_CUT_ROCK2           = smlua_model_util_get_id("g_cut_rock2_geo")
 MODEL_G_CUT_ROCK3           = smlua_model_util_get_id("g_cut_rock3_geo")
 MODEL_PAINTING              = smlua_model_util_get_id("collectable_painting_geo")
 MODEL_G_MOVING_PLATFORM     = smlua_model_util_get_id("g_moving_platform_geo")
+MODEL_JELLY                 = smlua_model_util_get_id("jelly_geo")
 
 BP3_ATTACH_ROPE             = 0xF0
 
