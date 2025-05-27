@@ -1531,3 +1531,13 @@ function bhv_collectable_painting(obj)
         end
     end
 end
+
+---@param o Object
+function bhv_g_moving_platform_init(o)
+    o.oMoveAngleYaw = o.oFaceAngleYaw;
+end
+
+function bhv_g_moving_platform_loop(o)
+    o.oForwardVel = o.oBehParams2ndByte * sins(o.oTimer * 0x88 * ((o.oBehParams >> 24) & 0xff));
+    cur_obj_move_xz_using_fvel_and_yaw();
+end

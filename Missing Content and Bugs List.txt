@@ -14,8 +14,6 @@ Area 4:
 - Hidden buttons for one of the stars isn't implemented yet
 - Signs representing the proper powerups needed on certain paths aren't in
 - Ink blobs and stains toward the left area aren't there
-- Moving platform going toward Marx fight entry isn't there
-- Moving platforms toward a few stars to the left side aren't fully implemented
 - Marx fight not in yet
 
 Course 2: MARIO IN BIKINI BOTTOM
