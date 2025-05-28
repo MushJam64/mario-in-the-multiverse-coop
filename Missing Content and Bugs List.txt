@@ -18,11 +18,16 @@ Area 4:
 Course 2: MARIO IN BIKINI BOTTOM
 
 Area 1:
+- Water under bridge isn't water
 
 Area 2:
 - 
 
+Area 3:
+
 Course 3: THE PIRANHA PIT
+
+Area 1:
 - 
 
 METAXY ISLES (Hub):
@@ -37,5 +42,6 @@ CUTTER ABILITY:
 - A Pose desync issue when hit by other players
 - Cutter-rangs can desync sometimes with other players
 
-BUBBLE HAT & NET:
-- 
+GENERAL STUFF:
+- No infinite lives yet
+- Ignore fall damage isn't in yet
