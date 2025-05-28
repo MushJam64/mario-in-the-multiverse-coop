@@ -222,42 +222,46 @@ abstr_util_3             = TEXT_ABILITY_UTIL_3
 
 
 -- Behavior
-MODEL_LEVEL_PIPE            = smlua_model_util_get_id("level_pipe_geo")
-MODEL_G_BANANA_DEE          = smlua_model_util_get_id("g_banana_dee_geo")
-MODEL_G_SPRING              = smlua_model_util_get_id("g_spring_geo")
-MODEL_G_WADDLE_DEE          = smlua_model_util_get_id("g_waddle_dee_geo")
-MODEL_ATTACHED_ROPE         = smlua_model_util_get_id("attached_rope_geo")
-MODEL_HUBPLATFORM           = smlua_model_util_get_id("hub_platform_geo")
-MODEL_G_BRONTO_BURT         = smlua_model_util_get_id("g_bronto_burt_geo")
-MODEL_G_CANNON              = smlua_model_util_get_id("g_cannon_geo")
-MODEL_G_CHECKER_BLOCK_1     = smlua_model_util_get_id("checker_block_1_geo")
-MODEL_G_SIR_KIBBLE          = smlua_model_util_get_id("sir_kibble_geo")
-MODEL_CUTTER_BLADE          = smlua_model_util_get_id("cutter_blade_geo")
-MODEL_G_STAR_PROJECTILE     = smlua_model_util_get_id("star_projectile_geo")
-MODEL_G_STAR_BLOCK          = smlua_model_util_get_id("star_block_geo")
-MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
-MODEL_G_CUT_ROCK            = smlua_model_util_get_id("g_cut_rock_geo")
-MODEL_G_CUT_ROCK2           = smlua_model_util_get_id("g_cut_rock2_geo")
-MODEL_G_CUT_ROCK3           = smlua_model_util_get_id("g_cut_rock3_geo")
-MODEL_PAINTING              = smlua_model_util_get_id("collectable_painting_geo")
-MODEL_G_MOVING_PLATFORM     = smlua_model_util_get_id("g_moving_platform_geo")
-MODEL_JELLY                 = smlua_model_util_get_id("jelly_geo")
-MODEL_TIKI_WOOD             = smlua_model_util_get_id("tikibox_geo")
-MODEL_TIKI_STONE            = smlua_model_util_get_id("stone_tiki_geo")
-MODEL_TIKI_FLOAT            = 0 --0x15A
-MODEL_TRAMP                 = smlua_model_util_get_id("tramp_geo")
-MODEL_ABILITY_SIGN          = smlua_model_util_get_id("ability_sign_geo")
-MODEL_A_CAGE                = smlua_model_util_get_id("a_cage_geo")
+MODEL_LEVEL_PIPE                = smlua_model_util_get_id("level_pipe_geo")
+MODEL_G_BANANA_DEE              = smlua_model_util_get_id("g_banana_dee_geo")
+MODEL_G_SPRING                  = smlua_model_util_get_id("g_spring_geo")
+MODEL_G_WADDLE_DEE              = smlua_model_util_get_id("g_waddle_dee_geo")
+MODEL_ATTACHED_ROPE             = smlua_model_util_get_id("attached_rope_geo")
+MODEL_HUBPLATFORM               = smlua_model_util_get_id("hub_platform_geo")
+MODEL_G_BRONTO_BURT             = smlua_model_util_get_id("g_bronto_burt_geo")
+MODEL_G_CANNON                  = smlua_model_util_get_id("g_cannon_geo")
+MODEL_G_CHECKER_BLOCK_1         = smlua_model_util_get_id("checker_block_1_geo")
+MODEL_G_SIR_KIBBLE              = smlua_model_util_get_id("sir_kibble_geo")
+MODEL_CUTTER_BLADE              = smlua_model_util_get_id("cutter_blade_geo")
+MODEL_G_STAR_PROJECTILE         = smlua_model_util_get_id("star_projectile_geo")
+MODEL_G_STAR_BLOCK              = smlua_model_util_get_id("star_block_geo")
+MODEL_ABILITY                   = smlua_model_util_get_id("ability_unlock_geo")
+MODEL_G_CUT_ROCK                = smlua_model_util_get_id("g_cut_rock_geo")
+MODEL_G_CUT_ROCK2               = smlua_model_util_get_id("g_cut_rock2_geo")
+MODEL_G_CUT_ROCK3               = smlua_model_util_get_id("g_cut_rock3_geo")
+MODEL_PAINTING                  = smlua_model_util_get_id("collectable_painting_geo")
+MODEL_G_MOVING_PLATFORM         = smlua_model_util_get_id("g_moving_platform_geo")
+MODEL_JELLY                     = smlua_model_util_get_id("jelly_geo")
+MODEL_TIKI_WOOD                 = smlua_model_util_get_id("tikibox_geo")
+MODEL_TIKI_STONE                = smlua_model_util_get_id("stone_tiki_geo")
+MODEL_TIKI_FLOAT                = 0 --0x15A
+MODEL_TRAMP                     = smlua_model_util_get_id("tramp_geo")
+MODEL_ABILITY_SIGN              = smlua_model_util_get_id("ability_sign_geo")
+MODEL_A_CAGE                    = smlua_model_util_get_id("a_cage_geo")
+MODEL_FLOATING_CHECKER_PLATFORM = smlua_model_util_get_id("floating_checker_platform_geo")
+MODEL_TAXISTOP                  = smlua_model_util_get_id("taxistop_geo")
+MODEL_TSBOAT                    = smlua_model_util_get_id("boat_geo")
 
-BP3_ATTACH_ROPE             = 0xF0
+BP3_ATTACH_ROPE                 = 0xF0
 
-OBJ_FLAG_ATTACHABLE_BY_ROPE = (OBJ_FLAG_30 + 16)
+OBJ_FLAG_ATTACHABLE_BY_ROPE     = (OBJ_FLAG_30 + 16)
 
 -- Music
-SEQ_CUSTOM_KIRBY_BOSS       = 0x26
-SOUND_ABILITY_CUTTER_CATCH  = audio_stream_load("ability_cutter_catch.aiff")
-SOUND_ABILITY_CUTTER_DASH   = audio_stream_load("ability_cutter_dash.aiff")
-SOUND_ABILITY_CUTTER_THROW  = audio_sample_load("ability_cutter_throw.aiff")
+SEQ_CUSTOM_KIRBY_BOSS           = 0x26
+SOUND_ABILITY_CUTTER_CATCH      = audio_stream_load("ability_cutter_catch.aiff")
+SOUND_ABILITY_CUTTER_DASH       = audio_stream_load("ability_cutter_dash.aiff")
+SOUND_ABILITY_CUTTER_THROW      = audio_sample_load("ability_cutter_throw.aiff")
+SOUND_MITM_LEVEL_TLIM_TAXI      = audio_sample_load("tlim_taxi.aiff")
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
@@ -583,6 +587,35 @@ end
 ---@return boolean
 function dream_comet_unlocked()
     return false
+end
+
+---@return boolean
+function check_if_swap_ability_allowed(m)
+    local marble_floor
+    local marble_floor_y = find_floor_height(m.pos.x, m.pos.y, m.pos.z)
+    --[[local force_marble = (not level_in_dream_comet_mode())
+                        and marble_floor
+                        and (marble_floor.type == SURFACE_FORCE_MARBLE)
+                        and (gMarioState.pos[2] < marble_floor_y + 120.0)
+                        and ((gMarioState.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE)]]
+
+    --[[if gWarpTransition.isActive then
+        return false
+    end
+    if force_marble then
+        return false
+    end]]
+    if m.action == ACT_BUBBLE_HAT_JUMP then
+        return false
+    end
+    --[[if cur_obj_nearest_object_with_behavior(bhvShockRocket) ~= nil then
+        return false
+    end
+    if gMarioState.action == ACT_HM_FLY then
+        return false
+    end]]
+
+    return true
 end
 
 function using_ability(gMarioState, ability_id)

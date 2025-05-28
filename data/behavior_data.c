@@ -277,6 +277,46 @@ const BehaviorScript bhvAcage[] = {
     END_LOOP(), 
 };
 
+const BehaviorScript bhvFloatingCheckerPlatform[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(floating_checker_platform_collision),
+    //ANIMATE(0),
+    SCALE(0, 160),
+    //LOAD_ANIMATIONS(oAnimations, floating_checker_platform_anims),
+    SET_FLOAT(oDrawingDistance, 8000),
+    BEGIN_LOOP(),
+        CALL_NATIVE(fcp_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvTaxiStop[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(taxistop_collision),
+    SCALE(0, 200),
+    SET_FLOAT(oDrawingDistance, 30000),
+    BEGIN_LOOP(),
+        CALL_NATIVE(taxistop_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvtsBoat[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    //LOAD_ANIMATIONS(oAnimations, boat_anims),
+    //ANIMATE(0),
+    SCALE(0, 200),
+    BEGIN_LOOP(),
+        CALL_NATIVE(tsboat_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1015,31 +1055,7 @@ const BehaviorScript bhvJellyfishFieldsPlatform[] = {
 };
 
 extern const Collision taxistop_collision[];
-const BehaviorScript bhvTaxiStop[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(taxistop_collision),
-    SCALE(0, 200),
-    SET_FLOAT(oDrawingDistance, 30000),
-    BEGIN_LOOP(),
-        CALL_NATIVE(taxistop_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
 extern const struct Animation *const boat_anims[];
-const BehaviorScript bhvtsBoat[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_ANIMATIONS(oAnimations, boat_anims),
-    ANIMATE(0),
-    SCALE(0, 200),
-    BEGIN_LOOP(),
-        CALL_NATIVE(tsboat_loop),
-    END_LOOP(),
-};
 
 extern const Collision tikibox_collision[];
 
@@ -1047,20 +1063,6 @@ extern const Collision tramp_collision[];
 
 extern const Collision floating_checker_platform_collision[];
 extern const struct Animation *const floating_checker_platform_anims[];
-const BehaviorScript bhvFloatingCheckerPlatform[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(floating_checker_platform_collision),
-    ANIMATE(0),
-    SCALE(0, 160),
-    LOAD_ANIMATIONS(oAnimations, floating_checker_platform_anims),
-    SET_FLOAT(oDrawingDistance, 8000),
-    BEGIN_LOOP(),
-        CALL_NATIVE(fcp_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
 
 extern const struct Animation *const kingjelly_anims[];
 const BehaviorScript bhvKingJelly[] = {

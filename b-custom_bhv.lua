@@ -1777,7 +1777,7 @@ function trampoline_loop(o)
 end
 
 function a_cage_init(o)
-    network_init_object(o, true, {"oAction", "oHomeY", "oPosY", "oVelY"})
+    network_init_object(o, true, { "oAction", "oHomeY", "oPosY", "oVelY" })
     o.hookRender = 1
 end
 
@@ -1807,5 +1807,103 @@ function a_cage_loop(o)
             spawn_triangle_break_particles(20, 0x8a, 0.7, 3)
             cur_obj_play_sound_2(SOUND_GENERAL_BREAK_BOX)
         end
+    end
+end
+
+---@param o Object
+function fcp_loop(o)
+    o.header.gfx.shadowInvisible = true
+    --cur_obj_init_animation(ANIM_C_MAIN)
+    smlua_anim_util_set_animation(o, "floating_checker_platform_anim_ArmatureAction")
+    o.oPosY = o.oPosY + o.oVelY
+
+    if o.oBehParams2ndByte == 0 then
+        o.oVelY = 5 * sins(o.oTimer * 0x122)
+    elseif o.oBehParams2ndByte == 1 then
+        o.oVelY = 5 * sins(o.oTimer * 0x222)
+    elseif o.oBehParams2ndByte == 2 then
+        o.oVelY = 9 * sins(o.oTimer * 0x300)
+    end
+end
+
+function taxistop_loop(o)
+    local transitionTimer = 52
+    local behparams = (o.oBehParams >> 24) & 0xff
+    local behparams2 = o.oBehParams2ndByte
+    ---@type MarioState
+    local gMarioState = gMarioStates[0]
+    o.header.gfx.skipInViewCheck = true
+    --[[
+    if gMarioObject.platform == o then
+        taxi_stop_text()
+    end
+    ]] --
+
+    if o.oAction == 0 then
+        if gMarioState.marioObj.platform ~= o then
+            o.oTimer = 0
+        end
+        if o.oTimer > 10 then
+            o.oAction = 1
+            set_mario_action(gMarioState, ACT_WAITING_FOR_DIALOG, 0)
+            audio_sample_play(SOUND_MITM_LEVEL_TLIM_TAXI, { x = o.oPosX, y = o.oPosY, z = o.oPosZ }, 1)
+        end
+    elseif o.oAction == 1 then
+        if o.oTimer == 1 then
+            local boat = spawn_object(o, MODEL_TSBOAT, bhvtsBoat)
+            if behparams == 4 then
+                boat.oPosZ = boat.oPosZ - 500
+            elseif behparams == 3 then
+                boat.oPosX = boat.oPosX - 500
+            elseif behparams == 1 then
+                boat.oPosX = boat.oPosX + 500
+            end
+        end
+        if o.oTimer == 14 then
+            set_mario_action(gMarioState, ACT_DISAPPEARED, 1)
+        end
+        if o.oTimer == 30 then
+            play_transition(WARP_TRANSITION_FADE_INTO_STAR, transitionTimer - 29, 0, 0, 0)
+        end
+        if o.oTimer == 52 then
+            warp_to_warpnode(LEVEL_WF, behparams, 0, behparams2)
+        end
+
+        if behparams == 1 then
+            gMarioState.area.camera.cutscene = 1
+            gLakituState.goalPos.x = o.oPosX + 1000
+            gLakituState.goalPos.y = o.oPosY + 200
+            gLakituState.goalPos.z = o.oPosZ
+
+            gLakituState.goalFocus.x = o.oPosX
+            gLakituState.goalFocus.y = o.oPosY + 100
+            gLakituState.goalFocus.z = o.oPosZ
+        elseif behparams == 3 then
+            gMarioState.area.camera.cutscene = 1
+            gLakituState.goalPos.x = o.oPosX - 1000
+            gLakituState.goalPos.y = o.oPosY + 200
+            gLakituState.goalPos.z = o.oPosZ
+
+            gLakituState.goalFocus.x = o.oPosX
+            gLakituState.goalFocus.y = o.oPosY + 100
+            gLakituState.goalFocus.z = o.oPosZ
+        elseif behparams == 4 then
+            gMarioState.area.camera.cutscene = 1
+            gLakituState.goalPos.x = o.oPosX
+            gLakituState.goalPos.y = o.oPosY + 200
+            gLakituState.goalPos.z = o.oPosZ - 1000
+
+            gLakituState.goalFocus.x = o.oPosX
+            gLakituState.goalFocus.y = o.oPosY + 100
+            gLakituState.goalFocus.z = o.oPosZ
+        end
+    end
+end
+
+function tsboat_loop(o)
+    smlua_anim_util_set_animation(o, "boat_anim_ArmatureAction")
+    if o.oAction == 0 then
+        local scale = 1.9 * sins(o.oTimer * 0x300)
+        obj_scale_xyz(o, scale, scale, 1.2)
     end
 end

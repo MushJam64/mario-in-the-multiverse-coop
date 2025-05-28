@@ -104,28 +104,28 @@ local function control_ability_dpad(m)
     end
     if (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
         if picked_ability > -1 then
-            --if check_if_swap_ability_allowed() then
-            -- Animate image on DPad HUD
-            ability_y_offset[picked_ability] = 5
-            ability_gravity[picked_ability] = 2
+            if check_if_swap_ability_allowed(m) then
+                -- Animate image on DPad HUD
+                ability_y_offset[picked_ability] = 5
+                ability_gravity[picked_ability] = 2
 
-            change_ability(ability_slot[picked_ability])
+                change_ability(ability_slot[picked_ability])
 
-            -- Equip Sound Effect
-            if ability_slot[picked_ability] == ABILITY_AKU then
-                -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
-            elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
-                -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
-            elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
-                --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
-            elseif ability_slot[picked_ability] == ABILITY_NONE then
-                -- Do nothing
+                -- Equip Sound Effect
+                if ability_slot[picked_ability] == ABILITY_AKU then
+                    -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
+                    -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
+                    --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
+                elseif ability_slot[picked_ability] == ABILITY_NONE then
+                    -- Do nothing
+                else
+                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+                end
             else
-                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
-            end
-            --[[ else
                 play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
-            end]]
+            end
         end
     end
 end
