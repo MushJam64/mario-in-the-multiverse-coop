@@ -222,26 +222,31 @@ abstr_util_3             = TEXT_ABILITY_UTIL_3
 
 
 -- Behavior
-MODEL_LEVEL_PIPE            = smlua_model_util_get_id("level_pipe_geo")
-MODEL_G_BANANA_DEE          = smlua_model_util_get_id("g_banana_dee_geo")
-MODEL_G_SPRING              = smlua_model_util_get_id("g_spring_geo")
-MODEL_G_WADDLE_DEE          = smlua_model_util_get_id("g_waddle_dee_geo")
-MODEL_ATTACHED_ROPE         = smlua_model_util_get_id("attached_rope_geo")
-MODEL_HUBPLATFORM           = smlua_model_util_get_id("hub_platform_geo")
-MODEL_G_BRONTO_BURT         = smlua_model_util_get_id("g_bronto_burt_geo")
-MODEL_G_CANNON              = smlua_model_util_get_id("g_cannon_geo")
-MODEL_G_CHECKER_BLOCK_1     = smlua_model_util_get_id("checker_block_1_geo")
-MODEL_G_SIR_KIBBLE          = smlua_model_util_get_id("sir_kibble_geo")
-MODEL_CUTTER_BLADE          = smlua_model_util_get_id("cutter_blade_geo")
-MODEL_G_STAR_PROJECTILE     = smlua_model_util_get_id("star_projectile_geo")
-MODEL_G_STAR_BLOCK          = smlua_model_util_get_id("star_block_geo")
-MODEL_ABILITY               = smlua_model_util_get_id("ability_unlock_geo")
-MODEL_G_CUT_ROCK            = smlua_model_util_get_id("g_cut_rock_geo")
-MODEL_G_CUT_ROCK2           = smlua_model_util_get_id("g_cut_rock2_geo")
-MODEL_G_CUT_ROCK3           = smlua_model_util_get_id("g_cut_rock3_geo")
-MODEL_PAINTING              = smlua_model_util_get_id("collectable_painting_geo")
-MODEL_G_MOVING_PLATFORM     = smlua_model_util_get_id("g_moving_platform_geo")
-MODEL_JELLY                 = smlua_model_util_get_id("jelly_geo")
+MODEL_LEVEL_PIPE        = smlua_model_util_get_id("level_pipe_geo")
+MODEL_G_BANANA_DEE      = smlua_model_util_get_id("g_banana_dee_geo")
+MODEL_G_SPRING          = smlua_model_util_get_id("g_spring_geo")
+MODEL_G_WADDLE_DEE      = smlua_model_util_get_id("g_waddle_dee_geo")
+MODEL_ATTACHED_ROPE     = smlua_model_util_get_id("attached_rope_geo")
+MODEL_HUBPLATFORM       = smlua_model_util_get_id("hub_platform_geo")
+MODEL_G_BRONTO_BURT     = smlua_model_util_get_id("g_bronto_burt_geo")
+MODEL_G_CANNON          = smlua_model_util_get_id("g_cannon_geo")
+MODEL_G_CHECKER_BLOCK_1 = smlua_model_util_get_id("checker_block_1_geo")
+MODEL_G_SIR_KIBBLE      = smlua_model_util_get_id("sir_kibble_geo")
+MODEL_CUTTER_BLADE      = smlua_model_util_get_id("cutter_blade_geo")
+MODEL_G_STAR_PROJECTILE = smlua_model_util_get_id("star_projectile_geo")
+MODEL_G_STAR_BLOCK      = smlua_model_util_get_id("star_block_geo")
+MODEL_ABILITY           = smlua_model_util_get_id("ability_unlock_geo")
+MODEL_G_CUT_ROCK        = smlua_model_util_get_id("g_cut_rock_geo")
+MODEL_G_CUT_ROCK2       = smlua_model_util_get_id("g_cut_rock2_geo")
+MODEL_G_CUT_ROCK3       = smlua_model_util_get_id("g_cut_rock3_geo")
+MODEL_PAINTING          = smlua_model_util_get_id("collectable_painting_geo")
+MODEL_G_MOVING_PLATFORM = smlua_model_util_get_id("g_moving_platform_geo")
+MODEL_JELLY             = smlua_model_util_get_id("jelly_geo")
+MODEL_TIKI_WOOD         = smlua_model_util_get_id("tikibox_geo")
+MODEL_TIKI_STONE        = smlua_model_util_get_id("stone_tiki_geo")
+MODEL_TIKI_FLOAT        = 0 --0x15A
+MODEL_TRAMP             = smlua_model_util_get_id("tramp_geo")
+
 
 BP3_ATTACH_ROPE             = 0xF0
 
@@ -523,6 +528,7 @@ ability_dpad_locked                      = false
 fb_bowser_phase                          = 0
 for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].abilityId = 0
+    gPlayerSyncTable[i].rotAngle = 0
 end
 
 local courseToLevel = {

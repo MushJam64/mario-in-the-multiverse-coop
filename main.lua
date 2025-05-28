@@ -28,6 +28,11 @@ local function mario_update(m)
             m.marioBodyState.capState = m.marioBodyState.capState | MARIO_HAS_DEFAULT_CAP_OFF
         end
     end
+    if m.action == ACT_TWIRLING and (m.controller.buttonDown & Z_TRIG) ~= 0 and m.playerIndex == 0 then
+        m.vel.y = m.vel.y + -15
+        gPlayerSyncTable[0].rotAngle = gPlayerSyncTable[0].rotAngle + 8500
+        m.marioObj.header.gfx.angle.y = gPlayerSyncTable[0].rotAngle
+    end
 end
 
 hook_event(HOOK_MARIO_UPDATE, mario_update)

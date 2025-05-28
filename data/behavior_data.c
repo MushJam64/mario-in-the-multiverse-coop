@@ -237,6 +237,31 @@ const BehaviorScript bhvJelly[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvTikiBox[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(tikibox_collision),
+    SCALE(0, 150),
+    CALL_NATIVE(tiki_box_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(load_object_collision_model),
+        CALL_NATIVE(tiki_box_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvTramp[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(tramp_collision),
+    //SET_FLOAT(oDrawingDistance, 9000.0f),
+    BEGIN_LOOP(),
+        CALL_NATIVE(load_object_collision_model),
+        CALL_NATIVE(trampoline_loop),
+    END_LOOP(), 
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1002,31 +1027,8 @@ const BehaviorScript bhvtsBoat[] = {
 };
 
 extern const Collision tikibox_collision[];
-const BehaviorScript bhvTikiBox[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(tikibox_collision),
-    SCALE(0, 150),
-    CALL_NATIVE(tiki_box_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(load_object_collision_model),
-        CALL_NATIVE(tiki_box_loop),
-    END_LOOP(),
-};
 
 extern const Collision tramp_collision[];
-const BehaviorScript bhvTramp[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(tramp_collision),
-    SET_FLOAT(oDrawingDistance, 9000.0f),
-    BEGIN_LOOP(),
-        CALL_NATIVE(load_object_collision_model),
-        CALL_NATIVE(trampoline_loop),
-    END_LOOP(), 
-};
 
 extern const Collision floating_checker_platform_collision[];
 extern const struct Animation *const floating_checker_platform_anims[];

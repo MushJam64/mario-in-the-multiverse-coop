@@ -10,7 +10,7 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
 
 function bhv_ability_init(o)
     o.oBehParams = (12 << 24) | (o.oBehParams2ndByte << 16)

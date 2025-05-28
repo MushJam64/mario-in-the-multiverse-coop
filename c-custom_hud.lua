@@ -329,7 +329,7 @@ local function render_ability_get_hud()
     if ability_get_alpha > 0.1 then
         ability_get_timer = ability_get_timer + 1
         djui_hud_set_color(0, 0, 0, ability_get_box_alpha)
-        djui_hud_render_rect(80, 33 + 123, 7 * 43, 7 * 8)
+        djui_hud_render_rect(get_middle_x_pos(" ", 3.5) - 136, 33 + 123, 7 * 43, 7 * 8)
         djui_hud_set_color(255, 255, 255, ability_get_alpha)
         --[[gDPSetEnvColor(gDisplayListHead, 255, 255, 255, math.floor(ability_get_alpha))
         create_dl_translation_matrix(MENU_MTX_PUSH, 160, 120, 0)
@@ -345,7 +345,7 @@ local function render_ability_get_hud()
         if ability_util.str then
             for id = 1, #ability_util.str do
                 local cStr = ability_util.str[id]
-                djui_hud_print_text_anchored(cStr, 85,
+                djui_hud_print_text_anchored(cStr, get_middle_x_pos(" ", 3.5) - 136 + 5,
                     49 + 35 - (id * 14) + 10,
                     scale,
                     ANCHOR_LEFT, ANCHOR_BOTTOM)

@@ -1568,7 +1568,7 @@ function jelly_check_dmg(m, o)
         o.hitboxRadius = 150
     end
 
-    local cutter = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvCutterBlade))
+    local cutter = obj_get_nearest_object_with_behavior_id(o, (bhvCutterBlade))
     if cutter and dist_between_objects(o, cutter) < 150.0 then
         o.oInteractType = INTERACT_BOUNCE_TOP
         o.oNumLootCoins = 1
@@ -1678,5 +1678,99 @@ function jelly_loop(o)
     -- Set model if in specific level
     if gNetworkPlayers[0].currLevelNum == LEVEL_A then
         obj_set_model_extended(o, MODEL_JELLY)
+    end
+end
+
+local sTikiHitbox = {
+    interactType = INTERACT_BREAKABLE,
+    downOffset = 20,
+    damageOrCoinValue = 0,
+    health = 1,
+    numLootCoins = 2,
+    radius = 150,
+    height = 200,
+    hurtboxRadius = 150,
+    hurtboxHeight = 200,
+}
+
+function tiki_box_init(o)
+    o.oGravity = 1
+    o.oOpacity = 150
+    obj_set_hitbox(o, sTikiHitbox)
+    network_init_object(o, true, {"oTimer", "oInteractStatus"})
+end
+
+function tiki_box_loop(o)
+    local nm = nearest_mario_state_to_object(o)
+    if using_ability(nm, ABILITY_BUBBLE_HAT) then
+        if cur_obj_was_attacked_or_ground_pounded() ~= 0 then
+            obj_mark_for_deletion(o)
+            obj_explode_and_spawn_coins(8, 1)
+            obj_spawn_loot_yellow_coins(o, 4, 10)
+        end
+    end
+
+    if o.oTimer >= 2 then
+        o.oInteractStatus = 0
+    end
+
+    if o.oBehParams2ndByte == 0 then
+        obj_set_model_extended(o, MODEL_TIKI_WOOD)
+    elseif o.oBehParams2ndByte == 1 then
+        obj_set_model_extended(o, MODEL_TIKI_STONE)
+    elseif o.oBehParams2ndByte == 2 then
+        obj_set_model_extended(o, MODEL_TIKI_FLOAT)
+    end
+end
+
+-- Trampoline hitbox definition
+local sTrampHitbox = {
+    interactType = INTERACT_NONE,
+    downOffset = 20,
+    damageOrCoinValue = 0,
+    health = 1,
+    numLootCoins = 0,
+    radius = 250,
+    height = 300,
+    hurtboxRadius = 250,
+    hurtboxHeight = 300,
+}
+
+function trampoline_loop(o)
+    local gMarioState = gMarioStates[0]
+    local yVel = 90.0
+    local fVel = 50.0
+
+    if o.oAction == 0 then
+        cur_obj_scale(1.0)
+    elseif o.oAction == 1 then
+        if o.oTimer >= 0 then
+            obj_scale_xyz(o,
+                1.0 + ((0.25 - (0.25 * o.oTimer / 20.0)) * sins(o.oTimer * 0x1000)),
+                1.0 + ((0.4 - (0.4 * o.oTimer / 20.0)) * coss(o.oTimer * 0x1000 + 0x4000)),
+                1.0 + ((0.25 - (0.25 * o.oTimer / 20.0)) * sins(o.oTimer * 0x1000))
+            )
+        end
+        if o.oTimer >= 22.5 then
+            obj_scale_xyz(o,
+                1.0 + ((0.2 - (0.2 * o.oTimer / 30.0)) * sins(o.oTimer * 0x1000)),
+                1.0 + ((0.3 - (0.3 * o.oTimer / 30.0)) * coss(o.oTimer * 0x1000 + 0x4000)),
+                1.0 + ((0.25 - (0.25 * o.oTimer / 30.0)) * sins(o.oTimer * 0x1000))
+            )
+        end
+        if o.oTimer >= 45 then
+           
+        end
+    end
+
+    if gMarioState.marioObj.platform == o then
+        cur_obj_play_sound_2(SOUND_OBJ_WATER_BOMB_BOUNCING)
+        o.oAction = 1
+        gMarioState.vel.y = yVel
+        gMarioState.faceAngle.y = gMarioState.intendedYaw
+        gMarioState.forwardVel = fVel
+        return set_mario_action(gMarioState, ACT_TWIRLING, 0)
+    elseif o.oTimer >= 45 then
+        o.oAction = 0
     end
 end
