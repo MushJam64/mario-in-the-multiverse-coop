@@ -12,15 +12,12 @@ Area 4:
 - Pipe to warp back to Area 3 isn't there
 - Star Piece block with behavior isn't implemented
 - Hidden buttons for one of the stars isn't implemented yet
-- Signs representing the proper powerups needed on certain paths aren't in
 - Ink blobs and stains toward the left area aren't there
 - Marx fight not in yet
 
 Course 2: MARIO IN BIKINI BOTTOM
 
 Area 1:
-- 2x4 row of giant wooden Tiki's not in
-- Jellyfish mooks not implemented
 
 Area 2:
 - 
@@ -39,7 +36,6 @@ CUTTER ABILITY:
 - Final Cutter not implemented yet
 - A Pose desync issue when hit by other players
 - Cutter-rangs can desync sometimes with other players
-- Sparkles that appear when Mario retrives the cutter-rangs are too high
 
 BUBBLE HAT & NET:
-- Glide behavior not in yet
+- 

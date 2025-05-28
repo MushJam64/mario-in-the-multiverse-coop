@@ -262,6 +262,21 @@ const BehaviorScript bhvTramp[] = {
     END_LOOP(), 
 };
 
+const BehaviorScript bhvAcage[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | (OBJ_FLAG_30 + 16))),
+    LOAD_COLLISION_DATA(a_cage_collision),
+    //SET_FLOAT(oDrawingDistance, 9000.0f),
+    //SET_FLOAT(oCollisionDistance, 9000.0f),
+    SET_HOME(),
+    CALL_NATIVE(a_cage_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(a_cage_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(), 
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1209,19 +1224,6 @@ const BehaviorScript bhvGooDrop[] = {
 
 extern const Collision a_cage_collision[];
 void a_cage_loop(void);
-const BehaviorScript bhvAcage[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_ATTACHABLE_BY_ROPE)),
-    LOAD_COLLISION_DATA(a_cage_collision),
-    SET_FLOAT(oDrawingDistance, 9000.0f),
-    SET_FLOAT(oCollisionDistance, 9000.0f),
-    SET_HOME(),
-    BEGIN_LOOP(),
-        CALL_NATIVE(a_cage_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(), 
-};
 
 extern const Collision a_ufo_robot_collision[];
 extern const struct Animation *const a_ufo_robot_anims[];

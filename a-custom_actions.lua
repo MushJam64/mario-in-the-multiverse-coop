@@ -2,6 +2,7 @@ ACT_CUTSCENE_CONTROLLED = allocate_mario_action(ACT_GROUP_CUTSCENE)
 ACT_ENTER_HUB_PIPE = allocate_mario_action(ACT_GROUP_CUTSCENE)
 ACT_CUTTER_THROW_AIR = allocate_mario_action(ACT_GROUP_AIRBORNE)
 ACT_CUTTER_DASH = allocate_mario_action(ACT_GROUP_MOVING)
+ACT_BUBBLE_HAT_JUMP = allocate_mario_action(ACT_GROUP_AIRBORNE|ACT_FLAG_AIR)
 
 local function act_cutscene_controlled(m)
     vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
@@ -151,6 +152,41 @@ local function act_cutter_dash(m)
     return false
 end
 
+function act_bubble_hat_jump(m)
+    if m.actionTimer == 0 then
+        play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+    end
+
+    if m.actionTimer < 30 and m.vel.y < 10.0 then
+        m.vel.y = m.vel.y + 5.0 * ((30.0 - m.actionTimer) / 30.0)
+    end
+
+    if m.vel.y < -10.0 and m.actionTimer < 120 then
+        m.vel.y = -10.0
+    end
+
+    m.vel.y = m.vel.y + 0.5
+
+    cur_obj_play_sound_1(SOUND_ENV_WIND1)
+
+    update_air_with_turn(m)
+    common_air_action_step(m, ACT_JUMP_LAND, MARIO_ANIM_HANG_ON_OWL, AIR_STEP_CHECK_LEDGE_GRAB)
+
+    if m.forwardVel < 0.0 then
+        m.forwardVel = 0.0
+    end
+
+    if m.actionTimer >= 10 and (m.input & (INPUT_B_PRESSED | INPUT_A_PRESSED)) ~= 0 then
+        m.input = m.input|INPUT_B_PRESSED
+        return set_mario_action(m, ACT_FREEFALL, 0)
+    end
+
+    -- set_mario_animation(m, MARIO_ANIM_MISSING_CAP)
+    -- m.marioObj.header.gfx.animInfo.animFrame = 25
+
+    m.actionTimer = m.actionTimer + 1
+    return 0
+end
 
 local function cutter_ability_overrides(m, inc)
     if using_ability(m, ABILITY_CUTTER) then
@@ -173,3 +209,4 @@ hook_mario_action(ACT_CUTTER_THROW_AIR, act_cutter_throw_air)
 hook_mario_action(ACT_CUTSCENE_CONTROLLED, act_cutscene_controlled)
 hook_mario_action(ACT_ENTER_HUB_PIPE, act_enter_hub_pipe)
 hook_mario_action(ACT_CUTTER_DASH, act_cutter_dash, INT_KICK)
+hook_mario_action(ACT_BUBBLE_HAT_JUMP, act_bubble_hat_jump)

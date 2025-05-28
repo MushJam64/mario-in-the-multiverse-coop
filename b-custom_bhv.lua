@@ -1174,7 +1174,7 @@ function bhv_cutter_blade_loop(o)
 
     if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) then
         audio_stream_play(SOUND_ABILITY_CUTTER_CATCH, false, 1)
-        spawn_object_relative2(0, 0, 100, 0, o.parentObj, E_MODEL_NONE, id_bhvSparkleSpawn)
+        spawn_object_relative2(0, 0, 100, 0, gMarioObject, E_MODEL_NONE, id_bhvSparkleSpawn)
         obj_mark_for_deletion(o)
     end
 end
@@ -1598,7 +1598,8 @@ function jelly_init(o)
         hurtboxHeight     = 80
     })
     smlua_anim_util_set_animation(o, "jelly_anim_jelly_geoAction")
-    network_init_object(o, true, {"oAction", "oTimer", "oGravity", "oForwardVel", "oInteractStatus", "oBehParams2ndByte", "oFaceAngleYaw"})
+    network_init_object(o, true,
+        { "oAction", "oTimer", "oGravity", "oForwardVel", "oInteractStatus", "oBehParams2ndByte", "oFaceAngleYaw" })
 end
 
 -- Main jelly loop
@@ -1697,7 +1698,7 @@ function tiki_box_init(o)
     o.oGravity = 1
     o.oOpacity = 150
     obj_set_hitbox(o, sTikiHitbox)
-    network_init_object(o, true, {"oTimer", "oInteractStatus"})
+    network_init_object(o, true, { "oTimer", "oInteractStatus" })
 end
 
 function tiki_box_loop(o)
@@ -1725,7 +1726,7 @@ end
 
 -- Trampoline hitbox definition
 local sTrampHitbox = {
-    interactType = INTERACT_NONE,
+    interactType = 0,
     downOffset = 20,
     damageOrCoinValue = 0,
     health = 1,
@@ -1759,7 +1760,7 @@ function trampoline_loop(o)
             )
         end
         if o.oTimer >= 45 then
-           
+
         end
     end
 
@@ -1772,5 +1773,39 @@ function trampoline_loop(o)
         return set_mario_action(gMarioState, ACT_TWIRLING, 0)
     elseif o.oTimer >= 45 then
         o.oAction = 0
+    end
+end
+
+function a_cage_init(o)
+    network_init_object(o, true, {"oAction", "oHomeY", "oPosY", "oVelY"})
+    o.hookRender = 1
+end
+
+function a_cage_loop(o)
+    local ability_object = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvAbilityUnlock))
+
+    if o.oAction == 0 then
+        -- Set home Y to floor height
+        o.oHomeY = find_floor_height(o.oPosX, o.oPosY, o.oPosZ)
+        o.oAction = 1
+    elseif o.oAction == 1 then
+        if ability_object then
+            --vec3f_copy(ability_object.oPosVec, o.oPosVec)
+            ability_object.oPosX = o.oPosX
+            ability_object.oPosY = o.oPosY
+            ability_object.oPosY = ability_object.oPosY - 300.0
+            ability_object.oPosZ = o.oPosZ
+        end
+
+        o.oPosY = o.oPosY + o.oVelY
+        o.oVelY = o.oVelY - 2.0
+
+        if o.oPosY < o.oHomeY + 400.0 then
+            o.oPosY = o.oHomeY
+            obj_mark_for_deletion(o)
+            spawn_mist_particles()
+            spawn_triangle_break_particles(20, 0x8a, 0.7, 3)
+            cur_obj_play_sound_2(SOUND_GENERAL_BREAK_BOX)
+        end
     end
 end

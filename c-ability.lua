@@ -146,6 +146,24 @@ local function ability_functions_update(m)
         else
             thrownCutter = false
         end
+        if m.action == ACT_JUMP or
+            m.action == ACT_DOUBLE_JUMP or
+            m.action == ACT_TRIPLE_JUMP or
+            m.action == ACT_BACKFLIP or
+            m.action == ACT_FREEFALL or
+            m.action == ACT_HOLD_JUMP or
+            m.action == ACT_SIDE_FLIP or
+            m.action == ACT_WALL_KICK_AIR or
+            m.action == ACT_LONG_JUMP or
+            m.action == ACT_FORWARD_ROLLOUT or
+            m.action == ACT_BACKWARD_ROLLOUT or
+            m.action == ACT_JUMP_KICK then
+            m.actionTimer = m.actionTimer + 1
+
+            if (using_ability(m, ABILITY_BUBBLE_HAT) and m.actionTimer > 1 and m.input & INPUT_A_PRESSED ~= 0) then
+                set_mario_action(m, ACT_BUBBLE_HAT_JUMP, 0);
+            end
+        end
     end
 end
 

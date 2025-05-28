@@ -161,7 +161,8 @@ function geo_generate_attached_rope(node, m)
     cast_graph_node(graphNode.next).displayList = dlHead
 end
 
-local ability_mat = gfx_get_from_name("ability_unlock_ability_unlock_mesh_layer_4")
+local ability_mat = gfx_get_from_name("mat_ability_unlock_ability")
+local ability_mat2 = gfx_get_from_name("mat_ability_sign_ability")
 
 function geo_ability_material(n, m)
     local ptr
@@ -172,15 +173,16 @@ function geo_ability_material(n, m)
 
     if not dlHead then
         dlHead = gfx_create("mitm_g" .. ptr, 32)
-        gfx_copy(dlHead, ability_mat, gfx_get_length(ability_mat))
+        if cast_graph_node(n).parameter == 1 then
+            gfx_copy(dlHead, ability_mat2, gfx_get_length(ability_mat2))
+        else
+            gfx_copy(dlHead, ability_mat, gfx_get_length(ability_mat))
+        end
     end
 
-    gfx_parse(dlHead, function(dl, cmd)
-        if cmd == G_SETTIMG then
-            gfx_set_command(dl, "gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, %t)",
-                ability_images[obj.oBehParams2ndByte][1].texture)
-        end
-    end)
+    local cmdt = gfx_get_command(dlHead, 3)
+    gfx_set_command(cmdt, "gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, %t),",
+        ability_images[obj.oBehParams2ndByte][1].texture)
     cast_graph_node(n.next).displayList = dlHead
 end
 
@@ -203,13 +205,23 @@ function geo_ability_hand(n, mi)
         if m.actionTimer <= 3 and m.action == ACT_CUTTER_THROW_AIR or (m.actionTimer >= 3 and m.action == ACT_PUNCHING or m.actionTimer >= 3 and m.actionTimer < 6 and m.action == ACT_MOVE_PUNCHING) or m.action == ACT_CUTTER_DASH then
             cNode.displayList = cutter_hand_right_hand_open_mesh_layer_1
         end
+    elseif using_ability(m, ABILITY_BUBBLE_HAT) then
+        if m.action == ACT_BUBBLE_HAT_JUMP then
+            cNode.displayList = bubblehat_hand_hand_mesh
+        end
     end
 end
 
 function geo_ability_hat(n, m)
-    local mid = geo_get_mario_state().playerIndex
-    local abilityHat = ability_struct[gPlayerSyncTable[mid].abilityId].hat
-    cast_graph_node(n.next).displayList = abilityHat
+    local cNode = cast_graph_node(n.next)
+    local mid = geo_get_mario_state()
+    local abilityHat = ability_struct[gPlayerSyncTable[mid.playerIndex].abilityId].hat
+    cNode.displayList = abilityHat
+    if using_ability(mid, ABILITY_BUBBLE_HAT) then
+        if mid.action == ACT_BUBBLE_HAT_JUMP then
+            cNode.displayList = gfx_empty
+        end
+    end
 end
 
 function geo_override_handscale(n, mi)

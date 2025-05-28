@@ -56,7 +56,7 @@ const LevelScript level_wf_entry[] = {
 		OBJECT(MODEL_NONE, -5684, -81, 4365, 0, 0, 0, (0x0 << 16), bhvTikiBox),
 		OBJECT(MODEL_A_CAGE, 346, 1083, -3635, 0, 0, 0, (0xF0 << 8), bhvAcage),
 		OBJECT(MODEL_ABILITY, 346, 883, -3635, 0, 0, 0, (2 << 16), bhvAbilityUnlock),
-		OBJECT(MODEL_ABILITY_SIGN, 1292, -163, -3964, 0, -117, 0, (2 << 16), bhvStaticObject),
+		OBJECT(MODEL_ABILITY_SIGN, 1292, -163, -3964, 0, -117, 0, (2 << 16), id_bhvStaticObject),
 		OBJECT(MODEL_NONE, 5137, -163, -7700, 0, -180, 0, (0x05 << 16), bhvInstantActiveWarp),
 		OBJECT(MODEL_CHECKPOINT_FLAG, -1392, -163, -3906, 0, 90, 0, (0 << 16), bhvCheckpointFlag),
 		OBJECT(MODEL_CHECKPOINT_FLAG, -46, -24, -13435, 0, 0, 0, (1 << 16), bhvCheckpointFlag),
@@ -110,7 +110,7 @@ const LevelScript level_wf_entry[] = {
 		TERRAIN(wf_area_2_collision),
 		MACRO_OBJECTS(wf_area_2_macro_objs),
 		//SEQ_JELLYFISH_SECRET
-		SET_BACKGROUND_MUSIC(0x00, 0),
+		SET_BACKGROUND_MUSIC(0x00, 0x3A),
 		TERRAIN_TYPE(TERRAIN_SNOW),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -180,7 +180,7 @@ const LevelScript level_wf_entry[] = {
 		OBJECT(MODEL_A_PLANK, -76, -1070, -6251, 0, 0, 0, 0x00000000, bhvRPlank),
 		OBJECT(MODEL_BUBBLENET_RED_BUTTON, 802, -1070, -4175, 0, -90, 0, (1 << 16), bhvBhButton2),
 		OBJECT(MODEL_TAXISTOP, 10473, 118, 1823, 0, 0, 0, (3 << 24) | (10 << 16), bhvTaxiStop),
-		OBJECT(MODEL_ABILITY_SIGN, -5032, -215, 8292, 0, 134, 0, (5 << 16), bhvStaticObject),
+		OBJECT(MODEL_ABILITY_SIGN, -5032, -215, 8292, 0, 134, 0, (5 << 16), id_bhvStaticObject),
 		OBJECT(MODEL_NONE, -3609, 1131, 11283, 0, 0, 0, (1 << 16), bhvDreamCatalyst),
 		OBJECT(MODEL_NONE, 4408, 172, -10552, 0, 0, 0, (2 << 16), bhvDreamCatalyst),
 		OBJECT(MODEL_NONE, -5872, 433, 950, 0, 85, 0, (0x01 << 16), bhvDeathWarp),
@@ -221,14 +221,14 @@ const LevelScript level_wf_entry[] = {
 		OBJECT(MODEL_CONCRETE_BLOCK, 4652, -2271, -1311, 0, 0, 0, (2 << 24) | (2 << 16), bhvConcreteBlock),
 		OBJECT(MODEL_CONCRETE_BLOCK, 4389, -2271, 20, 0, 0, 0, (2 << 24) | (2 << 16), bhvConcreteBlock),
 		OBJECT(MODEL_CONCRETE_BLOCK, 1613, -2271, 519, 0, 0, 0, (2 << 24) | (2 << 16), bhvConcreteBlock),
-		OBJECT(MODEL_ABILITY_SIGN, 3608, -2500, -1899, 0, -80, 0, (6 << 16), bhvStaticObject),
+		OBJECT(MODEL_ABILITY_SIGN, 3608, -2500, -1899, 0, -80, 0, (6 << 16), id_bhvStaticObject),
 		OBJECT(MODEL_KKB, 1589, -2500, 205, 0, 30, 0, 0x00000000, bhvKKB),
 		OBJECT(MODEL_SQUIDWARD, 3170, -2626, 630, 0, 180, 0, 0x00000000, bhvSquidward),
 		OBJECT(MODEL_NONE, 3192, -2238, -1204, 0, 0, 0, (4 << 24), bhvHiddenStar),
 		TERRAIN(wf_area_5_collision),
 		MACRO_OBJECTS(wf_area_5_macro_objs),
 		//SEQ_JELLYFISH_SECRET
-		SET_BACKGROUND_MUSIC(0x00, 0),
+		SET_BACKGROUND_MUSIC(0x00, 0x3A),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -238,7 +238,7 @@ const LevelScript level_wf_entry[] = {
 		WARP_NODE(0x0A, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
 		WARP_NODE(0x01 /*death entry*/, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF1/*death*/, LEVEL_WF, 0x06, 0x01, WARP_NO_CHECKPOINT),
-		OBJECT(MODEL_ABILITY_SIGN, -218, 200, -6100, 0, 121, 0, (7 << 16), bhvStaticObject),
+		OBJECT(MODEL_ABILITY_SIGN, -218, 200, -6100, 0, 121, 0, (7 << 16), id_bhvStaticObject),
 		OBJECT(MODEL_NONE, 1194, -472, -6489, 0, 0, 0, (3 << 16), bhvDreamCatalyst),
 		OBJECT(MODEL_FLIPSWITCH_1, -846, -200, -6464, 0, 90, 0, (5 << 24), bhvFlipswitch),
 		OBJECT(MODEL_FLIPSWITCH_1, -1246, -200, -6464, 0, 90, 0, (5 << 24), bhvFlipswitch),
@@ -298,7 +298,7 @@ const LevelScript level_wf_entry[] = {
 		TERRAIN(wf_area_6_collision),
 		MACRO_OBJECTS(wf_area_6_macro_objs),
 		//SEQ_JELLYFISH_SECRET
-		SET_BACKGROUND_MUSIC(0x00, 0),
+		SET_BACKGROUND_MUSIC(0x00, 0x3A),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
