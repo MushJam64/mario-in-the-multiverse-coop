@@ -48,10 +48,7 @@ CUTTER ABILITY:
 - Cutter-rangs can desync sometimes with other players
 
 INKLING ABILITY:
-- Dying as the squid respawns you into a twisted version of it
-- Can get twisted when even trying to use it
-- Bugs out when moving and changing at the same time to get crumpled character pose (This is consistent)
-- Can violently shake when trying to even move
+- syncing missing
 
 GENERAL STUFF:
 - No infinite lives yet

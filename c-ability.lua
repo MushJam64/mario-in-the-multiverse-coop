@@ -166,24 +166,40 @@ local function ability_functions_update(m)
                 set_mario_action(m, ACT_BUBBLE_HAT_JUMP, 0);
             end
         end
+    end
 
-        if using_ability(m, ABILITY_SQUID) then
-            if (m.controller.buttonPressed & L_TRIG) ~= 0 then
-                --cur_obj_spawn_particles(D_8032F270)
+    if m.action ~= ACT_SQUID then
+        if m.playerIndex == 0 then
+            if gPlayerSyncTable[0].modelId == MODEL_SQUID then
+                gPlayerSyncTable[0].modelId = nil
+            end
+        end
 
-                if m.action == ACT_SQUID then
+        if smlua_anim_util_get_current_animation_name(m.marioObj) == "mario_anim_squid" then
+            set_mario_animation(m, MARIO_ANIM_A_POSE)
+        end
+    end
+
+    if using_ability(m, ABILITY_SQUID) then
+        if (m.controller.buttonPressed & L_TRIG) ~= 0 then
+            spawn_mist_particles()
+
+            if m.action == ACT_SQUID then
+                if m.playerIndex == 0 then
                     gPlayerSyncTable[0].modelId = nil
                     set_mario_action(m, ACT_IDLE, 0)
                     --[[m.marioObj.header.gfx.node.flags = m.marioObj.header.gfx.node.flags |
                     GRAPH_RENDER_INVISIBLE
                     --make_mario_visible_again_after_this_frame = true]]
-                else
+                end
+            else
+                if m.playerIndex == 0 then
                     gPlayerSyncTable[0].modelId = MODEL_SQUID
                     set_mario_action(m, ACT_SQUID, 0)
-                    --[[m.marioObj.header.gfx.node.flags = m.marioObj.header.gfx.node.flags |
+                end
+                --[[m.marioObj.header.gfx.node.flags = m.marioObj.header.gfx.node.flags |
                     GRAPH_RENDER_INVISIBLE
                     --make_mario_visible_again_after_this_frame = true]]
-                end
             end
         end
     end
