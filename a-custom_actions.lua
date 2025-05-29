@@ -194,6 +194,7 @@ local squid_x_vel, squid_y_vel, squid_z_vel = 0.0, 0.0, 0.0
 local squid_goop_timer = 0.0
 
 function act_squid(m)
+    smlua_anim_util_set_animation(m.marioObj, "mario_anim_squid")
     if m.playerIndex ~= 0 then return end --!todo sync
     local surfie
     local wall
@@ -207,7 +208,7 @@ function act_squid(m)
     local ray_hit_pos = { 0, 0, 0 }
     local ray_surface
     local gPlayer1Controller = m.controller
-    smlua_anim_util_set_animation(m.marioObj, "mario_anim_squid")
+
 
     if m.actionState == 0 then -- out of the ink
         perform_air_step(m, 0)
@@ -354,12 +355,14 @@ function act_squid(m)
         play_sound(SOUND_GENERAL_QUIET_BUBBLE2, gGlobalSoundSource)
     end
 
+    -- if m.playerIndex == 0 then
     if not using_ability(m, ABILITY_SQUID) then
         gPlayerSyncTable[0].modelId = nil
         return set_mario_action(m, ACT_IDLE, 0)
     end
 
     gPlayerSyncTable[0].modelId = MODEL_SQUID
+    --end
 
     return false
 end

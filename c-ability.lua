@@ -87,49 +87,51 @@ hook_event(HOOK_UPDATE, save_abilities)
 
 local function control_ability_dpad(m)
     if m.playerIndex ~= 0 then return end
-    local gPlayer1Controller = m.controller
-    local picked_ability = -1
+    local force_marble = false
+    if ((not force_marble) and (m.action ~= ACT_BUBBLE_HAT_JUMP) and (m.action ~= ACT_SQUID)) then
+        local gPlayer1Controller = m.controller
+        local picked_ability = -1
 
-    if (gPlayer1Controller.buttonPressed & U_JPAD) ~= 0 then
-        picked_ability = 0
-    end
-    if (gPlayer1Controller.buttonPressed & R_JPAD) ~= 0 then
-        picked_ability = 1
-    end
-    if (gPlayer1Controller.buttonPressed & D_JPAD) ~= 0 then
-        picked_ability = 2
-    end
-    if (gPlayer1Controller.buttonPressed & L_JPAD) ~= 0 then
-        picked_ability = 3
-    end
-    if (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
-        if picked_ability > -1 then
-            if check_if_swap_ability_allowed(m) then
-                -- Animate image on DPad HUD
-                ability_y_offset[picked_ability] = 5
-                ability_gravity[picked_ability] = 2
+        if (gPlayer1Controller.buttonPressed & U_JPAD) ~= 0 then
+            picked_ability = 0
+        end
+        if (gPlayer1Controller.buttonPressed & R_JPAD) ~= 0 then
+            picked_ability = 1
+        end
+        if (gPlayer1Controller.buttonPressed & D_JPAD) ~= 0 then
+            picked_ability = 2
+        end
+        if (gPlayer1Controller.buttonPressed & L_JPAD) ~= 0 then
+            picked_ability = 3
+        end
+        if (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
+            if picked_ability > -1 then
+                if check_if_swap_ability_allowed(m) then
+                    -- Animate image on DPad HUD
+                    ability_y_offset[picked_ability] = 5
+                    ability_gravity[picked_ability] = 2
 
-                change_ability(ability_slot[picked_ability])
+                    change_ability(ability_slot[picked_ability])
 
-                -- Equip Sound Effect
-                if ability_slot[picked_ability] == ABILITY_AKU then
-                    -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
-                    -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
-                    --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
-                elseif ability_slot[picked_ability] == ABILITY_NONE then
-                    -- Do nothing
+                    -- Equip Sound Effect
+                    if ability_slot[picked_ability] == ABILITY_AKU then
+                        -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
+                    elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
+                        -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
+                    elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
+                        --  play_sound(SOUND_MITM_ABILITY_E_SHOTGUN_RACK, gGlobalSoundSource)
+                    elseif ability_slot[picked_ability] == ABILITY_NONE then
+                        -- Do nothing
+                    else
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+                    end
                 else
-                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+                    play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
                 end
-            else
-                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
             end
         end
     end
 end
-
 hook_event(HOOK_MARIO_UPDATE, control_ability_dpad)
 
 local thrownCutter = false

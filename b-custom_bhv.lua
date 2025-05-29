@@ -1916,6 +1916,7 @@ end
 
 function spawn_multiple_enemies(o, behavior, modelId, amount)
     local obj
+    if is_nearest_mario_state_to_object(gMarioStates[0], o) ~= 0 then return end
     for i = 1, amount do
         obj = spawn_sync_object(behavior, modelId, o.oPosX + random_signed_value(1500.0), o.oPosY + 0,
             o.oPosZ + random_signed_value(1500.0),
@@ -2173,4 +2174,26 @@ function bhv_paint_stain_loop(o)
         gMarioState.health = gMarioState.health - 5
         -- render_textured_splatoon()
     end
+end
+
+local MOVING_TIME = 203
+
+---@param o Object
+function bhv_ink_moving_platform_init(o)
+    o.oCapUnkF4 = 1
+    network_init_object(o, true, {"oCapUnkF4", "oVelY", "oTimer", "oPosX", "oPosY", "oPosZ" })
+end
+
+function bhv_ink_moving_platform_loop(o)
+    if o.oTimer <= MOVING_TIME then
+        o.oVelY = 10.0 * o.oCapUnkF4
+        cur_obj_play_sound_1(SOUND_ENV_ELEVATOR1)
+    elseif o.oTimer <= MOVING_TIME + 60 then
+        o.oVelY = 0.0
+    else
+        o.oTimer = 0
+        o.oCapUnkF4 = o.oCapUnkF4 * -1
+    end
+
+    cur_obj_move_using_vel()
 end

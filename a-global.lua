@@ -255,6 +255,7 @@ MODEL_OCTOBA                    = smlua_model_util_get_id("octoba_geo")
 MODEL_OCTOBALL                  = smlua_model_util_get_id("octoball_geo")
 MODEL_PAINT_STAIN               = smlua_model_util_get_id("paint_stain_geo")
 MODEL_SQUID                     = smlua_model_util_get_id("squid_geo")
+MODEL_INK_MOVING_PLATFORM       = smlua_model_util_get_id("ink_moving_platform_geo")
 
 BP3_ATTACH_ROPE                 = 0xF0
 

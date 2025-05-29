@@ -26,16 +26,15 @@ smlua_audio_utils_replace_sequence(0x4e, 42, 80, "4E_mitm_hub")
 smlua_audio_utils_replace_sequence(0x50, 42, 80, "50_mitm_ability_get")
 
 local function mario_update(m)
-    if (gPlayerSyncTable[0].abilityId == ABILITY_CUTTER) or using_ability(m, ABILITY_GADGET_WATCH) then
-        if m.playerIndex == 0 then
+    if m.playerIndex == 0 then
+        if (gPlayerSyncTable[0].abilityId == ABILITY_CUTTER) or using_ability(m, ABILITY_GADGET_WATCH) then
             m.marioBodyState.capState = m.marioBodyState.capState | MARIO_HAS_DEFAULT_CAP_OFF
         end
-    end
-    if m.action == ACT_TWIRLING and (m.controller.buttonDown & Z_TRIG) ~= 0 and m.playerIndex == 0 then
-        m.vel.y = m.vel.y + -15
-        gPlayerSyncTable[0].rotAngle = gPlayerSyncTable[0].rotAngle + 8500
-        m.marioObj.header.gfx.angle.y = gPlayerSyncTable[0].rotAngle
+        if m.action == ACT_TWIRLING and (m.controller.buttonDown & Z_TRIG) ~= 0 then
+            m.vel.y = m.vel.y + -15
+            gPlayerSyncTable[0].rotAngle = gPlayerSyncTable[0].rotAngle + 8500
+            m.marioObj.header.gfx.angle.y = gPlayerSyncTable[0].rotAngle
+        end
     end
 end
-
 hook_event(HOOK_MARIO_UPDATE, mario_update)

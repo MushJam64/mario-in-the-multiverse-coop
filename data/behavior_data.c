@@ -369,6 +369,20 @@ const BehaviorScript bhvPaintStain[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvInkMovingPlatform[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(ink_moving_platform_collision),
+    //SET_FLOAT(oCollisionDistance, 1000),
+    //SET_FLOAT(oDrawingDistance, 10000),
+    CALL_NATIVE(bhv_ink_moving_platform_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_ink_moving_platform_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1530,20 +1544,6 @@ const BehaviorScript bhvFlag[] = {
     LOAD_ANIMATIONS(oAnimations, flag_anims),
     ANIMATE(0),
     BEGIN_LOOP(),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvInkMovingPlatform[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(ink_moving_platform_collision),
-    SET_FLOAT(oCollisionDistance, 1000),
-    SET_FLOAT(oDrawingDistance, 10000),
-    SET_INT(oF4, 1),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_ink_moving_platform_loop),
-        CALL_NATIVE(load_object_collision_model),
     END_LOOP(),
 };
 
