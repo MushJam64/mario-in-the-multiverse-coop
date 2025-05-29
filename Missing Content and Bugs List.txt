@@ -24,11 +24,16 @@ Area 2:
 - 
 
 Area 3:
+- 
 
 Course 3: THE PIRANHA PIT
 
 Area 1:
-- 
+- Red Coin wall inaccurate if Inkling ability goes outside of blue ink
+- Ink Blaster homing turrets not in yet
+- Enemy Gauntlet for Inkling ability not fully implemented
+- Grabbing Inkling ability throws you into vanilla CG
+- Water isn't water yet
 
 METAXY ISLES (Hub):
 - Shop NPC and Shop System not implemented
@@ -41,6 +46,12 @@ CUTTER ABILITY:
 - Final Cutter not implemented yet
 - A Pose desync issue when hit by other players
 - Cutter-rangs can desync sometimes with other players
+
+INKLING ABILITY:
+- Dying as the squid respawns you into a twisted version of it
+- Can get twisted when even trying to use it
+- Bugs out when moving and changing at the same time to get crumpled character pose (This is consistent)
+- Can violently shake when trying to even move
 
 GENERAL STUFF:
 - No infinite lives yet
