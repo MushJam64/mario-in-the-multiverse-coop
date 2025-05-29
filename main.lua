@@ -21,6 +21,7 @@ smlua_audio_utils_replace_sequence(SEQ_CUSTOM_KIRBY_BOSS, 42, 80, "26_custom_kir
 smlua_audio_utils_replace_sequence(0x39, 19, 80, "39_jellyfish_fields")
 smlua_audio_utils_replace_sequence(0x3A, 19, 80, "3A_jellyfish_secret")
 smlua_audio_utils_replace_sequence(0x4a, 42, 80, "4A_downtown_bb")
+smlua_audio_utils_replace_sequence(0x4b, 19, 80, "4B_c_sea_me_now")
 smlua_audio_utils_replace_sequence(0x4e, 42, 80, "4E_mitm_hub")
 smlua_audio_utils_replace_sequence(0x50, 42, 80, "50_mitm_ability_get")
 

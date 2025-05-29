@@ -64405,24 +64405,16 @@ Gfx mat_revert_castle_inside_dl_iron_floor1[] = {
 };
 
 Gfx mat_castle_inside_dl_paint_layer6[] = {
-	gsSPGeometryMode(G_LIGHTING, 0),
+	gsSPClearGeometryMode(G_LIGHTING),
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL1, COMBINED, PRIMITIVE, TEXEL1_ALPHA, PRIMITIVE, 0, 0, 0, COMBINED),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0),
 	gsDPSetAlphaDither(G_AD_NOISE),
-	gsDPSetCycleType(G_CYC_2CYCLE),
-	gsDPSetRenderMode(G_RM_PASS, G_RM_AA_ZB_XLU_DECAL2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
 	gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, castle_inside_dl_peinture_ia4),
 	gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 1023, 1024),
 	gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_4b, 2, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
 	gsDPSetTileSize(0, 0, 0, 124, 508),
-	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_16b, 1, castle_inside_dl_peinture_alpha_i4),
-	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_16b, 0, 256, 6, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(6, 0, 0, 1023, 1024),
-	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_4b, 2, 256, 1, 0, G_TX_WRAP | G_TX_NOMIRROR, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
-	gsDPSetTileSize(1, 0, 0, 124, 508),
 	gsSPEndDisplayList(),
 };
 

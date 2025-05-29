@@ -164,9 +164,90 @@ local function ability_functions_update(m)
                 set_mario_action(m, ACT_BUBBLE_HAT_JUMP, 0);
             end
         end
+
+        if using_ability(m, ABILITY_SQUID) then
+            if (m.controller.buttonPressed & L_TRIG) ~= 0 then
+                --cur_obj_spawn_particles(D_8032F270)
+
+                if m.action == ACT_SQUID then
+                    gPlayerSyncTable[0].modelId = nil
+                    set_mario_action(m, ACT_IDLE, 0)
+                    --[[m.marioObj.header.gfx.node.flags = m.marioObj.header.gfx.node.flags |
+                    GRAPH_RENDER_INVISIBLE
+                    --make_mario_visible_again_after_this_frame = true]]
+                else
+                    gPlayerSyncTable[0].modelId = MODEL_SQUID
+                    set_mario_action(m, ACT_SQUID, 0)
+                    --[[m.marioObj.header.gfx.node.flags = m.marioObj.header.gfx.node.flags |
+                    GRAPH_RENDER_INVISIBLE
+                    --make_mario_visible_again_after_this_frame = true]]
+                end
+            end
+        end
     end
 end
 
+---@param m MarioState
+local function disable_squid_geometry(m)
+    if m.playerIndex == 0 then
+        if m.floor.type == SURFACE_TOXIC_INK then
+            m.input = m.input | INPUT_IN_POISON_GAS
+        end
+        if using_ability(m, ABILITY_SQUID) and m.action == ACT_SQUID then
+            m.floorHeight, m.floor = find_floor_height(m.pos.x, m.pos.y, m.pos.z),
+                collision_find_floor(m.pos.x, m.pos.y, m.pos.z)
+
+            -- If Mario is OOB, move his position to his graphical position (which was not updated)
+            -- and check for the floor there.
+            -- This can cause errant behavior when combined with astral projection,
+            -- since the graphical position was not Mario's previous location.
+            if m.floor == nil then
+                vec3f_copy(m.pos, m.marioObj.header.gfx.pos)
+                m.floorHeight, m.floor = find_floor_height(m.pos.x, m.pos.y, m.pos.z),
+                    collision_find_floor(m.pos.x, m.pos.y, m.pos.z)
+            end
+
+            m.ceilHeight = find_ceil_height(m.pos.x, m.pos.y, m.pos.z)
+            gasLevel = find_poison_gas_level(m.pos.x, m.pos.z)
+            m.waterLevel = find_water_level(m.pos.x, m.pos.z)
+
+            if m.floor ~= nil then
+                m.floorAngle = atan2s(m.floor.normal.z, m.floor.normal.x)
+                m.terrainSoundAddend = mario_get_terrain_sound_addend(m)
+
+                if (m.pos.y > m.waterLevel - 40) and mario_floor_is_slippery(m) ~= 0 then
+                    m.input = m.input | INPUT_ABOVE_SLIDE
+                end
+
+                if ((m.floor.flags & SURFACE_FLAG_DYNAMIC) ~= 0) or (m.ceil and (m.ceil.flags & SURFACE_FLAG_DYNAMIC) ~= 0) then
+                    ceilToFloorDist = m.ceilHeight - m.floorHeight
+
+                    if (0.0 <= ceilToFloorDist) and (ceilToFloorDist <= 150.0) then
+                        m.input = m.input | INPUT_SQUISHED
+                    end
+                end
+
+                if m.pos.y > m.floorHeight + 100.0 then
+                    m.input = m.input | INPUT_OFF_FLOOR
+                end
+
+                if m.pos.y < (m.waterLevel - 10) then
+                    m.input = m.input | INPUT_IN_WATER
+                end
+            else
+                vec3f_set(m.pos, m.spawnInfo.startPos.x, m.spawnInfo.startPos.y, m.spawnInfo.startPos.z)
+                m.faceAngle.y = m.spawnInfo.startAngle.y
+                local floor = nil
+                floor = collision_find_floor(m.pos.x, m.pos.y, m.pos.z)
+                if floor == nil then
+                    level_trigger_warp(m, WARP_OP_DEATH)
+                end
+            end
+
+            return false
+        end
+    end
+end
 hook_event(HOOK_OBJECT_SET_MODEL, function(o)
     if obj_has_behavior_id(o, id_bhvMario) ~= 0 then
         local i = network_local_index_from_global(o.globalPlayerIndex)
@@ -238,3 +319,4 @@ hook_behavior(id_bhvCelebrationStar, OBJ_LIST_DEFAULT, false, nil, celeb_star_ov
 hook_event(HOOK_ON_SEQ_LOAD, ability_override_sound)
 hook_event(HOOK_ON_INTERACT, interact_ability_star)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)
+hook_event(HOOK_MARIO_OVERRIDE_GEOMETRY_INPUTS, disable_squid_geometry)

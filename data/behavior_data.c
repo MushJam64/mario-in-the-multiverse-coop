@@ -317,6 +317,58 @@ const BehaviorScript bhvtsBoat[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvFightWavesManager[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)), //OR OBJ_FLAG_NO_DREAM_COMET also
+    CALL_NATIVE(bhv_fight_waves_manager_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_fight_waves_manager_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvOctoball[] = {
+    BEGIN(OBJ_LIST_DESTRUCTIVE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_PERSISTENT_RESPAWN | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),//OR OBJ_FLAG_E__SG_CUSTOM also
+    DROP_TO_FLOOR(),
+    SET_INT(oIntangibleTimer, 0),
+    SET_FLOAT(oGraphYOffset, 85),
+    SCALE(0, 85),
+    SET_HOME(),
+    CALL_NATIVE(bhv_octoball_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_octoball_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvOctoballWaves[] = {
+    BEGIN(OBJ_LIST_DESTRUCTIVE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_PERSISTENT_RESPAWN | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),//OR OBJ_FLAG_E__SG_CUSTOM also
+    DROP_TO_FLOOR(),
+    SET_INT(oIntangibleTimer, 0),
+    SET_FLOAT(oGraphYOffset, 85),
+    SCALE(0, 85),
+    SET_HOME(),
+    CALL_NATIVE(bhv_octoball_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_octoball_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvPaintStain[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
+    DROP_TO_FLOOR(),
+    SET_INT(oOpacity, 255),
+    CALL_NATIVE(bhv_paint_stain_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_paint_stain_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1361,16 +1413,6 @@ const BehaviorScript bhvConcreteBlock[] = {
 /* GROUP B END *\
 
 /* GROUP C START *\
-
-const BehaviorScript bhvFightWavesManager[] = {
-    BEGIN(OBJ_LIST_LEVEL),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_NO_DREAM_COMET)),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_fight_waves_manager_loop),
-    END_LOOP(),
-};
-
 const BehaviorScript bhvCrane[] = {
     BEGIN(OBJ_LIST_DEFAULT),
     ID(id_bhvNewId),
@@ -1454,33 +1496,6 @@ const BehaviorScript bhvCamera[] = {
     ID(id_bhvNewId),
     OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     BREAK(),
-};
-
-const BehaviorScript bhvOctoball[] = {
-    BEGIN(OBJ_LIST_DESTRUCTIVE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_PERSISTENT_RESPAWN | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_E__SG_CUSTOM)),//--E
-    DROP_TO_FLOOR(),
-    SET_INT(oIntangibleTimer, 0),
-    SET_FLOAT(oGraphYOffset, 85),
-    SCALE(0, 85.0f),
-    SET_HOME(),
-    CALL_NATIVE(bhv_octoball_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_octoball_loop),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvPaintStain[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
-    DROP_TO_FLOOR(),
-    SET_INT(oOpacity, 255),
-    CALL_NATIVE(bhv_paint_stain_init),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_paint_stain_loop),
-    END_LOOP(),
 };
 
 const BehaviorScript bhvLevelSplatoonTarget[] = {

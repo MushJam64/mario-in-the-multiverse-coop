@@ -251,6 +251,10 @@ MODEL_A_CAGE                    = smlua_model_util_get_id("a_cage_geo")
 MODEL_FLOATING_CHECKER_PLATFORM = smlua_model_util_get_id("floating_checker_platform_geo")
 MODEL_TAXISTOP                  = smlua_model_util_get_id("taxistop_geo")
 MODEL_TSBOAT                    = smlua_model_util_get_id("boat_geo")
+MODEL_OCTOBA                    = smlua_model_util_get_id("octoba_geo")
+MODEL_OCTOBALL                  = smlua_model_util_get_id("octoball_geo")
+MODEL_PAINT_STAIN               = smlua_model_util_get_id("paint_stain_geo")
+MODEL_SQUID                     = smlua_model_util_get_id("squid_geo")
 
 BP3_ATTACH_ROPE                 = 0xF0
 
@@ -262,6 +266,10 @@ SOUND_ABILITY_CUTTER_CATCH      = audio_stream_load("ability_cutter_catch.aiff")
 SOUND_ABILITY_CUTTER_DASH       = audio_stream_load("ability_cutter_dash.aiff")
 SOUND_ABILITY_CUTTER_THROW      = audio_sample_load("ability_cutter_throw.aiff")
 SOUND_MITM_LEVEL_TLIM_TAXI      = audio_sample_load("tlim_taxi.aiff")
+
+-- Floor
+SURFACE_SQUID_INK               = SURFACE_TRAPDOOR + 16
+SURFACE_TOXIC_INK               = SURFACE_TRAPDOOR + 32
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
@@ -362,6 +370,7 @@ local bubble_hat_bhat_mesh               = gfx_get_from_name("bubble_hat_bhat_me
 cutter_hand_right_hand_open_mesh_layer_1 = gfx_get_from_name("cutter_hand_right_hand_open_mesh_layer_1")
 bubblehat_hand_hand_mesh                 = gfx_get_from_name("bubblehat_hand_hand_mesh")
 gfx_empty                                = gfx_get_from_name("GFXEMPTY")
+local squid_hat_lunette_mesh             = gfx_get_from_name("squid_hat_lunette_mesh")
 
 -- Ability struct
 ability_struct                           = {

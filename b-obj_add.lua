@@ -1,4 +1,4 @@
-local function for_each_object_with_behavior(behavior, func) --* function by Isaac
+function for_each_object_with_behavior(behavior, func) --* function by Isaac
     local o = obj_get_first_with_behavior_id(behavior)
     if o == nil then return end
     while o ~= nil do

@@ -7,6 +7,8 @@ define_custom_obj_fields({
     oUpdateRopeSize = "u32",
     oNumSwitchesLeft = "s32",
     oShotByShotgun = "s32",
+    oOctoballCantRespawn = "u32",
+    oFloatF4 = "f32",
 })
 
 -- utils
@@ -1172,7 +1174,7 @@ function bhv_cutter_blade_loop(o)
         end
     end
 
-    if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) then
+    if o.oAction >= 2 and obj_check_hitbox_overlap(gMarioObject, o) and o.oInteractType ~= INTERACT_DAMAGE then
         audio_stream_play(SOUND_ABILITY_CUTTER_CATCH, false, 1)
         spawn_object_relative2(0, 0, 100, 0, gMarioObject, E_MODEL_NONE, id_bhvSparkleSpawn)
         obj_mark_for_deletion(o)
@@ -1905,5 +1907,270 @@ function tsboat_loop(o)
     if o.oAction == 0 then
         local scale = 1.9 * sins(o.oTimer * 0x300)
         obj_scale_xyz(o, scale, scale, 1.2)
+    end
+end
+
+function random_signed_value(max)
+    return random_float() * random_sign() * max
+end
+
+function spawn_multiple_enemies(o, behavior, modelId, amount)
+    local obj
+    for i = 1, amount do
+        obj = spawn_sync_object(behavior, modelId, o.oPosX + random_signed_value(1500.0), o.oPosY + 0,
+            o.oPosZ + random_signed_value(1500.0),
+            nil)
+        --obj_scale(obj, 2.0)
+        --obj.oGraphYOffset = 15
+        --obj.oBehParams = 3 << 24
+        if behavior == bhvOctoballWaves then
+            obj.oOctoballCantRespawn = 1
+        end
+    end
+    return obj
+end
+
+function bhv_fight_waves_manager_init(o)
+    network_init_object(o, true, { "oAction", "oTimer" })
+    --obj_scale(o, 5)
+    --obj_set_model_extended(o, E_MODEL_MARIO)
+end
+
+function bhv_fight_waves_manager_loop(o)
+    local squidLoot
+    if o.oAction == 0 then
+        -- wait for Mario
+        if dist_between_objects(o, nearest_player_to_object(o)) < 2000 then
+            spawn_multiple_enemies(o, id_bhvGoomba, MODEL_OCTOBA, 5)
+            --play_sound(SOUND_MITM_LEVEL_C_BELL, gGlobalSoundSource)
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        -- wait for wave 1 to end
+        if obj_count_objects_with_behavior_id(id_bhvGoomba) == 0 then
+            spawn_multiple_enemies(o, bhvOctoballWaves, MODEL_OCTOBALL, 5)
+            o.oAction = 2
+        end
+    elseif o.oAction == 2 then
+        if count_objects_with_behavior(get_behavior_from_id(bhvOctoballWaves)) == 0 then
+            spawn_multiple_enemies(o, id_bhvChuckya, E_MODEL_CHUCKYA, 5)
+            o.oAction = 3
+        end
+    elseif o.oAction == 3 then
+        -- wait for wave 3 to end
+        if count_objects_with_behavior(get_behavior_from_id(id_bhvChuckya)) == 0 then
+            --djui_chat_message_create("gay")
+            create_sound_spawner(SOUND_GENERAL2_RIGHT_ANSWER)
+            squidLoot = spawn_object2(o, MODEL_ABILITY, bhvAbilityUnlock)
+            squidLoot.oBehParams2ndByte = ABILITY_SQUID
+            o.oAction = 4
+        end
+    elseif o.oAction == 4 then
+        -- end fight
+        if o.oTimer > 20 then
+            cur_obj_spawn_star_at_y_offset(6656.0, 4172.0, -3519.0, 0.0)
+            o.oAction = o.oAction + 1
+        end
+    end
+end
+
+local sOctoballHitbox = {
+    interactType = INTERACT_DAMAGE,
+    downOffset = 0,
+    damageOrCoinValue = 3,
+    health = 0,
+    numLootCoins = 0,
+    radius = 65,
+    height = 113,
+    hurtboxRadius = 0,
+    hurtboxHeight = 0,
+}
+
+function bhv_octoball_init(o)
+    o.oGravity = 2.5
+    o.oFriction = 0.8
+    o.oBuoyancy = 1.3
+    o.oFloatF4 = 0.0
+    network_init_object(o, true, { "oAction", "oTimer", "oFloatF4", "oBehParams" })
+end
+
+local function octoball_spawn_coin(o)
+    if ((o.oBehParams >> 8) & 0x01) == 0 then
+        obj_spawn_yellow_coins(o, 3)
+        o.oBehParams = 0x100
+        --set_object_respawn_info_bits(o, 1)
+    end
+end
+
+local function try_create_octoball_respawner(o)
+    if o.oOctoballCantRespawn == 0 then
+        -- create_respawner(MODEL_OCTOBALL, bhvOctoball, 3000)
+    end
+end
+
+local function octoball_act_explode(o)
+    if o.oTimer < 5 then
+        cur_obj_scale(1.0 + o.oTimer / 5.0)
+    else
+        local explosion = spawn_object2(o, E_MODEL_EXPLOSION, id_bhvExplosion)
+        explosion.oGraphYOffset = explosion.oGraphYOffset + 100.0
+
+        octoball_spawn_coin(o)
+        try_create_octoball_respawner(o)
+
+        o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+    end
+end
+
+local function octoball_attack_collided_from_other_object(o)
+    if o.numCollidedObjs ~= 0 then
+        local other = o.collidedObjs[1]
+        if other == nearest_player_to_object(o) then
+            o.oInteractStatus = o.oInteractStatus | INT_STATUS_HOOT_GRABBED_BY_MARIO
+        elseif obj_has_behavior_id(other, bhvOctoball) ~= 0 then
+            return false
+        end
+        return true
+    end
+    return false
+end
+
+local function octoball_check_interactions(o)
+    obj_set_hitbox(o, sOctoballHitbox)
+
+    if octoball_attack_collided_from_other_object(o) then
+        if (o.oInteractStatus & INT_STATUS_HOOT_GRABBED_BY_MARIO) ~= 0 or
+            (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
+            o.oAction = BOBOMB_ACT_EXPLODE
+        end
+    end
+end
+
+local function octoball_act_patrol(o)
+    o.oForwardVel = 8.0
+    o.oFloatF4 = 0.4
+    local collisionFlags = object_step_without_floor_orient()
+
+    if obj_return_home_if_safe(o, o.oHomeX, o.oHomeY, o.oHomeZ, 600) ~= 0 and
+        (abs_angle_diff(o.oMoveAngleYaw, o.oAngleToMario) < 0x4000) then
+        o.oBobombFuseLit = 1
+        o.oAction = BOBOMB_ACT_CHASE_MARIO
+    end
+
+    obj_check_floor_death(collisionFlags, o.oFloor)
+
+    if o.oTimer % 50 == 0 then
+        spawn_object2(o, MODEL_PAINT_STAIN, bhvPaintStain)
+    end
+end
+
+local function octoball_act_chase_mario(o)
+    o.header.gfx.animInfo.animFrame = o.header.gfx.animInfo.animFrame + 1
+    local animFrame = o.header.gfx.animInfo.animFrame
+    local collisionFlags
+
+    o.oForwardVel = 30.0
+    o.oFloatF4 = 1.2
+    collisionFlags = object_step_without_floor_orient()
+
+    if animFrame == 5 or animFrame == 16 then
+        cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK)
+    end
+
+    if o.oTimer % 10 == 0 then
+        spawn_object2(o, MODEL_PAINT_STAIN, bhvPaintStain)
+    end
+
+    obj_turn_toward_object(o, nearest_player_to_object(o), 16, 0x800)
+    obj_check_floor_death(collisionFlags, o.oFloor)
+end
+
+local function octoball_free_loop(o)
+    o.header.gfx.scale.x = 1.0 + (coss((3000 * o.oFloatF4) * o.oTimer) * (0.12 * o.oFloatF4))
+    o.header.gfx.scale.y = 1.0 + (coss((2500 * o.oFloatF4) * o.oTimer) * (0.23 * o.oFloatF4))
+    o.header.gfx.scale.z = 1.0 + (coss((1000 * o.oFloatF4) * o.oTimer) * (0.08 * o.oFloatF4))
+
+    if o.oAction == BOBOMB_ACT_PATROL then
+        octoball_act_patrol(o)
+    elseif o.oAction == BOBOMB_ACT_CHASE_MARIO then
+        octoball_act_chase_mario(o)
+    elseif o.oAction == BOBOMB_ACT_EXPLODE then
+        octoball_act_explode(o)
+    elseif o.oAction == OBJ_ACT_LAVA_DEATH then
+        if obj_lava_death() ~= 0 then
+            try_create_octoball_respawner(o)
+        end
+    elseif o.oAction == OBJ_ACT_DEATH_PLANE_DEATH then
+        o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+        try_create_octoball_respawner(o)
+    end
+
+    octoball_check_interactions(o)
+
+    if o.oShotByShotgun > 1 then
+        octoball_act_explode(o)
+        o.oShotByShotgun = 0
+    end
+
+    if o.oBobombFuseTimer > 200 then
+        o.oAction = BOBOMB_ACT_EXPLODE
+    end
+end
+
+function bhv_octoball_loop(o)
+    o.oFaceAnglePitch = o.oFaceAnglePitch + (o.oForwardVel * 100.0)
+
+    if dist_between_objects(o, nearest_player_to_object(o)) < 4000 then
+        octoball_free_loop(o)
+
+        if o.oBobombFuseLit == 1 then
+            cur_obj_play_sound_1(SOUND_AIR_BOBOMB_LIT_FUSE)
+            o.oBobombFuseTimer = o.oBobombFuseTimer + 1
+        end
+    end
+end
+
+---@param o Object
+function bhv_paint_stain_init(o)
+    if random_sign() == -1 then
+        o.oAnimState = 0
+    else
+        o.oAnimState = 1
+    end
+
+    o.oFaceAngleYaw = random_u16()
+
+    o.oFloatF4 = 1.0 -- scale
+    cur_obj_scale(o.oFloatF4)
+    network_init_object(o, true, { "oAction", "oTimer", "oFloatF4", "oBehParams" })
+end
+
+---@param o Object
+function bhv_paint_stain_loop(o)
+    local sObjFloor = collision_find_floor(o.oPosX, o.oPosY, o.oPosZ)
+
+    local snormals;
+    if sObjFloor then
+        snormals = { x = sObjFloor.normal.x, y = sObjFloor.normal.y, z = sObjFloor.normal.z }
+    end
+
+    mtxf_align_terrain_normal(o.transform, snormals, { x = o.oPosX, y = o.oPosY, z = o.oPosZ }, o.oFaceAngleYaw)
+    o.header.gfx.throwMatrix = o.transform
+    --[[local z, normal = { x = 0, y = 0, z = 0 }, cur_obj_update_floor_height_and_get_floor().normal
+    o.oFaceAnglePitch = 16384 - calculate_pitch(z, normal)
+    o.oFaceAngleRoll = 0]]
+
+    if o.oTimer > 120 then
+        o.oFloatF4 = o.oFloatF4 - 0.02
+        cur_obj_scale(o.oFloatF4)
+        if o.oFloatF4 <= 0 then
+            obj_mark_for_deletion(o)
+        end
+    end
+    local gMarioState = nearest_mario_state_to_object(o)
+    local marioNearestPaintStain = obj_get_nearest_object_with_behavior_id(nearest_player_to_object(o), bhvPaintStain)
+    if marioNearestPaintStain == o and dist_between_objects(o, gMarioState.marioObj) < 300.0 then
+        gMarioState.health = gMarioState.health - 5
+        -- render_textured_splatoon()
     end
 end
