@@ -9,7 +9,7 @@ const GeoLayout bob_area_1_geo[] = {
 			GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_debris_mesh_layer_1),
 		GEO_CLOSE_NODE(),
 		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -3532, 879, -2882, 0, 45, 0, bob_dl_debris_solid_mesh_layer_1),
-		//GEO_DISPLAY_LIST(LAYER_TRANSPARENT_DECAL, bob_dl_ignoreCol_mesh_layer_6),
+		GEO_DISPLAY_LIST(LAYER_TRANSPARENT_DECAL, bob_dl_ignoreCol_mesh_layer_6),
 		GEO_DISPLAY_LIST(LAYER_OPAQUE, bob_dl_ignoreCol_mesh_layer_1),
 		GEO_DISPLAY_LIST(LAYER_ALPHA, bob_dl_ignoreCol_mesh_layer_4),
 		GEO_DISPLAY_LIST(LAYER_TRANSPARENT, bob_dl_ignoreCol_mesh_layer_5),
