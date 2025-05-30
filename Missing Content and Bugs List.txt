@@ -48,8 +48,7 @@ CUTTER ABILITY:
 - Cutter-rangs can desync sometimes with other players
 
 INKLING ABILITY:
-- syncing missing
+- 
 
 GENERAL STUFF:
-- No infinite lives yet
-- Ignore fall damage isn't in yet
+- 

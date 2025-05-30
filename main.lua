@@ -36,6 +36,9 @@ local function mario_update(m)
             gPlayerSyncTable[0].rotAngle = gPlayerSyncTable[0].rotAngle + 8500
             m.marioObj.header.gfx.angle.y = gPlayerSyncTable[0].rotAngle
         end
+
+        m.peakHeight = m.pos.y
+        m.numLives = 99
     end
 end
 hook_event(HOOK_MARIO_UPDATE, mario_update)

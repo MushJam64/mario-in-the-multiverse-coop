@@ -526,8 +526,6 @@ ability_gravity                          = { [0] = 0, 0, 0, 0 };
 ability_dpad_locked                      = false
 
 fb_bowser_phase                          = 0
-
-gMitmStateExtras = {} ---@type MitmStateExtras[]
 for i = 0, (MAX_PLAYERS - 1) do
 
     -- PlayerSyncTable --
@@ -535,21 +533,12 @@ for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].abilityId = 0
     gPlayerSyncTable[i].rotAngle = 0
 
-    -- MitmStateExtras --
-
-    gMitmStateExtras[i] = {}
-    local mitm = gMitmStateExtras[i]
-
-    -- Squid Stuff --
-
-    mitm.squid_wall = nil
-
-    mitm.squid_x_vel = 0.0
-    mitm.squid_y_vel = 0.0
-    mitm.squid_z_vel = 0.0
-
-    mitm.squid_goop_timer = 0.0
-
+    gPlayerSyncTable[i].sqwall_normalx = 0
+    gPlayerSyncTable[i].sqwall_normalz = 0
+    gPlayerSyncTable[i].squid_x_vel = 0.0
+    gPlayerSyncTable[i].squid_y_vel = 0.0
+    gPlayerSyncTable[i].squid_z_vel = 0.0
+    gPlayerSyncTable[i].squid_goop_timer = 0.0
 end
 
 local courseToLevel = {
