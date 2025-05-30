@@ -181,7 +181,7 @@ local function ability_functions_update(m)
     end
 
     if using_ability(m, ABILITY_SQUID) then
-        if (m.controller.buttonPressed & L_TRIG) ~= 0 then
+        if (m.controller.buttonPressed & L_TRIG) ~= 0 and m.action ~= ACT_BUBBLED then
             spawn_mist_particles()
 
             if m.action == ACT_SQUID then

@@ -12,6 +12,7 @@ gLevelValues.fixCollisionBugsPickBestWall = true
 gBehaviorValues.ShowStarMilestones = false
 gBehaviorValues.ShowStarDialog = false
 gServerSettings.skipIntro = true
+gServerSettings.stayInLevelAfterStar = 1
 gLevelValues.exitCastleWarpNode = 1
 
 smlua_audio_utils_replace_sequence(0x25, 42, 80, "25_custom_peanut_plains")

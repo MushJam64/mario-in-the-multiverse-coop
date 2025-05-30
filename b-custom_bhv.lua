@@ -1916,17 +1916,22 @@ end
 
 function spawn_multiple_enemies(o, behavior, modelId, amount)
     local obj
-    if is_nearest_mario_state_to_object(gMarioStates[0], o) ~= 0 then return end
+    if is_nearest_mario_state_to_object(gMarioStates[0], o) == 0 then return end
     for i = 1, amount do
         obj = spawn_sync_object(behavior, modelId, o.oPosX + random_signed_value(1500.0), o.oPosY + 0,
             o.oPosZ + random_signed_value(1500.0),
-            nil)
+            function(obj2)
+                obj2.oFaceAngleYaw = 0
+                obj2.oFaceAnglePitch = 0
+                obj2.oFaceAngleRoll = 0; obj2.oGraphYOffset = 15
+                if behavior == bhvOctoballWaves then
+                    obj2.oOctoballCantRespawn = 1
+                end
+                obj_scale(obj2, 2.0)
+            end)
         --obj_scale(obj, 2.0)
         --obj.oGraphYOffset = 15
         --obj.oBehParams = 3 << 24
-        if behavior == bhvOctoballWaves then
-            obj.oOctoballCantRespawn = 1
-        end
     end
     return obj
 end
@@ -2181,7 +2186,7 @@ local MOVING_TIME = 203
 ---@param o Object
 function bhv_ink_moving_platform_init(o)
     o.oCapUnkF4 = 1
-    network_init_object(o, true, {"oCapUnkF4", "oVelY", "oTimer", "oPosX", "oPosY", "oPosZ" })
+    network_init_object(o, true, { "oCapUnkF4", "oVelY", "oTimer", "oPosX", "oPosY", "oPosZ" })
 end
 
 function bhv_ink_moving_platform_loop(o)
