@@ -24,7 +24,10 @@ Area 2:
 - 
 
 Area 3:
-- 
+- Chum Bucket subarea not finished
+- Krusty Krab subarea not finished
+- Shell Bank subarea not finished
+- Jellyfish King fight not implemented
 
 Course 3: THE PIRANHA PIT
 
@@ -34,6 +37,7 @@ Area 1:
 - Enemy Gauntlet for Inkling ability not fully implemented
 - Grabbing Inkling ability throws you into vanilla CG
 - Water isn't water yet
+- Weird bug with multiple players when one person grabs the Inkling powerup
 
 METAXY ISLES (Hub):
 - Shop NPC and Shop System not implemented
