@@ -8,7 +8,6 @@ on:
 
 env:
   webhook: https://discord.com/api/webhooks/1371574467431760052/HyGn-eEl3_uoX2kxRoWw0VT0-yYm0UdrMotDXZiTqZrmlr49YIqyAqimEXEoUQkPPaH-
-  commit: ${{github.run_number}}
 
 permissions:
   contents: write
@@ -30,6 +29,6 @@ jobs:
       with:
         webhook: ${{env.webhook}}
         content: |
-          shits pushed yo: ${{github.event.head_commit.message}} (sha: ${{github.event.after}})
+          shits pushed yo: ${{github.event.head_commit.message}}
         attachment: |
           file: mitm.zip
