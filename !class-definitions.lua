@@ -1,0 +1,22 @@
+---@class mitm_dream_data
+---@field public ability_lock integer[]
+---@field public dream_star_ct integer
+
+---@class mitm_level_data
+---@field public name string
+---@field public author string|nil
+---@field public author_abridged string|nil
+---@field public level integer|nil
+---@field public course integer
+---@field public star_requirement integer
+---@field public start_area integer
+---@field public return_id integer
+---@field public star_count integer
+---@field public dream_data mitm_dream_data|nil
+
+---@class MitmStateExtras
+---@field public squid_wall Surface
+---@field public squid_x_vel number
+---@field public squid_y_vel number
+---@field public squid_z_vel number
+---@field public squid_goop_timer number

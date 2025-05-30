@@ -319,22 +319,6 @@ mitmdd_m                                 = { ability_lock = { ABILITY_DEFAULT, A
 mitmdd_n                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_E_SHOTGUN, ABILITY_BUBBLE_HAT, ABILITY_NONE }, dream_star_ct = 7 } ---@type mitm_dream_data
 mitmdd_o                                 = { ability_lock = { ABILITY_DEFAULT, ABILITY_UTIL_MIRROR, ABILITY_HM_FLY, ABILITY_GADGET_WATCH }, dream_star_ct = 8 } ---@type mitm_dream_data
 
----@class mitm_dream_data
----@field public ability_lock integer[]
----@field public dream_star_ct integer
-
----@class mitm_level_data
----@field public name string
----@field public author string|nil
----@field public author_abridged string|nil
----@field public level integer|nil
----@field public course integer
----@field public star_requirement integer
----@field public start_area integer
----@field public return_id integer
----@field public star_count integer
----@field public dream_data mitm_dream_data|nil
-
 --In course order, not alphabetical!
 --Only mess with --[[ Level ]] entry, everything else is pre-configured
 ---@type mitm_level_data[]
@@ -542,9 +526,30 @@ ability_gravity                          = { [0] = 0, 0, 0, 0 };
 ability_dpad_locked                      = false
 
 fb_bowser_phase                          = 0
+
+gMitmStateExtras = {} ---@type MitmStateExtras[]
 for i = 0, (MAX_PLAYERS - 1) do
+
+    -- PlayerSyncTable --
+
     gPlayerSyncTable[i].abilityId = 0
     gPlayerSyncTable[i].rotAngle = 0
+
+    -- MitmStateExtras --
+
+    gMitmStateExtras[i] = {}
+    local mitm = gMitmStateExtras[i]
+
+    -- Squid Stuff --
+
+    mitm.squid_wall = nil
+
+    mitm.squid_x_vel = 0.0
+    mitm.squid_y_vel = 0.0
+    mitm.squid_z_vel = 0.0
+
+    mitm.squid_goop_timer = 0.0
+
 end
 
 local courseToLevel = {

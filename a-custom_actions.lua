@@ -189,14 +189,13 @@ local function act_bubble_hat_jump(m)
     return 0
 end
 
-local squid_wall = nil
-local squid_x_vel, squid_y_vel, squid_z_vel = 0.0, 0.0, 0.0
-local squid_goop_timer = 0.0
-
 function act_squid(m)
+
+    local mitm = gMitmStateExtras[m.playerIndex]
+
     m.marioObj.header.gfx.animInfo.animAccel = 65536
     smlua_anim_util_set_animation(m.marioObj, "mario_anim_squid")
-    if m.playerIndex ~= 0 then return end --!todo sync
+
     local surfie
     local wall
     local intend_x, intend_y, intend_z
@@ -216,7 +215,7 @@ function act_squid(m)
 
         fheight, surfie = find_floor_height(m.pos.x, m.pos.y, m.pos.z), collision_find_floor(m.pos.x, m.pos.y, m.pos.z)
         if surfie and fheight + 10.0 > m.pos.y and surfie.type == SURFACE_SQUID_INK then
-            squid_x_vel, squid_y_vel, squid_z_vel = 0.0, 0.0, 0.0
+            mitm.squid_x_vel, mitm.squid_y_vel, mitm.squid_z_vel = 0.0, 0.0, 0.0
             m.actionState = 1
             vec3f_set(m.vel, 0, 0, 0)
         end
@@ -224,13 +223,13 @@ function act_squid(m)
             stationary_ground_step(m)
         end
     elseif m.actionState == 1 then -- ink ground move
-        squid_x_vel = approach_f32_asymptotic(squid_x_vel, sins(m.intendedYaw) * m.intendedMag, 0.2)
-        squid_z_vel = approach_f32_asymptotic(squid_z_vel, coss(m.intendedYaw) * m.intendedMag, 0.2)
+        mitm.squid_x_vel = approach_f32_asymptotic(mitm.squid_x_vel, sins(m.intendedYaw) * m.intendedMag, 0.2)
+        mitm.squid_z_vel = approach_f32_asymptotic(mitm.squid_z_vel, coss(m.intendedYaw) * m.intendedMag, 0.2)
 
-        squid_goop_timer = squid_goop_timer + (math.abs(squid_x_vel) / 60.0) + (math.abs(squid_z_vel) / 60.0)
+        mitm.squid_goop_timer = mitm.squid_goop_timer + (math.abs(mitm.squid_x_vel) / 60.0) + (math.abs(mitm.squid_z_vel) / 60.0)
 
-        intend_x = m.pos.x + squid_x_vel
-        intend_z = m.pos.z + squid_z_vel
+        intend_x = m.pos.x + mitm.squid_x_vel
+        intend_z = m.pos.z + mitm.squid_z_vel
 
         v3.x = intend_x
         v3.y = m.pos.y
@@ -242,9 +241,9 @@ function act_squid(m)
             m.pos.x = intend_x
             m.pos.y = m.pos.y + 10.0
             m.pos.z = intend_z
-            squid_wall = wall
+            mitm.squid_wall = wall
             m.actionState = 2
-            squid_y_vel = 0.0
+            mitm.squid_y_vel = 0.0
             return false
         end
 
@@ -260,35 +259,35 @@ function act_squid(m)
                 wall = resolve_and_return_wall_collisions(v3, -40.0, 120.0)
                 if wall and wall.type == SURFACE_SQUID_INK then
                     m.pos.y = m.pos.y - 10.0
-                    squid_wall = wall
+                    mitm.squid_wall = wall
                     m.actionState = 2
-                    squid_y_vel = 0.0
+                    mitm.squid_y_vel = 0.0
                     return false
                 end
             end
         end
 
         vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
-        vec3s_set(m.marioObj.header.gfx.angle, 0, atan2s(squid_z_vel, squid_x_vel), 0)
+        vec3s_set(m.marioObj.header.gfx.angle, 0, atan2s(mitm.squid_z_vel, mitm.squid_x_vel), 0)
     elseif m.actionState == 2 then -- ink wall move
-        squid_x_vel = approach_f32_asymptotic(squid_x_vel, sins(m.intendedYaw) * m.intendedMag, 0.2)
-        squid_z_vel = approach_f32_asymptotic(squid_z_vel, coss(m.intendedYaw) * m.intendedMag, 0.2)
+        mitm.squid_x_vel = approach_f32_asymptotic(mitm.squid_x_vel, sins(m.intendedYaw) * m.intendedMag, 0.2)
+        mitm.squid_z_vel = approach_f32_asymptotic(mitm.squid_z_vel, coss(m.intendedYaw) * m.intendedMag, 0.2)
 
-        m.pos.x = m.pos.x + squid_x_vel
-        m.pos.z = m.pos.z + squid_z_vel
+        m.pos.x = m.pos.x + mitm.squid_x_vel
+        m.pos.z = m.pos.z + mitm.squid_z_vel
 
         -- vec3f_copy(ray_origin, m.pos)
         ray_origin.x = m.pos.x
         ray_origin.y = m.pos.y
         ray_origin.z = m.pos.z
 
-        ray_origin.x = ray_origin.x + squid_wall.normal.x * 50.0
+        ray_origin.x = ray_origin.x + mitm.squid_wall.normal.x * 50.0
         ray_origin.y = ray_origin.y + 10.0
-        ray_origin.z = ray_origin.z + squid_wall.normal.z * 50.0
+        ray_origin.z = ray_origin.z + mitm.squid_wall.normal.z * 50.0
 
-        ray_vec[1] = squid_wall.normal.x * -120.0
+        ray_vec[1] = mitm.squid_wall.normal.x * -120.0
         ray_vec[2] = 0.0
-        ray_vec[3] = squid_wall.normal.z * -120.0
+        ray_vec[3] = mitm.squid_wall.normal.z * -120.0
 
         local RAY = collision_find_surface_on_ray(ray_origin.x, ray_origin.y, ray_origin.z,
             ray_vec[1], ray_vec[2], ray_vec[3],
@@ -298,12 +297,12 @@ function act_squid(m)
         vec3f_copy(ray_hit_pos, RAY.hitPos)
 
         if ray_surface and ray_surface.type == SURFACE_SQUID_INK then
-            squid_wall = ray_surface
+            mitm.squid_wall = ray_surface
             m.pos.x = ray_hit_pos.x + ray_surface.normal.x * 20.0
             m.pos.z = ray_hit_pos.z + ray_surface.normal.z * 20.0
 
-            squid_y_vel = approach_f32_asymptotic(squid_y_vel, (gPlayer1Controller.rawStickY / 4.0), 0.2)
-            intend_y = squid_y_vel
+            mitm.squid_y_vel = approach_f32_asymptotic(mitm.squid_y_vel, (gPlayer1Controller.rawStickY / 4.0), 0.2)
+            intend_y = mitm.squid_y_vel
             m.pos.y = m.pos.y + intend_y
 
             wall_angle = atan2s(ray_surface.normal.z, ray_surface.normal.x)
@@ -330,10 +329,10 @@ function act_squid(m)
                 end
             end
 
-            squid_goop_timer = squid_goop_timer + (math.abs(squid_x_vel) / 60.0) + (math.abs(squid_z_vel) / 60.0) +
-                (math.abs(squid_y_vel) / 60.0)
+            mitm.squid_goop_timer = mitm.squid_goop_timer + (math.abs(mitm.squid_x_vel) / 60.0) + (math.abs(mitm.squid_z_vel) / 60.0) +
+                (math.abs(mitm.squid_y_vel) / 60.0)
         else
-            wall_angle = atan2s(squid_wall.normal.z, squid_wall.normal.x)
+            wall_angle = atan2s(mitm.squid_wall.normal.z, mitm.squid_wall.normal.x)
             fheight, surfie = find_floor_height(m.pos.x, m.pos.y, m.pos.z), collision_find_floor(
                 m.pos.x + sins(wall_angle + 0x8000) * 40.0,
                 m.pos.y + 20.0,
@@ -351,18 +350,18 @@ function act_squid(m)
         end
     end
 
-    if squid_goop_timer > 15.0 then
-        squid_goop_timer = 0.0
+    if mitm.squid_goop_timer > 15.0 then
+        mitm.squid_goop_timer = 0.0
         play_sound(SOUND_GENERAL_QUIET_BUBBLE2, gGlobalSoundSource)
     end
 
-    -- if m.playerIndex == 0 then
-    if not using_ability(m, ABILITY_SQUID) then
-        gPlayerSyncTable[0].modelId = nil
-        return set_mario_action(m, ACT_IDLE, 0)
+    if m.playerIndex == 0 then
+        if not using_ability(m, ABILITY_SQUID) then
+            gPlayerSyncTable[0].modelId = nil
+            return set_mario_action(m, ACT_IDLE, 0)
+        end
+        gPlayerSyncTable[0].modelId = MODEL_SQUID
     end
-
-    gPlayerSyncTable[0].modelId = MODEL_SQUID
     --end
 
     return false
