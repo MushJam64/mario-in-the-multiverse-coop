@@ -28,7 +28,7 @@ function djui_hud_print_text_anchored(message, x, y, scale, xAnchor, yAnchor)
     djui_hud_print_text(message, finalX, finalY, scale)
 end
 
-local function get_middle_x_pos(str, scale)
+function get_middle_x_pos(str, scale)
     return djui_hud_get_screen_width() * 0.5 - djui_hud_measure_text(str) * scale * 0.5
 end
 
@@ -253,7 +253,7 @@ local function render_ability_icon(x, y, alpha, index)
 
     gDPSetEnvColor(gDisplayListHead, 255, 255, 255, alpha)]]
 
-    djui_hud_set_color(255, 255, 255, 255)
+    djui_hud_set_color(255, 255, 255, alpha)
     --if ability_images[index] then
     djui_hud_render_texture(ability_images[index][1], x + 8, y - 50, 0.8, 0.8)
     --end
@@ -359,20 +359,41 @@ local function render_ability_get_hud()
         end
     end
 end
-
-local function all_huds()
+local hud_alpha = 0
+local function render_hud()
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_font(FONT_NORMAL)
     djui_hud_set_color(255, 255, 255, 255)
-    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
     if (gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE) then
         render_mitm_hub_hud();
     else
         render_mitm_return_to_hub_hud();
     end
-    local hud_alpha = 230
+    if isPaused then
+        hud_alpha = approach_f32_asymptotic(hud_alpha, 0.0, 0.2)
+    else
+        hud_alpha = approach_f32_asymptotic(hud_alpha, 255.0, 0.2)
+    end
     render_ability_dpad(60, 265 - 240, hud_alpha);
     render_ability_get_hud()
+
+    -- Hud bar
+    djui_hud_set_font(FONT_HUD)
+    djui_hud_set_color(255, 255, 255, hud_alpha)
+    local sw = djui_hud_get_screen_width()
+    djui_hud_render_texture(TEX_HUDBAR, sw - 190, 265 - 255, 0.18, 0.18)
+    djui_hud_render_texture(gTextures.coin, sw - 165, 265 - 255 + 4, 1, 1)
+    djui_hud_print_text(string.format("%03d", hud_get_value(HUD_DISPLAY_COINS)), sw - 165 + 20, 265 - 255 + 4, 1)
+
+    djui_hud_render_texture(gTextures.star, sw - 165 + 20 + 25 + 25, 265 - 255 + 4, 1, 1)
+    djui_hud_print_text(string.format("%03d", hud_get_value(HUD_DISPLAY_STARS)), sw - 165 + 20 + 25 + 20 + 25,
+    265 - 255 + 4,
+        1)
+
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_STAR_COUNT)
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_COIN_COUNT)
+    djui_hud_reset_color()
 end
 
-hook_event(HOOK_ON_HUD_RENDER_BEHIND, all_huds)
+hook_event(HOOK_ON_HUD_RENDER_BEHIND, render_hud)

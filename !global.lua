@@ -3,6 +3,8 @@
 -- Custom Mod
 
 TEX_DPAD                 = get_texture_info("dpad_texture")
+TEX_HUDBAR               = get_texture_info("hudbar_texture")
+TEX_MAINMENU             = get_texture_info("mainmenu_texture")
 ability_util             = { str = nil, display = false, seq = false }
 
 -- Defining NULL
@@ -256,6 +258,8 @@ MODEL_OCTOBALL                  = smlua_model_util_get_id("octoball_geo")
 MODEL_PAINT_STAIN               = smlua_model_util_get_id("paint_stain_geo")
 MODEL_SQUID                     = smlua_model_util_get_id("squid_geo")
 MODEL_INK_MOVING_PLATFORM       = smlua_model_util_get_id("ink_moving_platform_geo")
+MODEL_PAINT_GUN                 = smlua_model_util_get_id("paint_gun_geo")
+MODEL_PAINT_BULLET              = smlua_model_util_get_id("paint_bullet_geo")
 
 BP3_ATTACH_ROPE                 = 0xF0
 
@@ -271,6 +275,8 @@ SOUND_MITM_LEVEL_TLIM_TAXI      = audio_sample_load("tlim_taxi.aiff")
 -- Floor
 SURFACE_SQUID_INK               = SURFACE_TRAPDOOR + 16
 SURFACE_TOXIC_INK               = SURFACE_TRAPDOOR + 32
+
+CAMERA_MODE_PAINT_GUN           = CAMERA_MODE_ROM_HACK + 0X01
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
@@ -526,8 +532,8 @@ ability_gravity                          = { [0] = 0, 0, 0, 0 };
 ability_dpad_locked                      = false
 
 fb_bowser_phase                          = 0
-for i = 0, (MAX_PLAYERS - 1) do
 
+for i = 0, (MAX_PLAYERS - 1) do
     -- PlayerSyncTable --
 
     gPlayerSyncTable[i].abilityId = 0

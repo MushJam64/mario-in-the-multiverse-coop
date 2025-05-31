@@ -29,7 +29,7 @@ const LevelScript level_jrb_entry[] = {
 
 	AREA(1, jrb_area_1),
 		WARP_NODE(/*entry*/ 0x0A, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
-		WARP_NODE(/*death*/ 0xF1, LEVEL_C, /*this area*/ 0x01, 0x01, WARP_NO_CHECKPOINT),
+		WARP_NODE(/*death*/ 0xF1, LEVEL_JRB, /*this area*/ 0x01, 0x01, WARP_NO_CHECKPOINT),
 		WARP_NODE(/*death entry*/ 0x01, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
 		OBJECT(MODEL_NONE, 1515, 2416, 3128, 0, 0, 0, (2 << 16), bhvCoinFormation),
 		OBJECT(MODEL_NONE, 2256, 2438, 5385, 0, 0, 0, 0x00000000, bhvCoinFormation),

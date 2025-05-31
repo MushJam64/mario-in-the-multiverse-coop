@@ -180,8 +180,8 @@ local function attack_object(obj, interaction)
         attackType = ATTACK_GROUND_POUND_OR_TWIRL
     elseif interaction == INT_PUNCH then
         attackType = ATTACK_PUNCH
-        -- elseif interaction == INT_SLASH then
-        obj.oIntangibleTimer = 4
+        --elseif interaction == INT_SLASH then
+        --obj.oIntangibleTimer = 4
         --  -- fall through
     elseif interaction == INT_KICK or interaction == INT_TRIP then
         attackType = ATTACK_KICK_OR_TRIP
@@ -191,16 +191,15 @@ local function attack_object(obj, interaction)
         attackType = ATTACK_FROM_ABOVE
     elseif interaction == INT_HIT_FROM_BELOW then
         attackType = ATTACK_FROM_BELOW
-        --[[elseif interaction == INT_HIT_STUN then
-        attackType = ATTACK_HIT_STUN]]
+        --elseif interaction == INT_HIT_STUN then
+        --attackType = ATTACK_HIT_STUN
     end
 
     obj.oInteractStatus = attackType + (INT_STATUS_INTERACTED + INT_STATUS_WAS_ATTACKED)
 
-    --[[ if interaction == INT_SLASH then
-        obj.oInteractStatus = bit.bor(obj.oInteractStatus, INT_STATUS_CHRONOS_SLASHED)
-    end
-]]
+    -- if interaction == INT_SLASH then
+    --obj.oInteractStatus = bit.bor(obj.oInteractStatus, INT_STATUS_CHRONOS_SLASHED)
+    --end
     return attackType
 end
 
@@ -244,6 +243,10 @@ end
 
 function approach_s32_symmetric(current, target, inc)
     return approach_s32(current, target, inc, inc)
+end
+
+local function should_object_spawn()
+    return (is_nearest_mario_state_to_object(gMarioStates[0], get_current_object()) ~= 0)
 end
 
 -- bhv function
@@ -664,7 +667,7 @@ function bhv_g_attached_rope_init(o)
 
     surf = collision_find_surface_on_ray(
         originPos[1], originPos[2], originPos[3],
-        raydir[1], raydir[2], raydir[3], 4
+        raydir[1], raydir[2], raydir[3], 2
     )
 
     if surf.surface ~= nil then
@@ -706,7 +709,7 @@ end
 function bhv_g_attached_rope_loop(o)
     local gMarioState = nearest_mario_state_to_object(o)
 
-    for i = 1, o.numCollidedObjs - 1 do
+    for i = 1, o.numCollidedObjs do
         local other = o.collidedObjs[i]
         local marioHigherPos = gMarioState.pos.y + 100
         if (obj_has_behavior_id(other, bhvCutterBlade) ~= 0 and other.oPosY - 30 > o.oPosY) or
@@ -714,7 +717,7 @@ function bhv_g_attached_rope_loop(o)
             local otherObjY = (other == gMarioState.marioObj) and math.floor(marioHigherPos) or math.floor(other.oPosY)
             audio_stream_play(SOUND_ABILITY_CUTTER_CATCH, false, 1)
             local cutRope = spawn_object_relative(0, 0, otherObjY - o.oPosY, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
-            o.oBehParams = (o.oBehParams & 0xFFFF0000) | (otherObjY - o.oPosY)
+            o.oBehParams = (o.oBehParams & 0xFFFF0000) |  math.floor(otherObjY - o.oPosY)
             o.parentObj.oBehParams = (o.parentObj.oBehParams & ~(BP3_ATTACH_ROPE << 8))
             cur_obj_become_intangible()
             o.oUpdateRopeSize = 1
@@ -975,7 +978,7 @@ function bhv_sir_kibble_init(o)
     end
     smlua_anim_util_set_animation(o, "sir_kibble_anim_idle")
     o.oGravity = -4.0
-    network_init_object(o, true, { "oAction", "oTimer", "oHealth", "oForwardVel", "oVelY", "oInteractStatus" })
+    network_init_object(o, true, { "oAction", "oTimer", "oShotByShotgun", "oHealth", "oForwardVel", "oVelY", "oInteractStatus" })
 end
 
 -- sir_kibble_anim_throw and sir_kibble_anim_idle
@@ -1165,7 +1168,7 @@ function bhv_cutter_blade_loop(o)
     end
 
     o.oInteractStatus = 0
-    for i = 1, o.numCollidedObjs - 1 do
+    for i = 1, o.numCollidedObjs do
         local other = o.collidedObjs[i]
         if other ~= o.parentObj then
             if other ~= gMarioObject then
@@ -1916,7 +1919,7 @@ end
 
 function spawn_multiple_enemies(o, behavior, modelId, amount)
     local obj
-    if is_nearest_mario_state_to_object(gMarioStates[0], o) == 0 then return end
+    if not should_object_spawn() then return end
     for i = 1, amount do
         obj = spawn_sync_object(behavior, modelId, o.oPosX + random_signed_value(1500.0), o.oPosY + 0,
             o.oPosZ + random_signed_value(1500.0),
@@ -1967,8 +1970,10 @@ function bhv_fight_waves_manager_loop(o)
         if count_objects_with_behavior(get_behavior_from_id(id_bhvChuckya)) == 0 then
             --djui_chat_message_create("gay")
             create_sound_spawner(SOUND_GENERAL2_RIGHT_ANSWER)
-            squidLoot = spawn_object2(o, MODEL_ABILITY, bhvAbilityUnlock)
-            squidLoot.oBehParams2ndByte = ABILITY_SQUID
+            if should_object_spawn() then
+                spawn_sync_object(bhvAbilityUnlock, MODEL_ABILITY, o.oPosX, o.oPosY, o.oPosZ,
+                    function(j) j.oBehParams2ndByte = ABILITY_SQUID end)
+            end
             o.oAction = 4
         end
     elseif o.oAction == 4 then
@@ -1997,7 +2002,7 @@ function bhv_octoball_init(o)
     o.oFriction = 0.8
     o.oBuoyancy = 1.3
     o.oFloatF4 = 0.0
-    network_init_object(o, true, { "oAction", "oTimer", "oFloatF4", "oBehParams" })
+    network_init_object(o, true, { "oAction", "oTimer", "oFloatF4", "oBehParams", "oShotByShotgun" })
 end
 
 local function octoball_spawn_coin(o)
@@ -2201,4 +2206,150 @@ function bhv_ink_moving_platform_loop(o)
     end
 
     cur_obj_move_using_vel()
+end
+
+local sPaintGunHitbox = {
+    interactType      = INTERACT_GRABBABLE,
+    downOffset        = 50,
+    damageOrCoinValue = 0,
+    health            = 1,
+    numLootCoins      = 0,
+    radius            = 120,
+    height            = 200,
+    hurtboxRadius     = 130,
+    hurtboxHeight     = 210,
+}
+
+local sPaintBulletHitbox = {
+    interactType      = INTERACT_DAMAGE,
+    downOffset        = 50,
+    damageOrCoinValue = 1,
+    health            = 1,
+    numLootCoins      = 0,
+    radius            = 45,
+    height            = 80,
+    hurtboxRadius     = 45,
+    hurtboxHeight     = 80,
+}
+
+local function shoot()
+    local o = get_current_object()
+    local m = nearest_mario_state_to_object(o)
+    if should_object_spawn() then
+        spawn_sync_object(bhvPaintBullet, MODEL_PAINT_BULLET, 0, 0, o.oPosZ + 180,
+            function(s)
+                s.oAnimState = o.oAnimState
+                s.parentObj = o
+                obj_copy_angle(s, o)
+                obj_copy_pos_and_angle(s, o)
+                obj_set_parent_relative_pos(s, 0, 0, 180)
+                obj_build_relative_transform(s)
+            end)
+    end
+    cur_obj_play_sound_1(SOUND_OBJ_SNUFIT_SHOOT)
+end
+
+local function remove_mario_from_paint_gun()
+    local m = nearest_mario_state_to_object(get_current_object())
+    set_mario_action(m, ACT_IDLE, 0)
+    m.usedObj = nil
+    gLakituState.mode = CAMERA_MODE_8_DIRECTIONS
+    --gMarioObject.header.gfx.sharedChild = gLoadedGraphNodes[ability_struct[m.abilityId].model_id]
+end
+
+function bhv_paint_gun_init(o)
+    network_init_object(o, true,
+        { "oInteractStatus", "oSubAction", "oAction", "oAngleVelYaw", "oShotByShotgun", "oAnimState", "oFaceAnglePitch",
+            "oMoveAngleYaw" })
+end
+
+function bhv_paint_gun_loop(o)
+    local m = nearest_mario_state_to_object(o)
+    local dist = dist_between_objects(o, m.marioObj)
+    obj_set_hitbox(o, sPaintGunHitbox)
+    o.oInteractionSubtype = INT_SUBTYPE_NOT_GRABBABLE
+
+    if o.oAction == 0 then -- orange
+        o.oMoveAngleYaw = obj_angle_to_object(o, m.marioObj)
+        obj_turn_toward_object(o, m.marioObj, 0x0f, 0x1000)
+        o.oFaceAnglePitch = o.oMoveAnglePitch
+
+        if dist < 2500 and o.oTimer % 15 == 0 then
+            shoot()
+        end
+
+        if (o.oInteractStatus & INT_STATUS_INTERACTED ~= 0 and o.oInteractStatus & INT_STATUS_WAS_ATTACKED ~= 0)
+            or o.oShotByShotgun == 2
+        or o.oInteractStatus & INT_STATUS_MARIO_UNK1 ~= 0 then
+            o.oAction = o.oAction + 1
+            o.oAnimState = 0
+        end
+    elseif o.oAction == 1 then -- blue
+        if o.oSubAction == 0 then
+            o.oAngleVelYaw = 0x2000
+            o.oSubAction = o.oSubAction + 1
+        elseif o.oSubAction == 1 then -- pivot and slow down
+            o.oMoveAngleYaw = o.oMoveAngleYaw + o.oAngleVelYaw
+            o.oAngleVelYaw = approach_s32(o.oAngleVelYaw, 0, 0x50, 0x50)
+            if o.oAngleVelYaw <= 0 then o.oSubAction = o.oSubAction + 1 end
+        elseif o.oSubAction == 2 then -- wait to be controlled
+            if dist < 400 then
+                hud_information_string = "Press B to use"
+               --[[ if m.controller.buttonPressed & B_BUTTON ~= 0 then
+                    o.oSubAction = o.oSubAction + 1
+                    --obj_set_model(gMarioObject, MODEL_NONE)
+                    o.oTimer = 0
+                end]]
+            end
+        elseif o.oSubAction == 3 then -- Mario controls it
+            if set_cam_angle(0) == 3 then
+                set_cam_angle(CAM_ANGLE_LAKITU)
+            end
+
+            --shock_rocket_stick_control() --todo add
+            set_mario_action(m, ACT_CUTSCENE_CONTROLLED, 0)
+            m.usedObj = o
+            if m.playerIndex == 0 then
+                gLakituState.mode = CAMERA_MODE_PAINT_GUN
+            end
+
+            if m.controller.buttonPressed & A_BUTTON ~= 0 then
+                shoot()
+            elseif m.controller.buttonPressed & B_BUTTON ~= 0 then
+                remove_mario_from_paint_gun()
+                o.oSubAction = o.oSubAction - 1
+            end
+        end
+    end
+
+    -- cap pitch to avoid camera flipping
+    if o.oMoveAnglePitch > 0x1600 then o.oMoveAnglePitch = 0x1600 end
+    if o.oMoveAnglePitch < -0x1800 then o.oMoveAnglePitch = -0x1800 end
+
+    o.oInteractStatus = 0
+    o.oShotByShotgun = 0
+end
+
+function bhv_paint_bullet_loop(o)
+    obj_set_hitbox(o, sPaintBulletHitbox)
+
+    local ceilHeight = find_ceil_height(o.oPosX, o.oPosY, o.oPosZ)
+    cur_obj_update_floor_and_walls()
+    obj_attack_collided_from_other_object(o)
+
+    if o.oTimer == 0 then
+        local smoke = spawn_object(o, E_MODEL_SMOKE, id_bhvSmoke)
+        obj_scale(smoke, 3.0)
+    end
+
+    if obj_check_if_collided_with_object(o, nearest_player_to_object(o)) ~= 0
+        or o.oTimer > 70
+        or (o.oMoveFlags & OBJ_MOVE_HIT_WALL) ~= 0
+        or (o.oPosY - o.oFloorHeight < 15)
+        or (ceilHeight - o.oPosY < 20) then
+        obj_mark_for_deletion(o)
+    end
+
+    cur_obj_move_xz_using_fvel_and_yaw()
+    o.oPosY = o.oPosY - (sins(o.oMoveAnglePitch)) * o.oForwardVel
 end

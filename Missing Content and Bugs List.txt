@@ -12,7 +12,6 @@ Area 4:
 - Pipe to warp back to Area 3 isn't there
 - Star Piece block with behavior isn't implemented
 - Hidden buttons for one of the stars isn't implemented yet
-- Ink blobs and stains toward the left area aren't there
 - Marx fight not in yet
 
 Course 2: MARIO IN BIKINI BOTTOM
@@ -32,12 +31,7 @@ Area 3:
 Course 3: THE PIRANHA PIT
 
 Area 1:
-- Red Coin wall inaccurate if Inkling ability goes outside of blue ink
-- Ink Blaster homing turrets not in yet
-- Enemy Gauntlet for Inkling ability not fully implemented
-- Grabbing Inkling ability throws you into vanilla CG
-- Water isn't water yet
-- Weird bug with multiple players when one person grabs the Inkling powerup
+- bullet bill and npcs missing
 
 METAXY ISLES (Hub):
 - Shop NPC and Shop System not implemented

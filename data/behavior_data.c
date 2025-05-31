@@ -383,6 +383,34 @@ const BehaviorScript bhvInkMovingPlatform[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvPaintGun[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_ANGLE_TO_MOVE_ANGLE)), //or OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_NO_DREAM_COMET also
+    SET_INT(oInteractType, INTERACT_GRABBABLE),
+    SET_INT(oInteractionSubtype, INT_SUBTYPE_NOT_GRABBABLE),
+    SET_INT(oAnimState, 1),
+    CALL_NATIVE(bhv_paint_gun_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_paint_gun_loop),
+        SET_INT(oIntangibleTimer, 0),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvPaintBullet[] = {
+    BEGIN(OBJ_LIST_DESTRUCTIVE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    SET_FLOAT(oDrawingDistance, 8000),
+    SET_FLOAT(oCollisionDistance, 500),
+    SET_FLOAT(oForwardVel, 70),
+    SET_INT(oWallHitboxRadius, 40),
+    BEGIN_LOOP(),
+        SET_INT(oIntangibleTimer, 0),
+        CALL_NATIVE(bhv_paint_bullet_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1475,33 +1503,6 @@ const BehaviorScript bhvCraneRock[] = {
     CALL_NATIVE(bhv_crane_rock_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_crane_rock_loop),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvPaintGun[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_ANGLE_TO_MOVE_ANGLE | OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_NO_DREAM_COMET)),
-    SET_INT(oInteractType, INTERACT_GRABBABLE),
-    SET_INT(oInteractionSubtype, INT_SUBTYPE_NOT_GRABBABLE),
-    SET_INT(oAnimState, 1),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_paint_gun_loop),
-        SET_INT(oIntangibleTimer, 0),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvPaintBullet[] = {
-    BEGIN(OBJ_LIST_DESTRUCTIVE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    SET_FLOAT(oDrawingDistance, 8000),
-    SET_FLOAT(oCollisionDistance, 500),
-    SET_FLOAT(oForwardVel, 70.0f),
-    SET_INT(oWallHitboxRadius, 40),
-    BEGIN_LOOP(),
-        SET_INT(oIntangibleTimer, 0),
-        CALL_NATIVE(bhv_paint_bullet_loop),
     END_LOOP(),
 };
 

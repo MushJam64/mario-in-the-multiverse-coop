@@ -1,11 +1,14 @@
 -- name: \\#0865de\\Mario \\#ffffff\\In The \\#3b348a\\Multiverse
 -- description: \\#0865de\\Mario \\#ffffff\\In The \\#3b348a\\Multiverse\\#ffffff\\ is a Collaborative Major Hack brought to you by an all-star team of ROMhackers, each representing a given series through a unique level and ability to make this a journey like no other.\n\nPorted By:\n\\#00ff00\\I'mYourCat\\#FF0000\\2 (Creator)\n\\#dcdcdc\\x\\#00FF00\\Luigi\\#434343\\Gamer\\#dcdcdc\\x (Programmer)\n\\#FFC0CB\\MaiskX3 (Music Porter, Tester)\n\\#105009\\Emeraldsniper (Tester)\n\\#FF004C\\CitraDreamPainter (Tester)\n\\#00FFFF\\WBmarioo (Tester)
 -- incompatible: romhack
+-- pausable: false
+
 if save_file_check_ability_unlocked(ABILITY_CUTTER) then
     gLevelValues.entryLevel = LEVEL_CASTLE
 else
     gLevelValues.entryLevel = LEVEL_BOB
 end
+
 gLevelValues.disableActs = true
 gLevelValues.fixCollisionBugs = true
 gLevelValues.fixCollisionBugsPickBestWall = true
@@ -39,6 +42,7 @@ local function mario_update(m)
 
         m.peakHeight = m.pos.y
         m.numLives = 99
+
     end
 end
 hook_event(HOOK_MARIO_UPDATE, mario_update)

@@ -1789,14 +1789,12 @@ Gfx mat_revert_level_pipe_MversePipe2_layer1[] = {
 };
 
 Gfx level_pipe_Level_Pipe_Visual_mesh_layer_1[] = {
-	gsSPDisplayList(mat_level_pipe_MversePipe1_layer1),
 	gsSPDisplayList(level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_0),
 	gsSPDisplayList(mat_revert_level_pipe_MversePipe1_layer1),
 	gsSPEndDisplayList(),
 };
 
 Gfx level_pipe_Level_Pipe_Visual_mesh_layer_5[] = {
-	gsSPDisplayList(mat_level_pipe_MversePipe2_layer1),
 	gsSPDisplayList(level_pipe_Level_Pipe_Visual_mesh_layer_1_tri_1),
 	gsSPDisplayList(mat_revert_level_pipe_MversePipe2_layer1),
 	gsSPEndDisplayList(),

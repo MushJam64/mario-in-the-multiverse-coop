@@ -80,21 +80,36 @@ local function shift_UV_NORMAL(gfx, vertcount, speed, bhv, cycle)
     end]]
 end
 
+local mversepipe_mat = gfx_get_from_name("mat_level_pipe_MversePipe1_layer1")
+local mversepipe_mat2 = gfx_get_from_name("mat_level_pipe_MversePipe2_layer1")
+
 function geo_update_mverse_pipe(n, m)
     local objectGraphnode = geo_get_current_object()
-    local gfx = cast_graph_node(n.next).displayList
+    local gfx = cast_graph_node(n.next)
+
+    local ptr
+    ptr = objectGraphnode._pointer
+
+    local dlHead = gfx_get_from_name("mitm_g" .. ptr)
+    local dlHead2 = gfx_get_from_name("mitm_g2" .. ptr)
+
+    if not dlHead then
+        dlHead = gfx_create("mitm_g" .. ptr, 14)
+        dlHead2 = gfx_create("mitm_g2" .. ptr, 14)
+        gfx_copy(dlHead, mversepipe_mat, gfx_get_length(mversepipe_mat))
+        gfx_copy(dlHead2, mversepipe_mat2, gfx_get_length(mversepipe_mat2))
+    end
     if objectGraphnode then
         local timer = objectGraphnode.oUnk94
         local grade = (objectGraphnode.oOpacity / 255.0)
         local r = 120 + sins(timer * 0x300 + 0x0000) * 55.0 * grade
         local g = 120 + sins(timer * 0x300 + 0x5555) * 55.0 * grade
         local b = 120 + sins(timer * 0x300 + 0xAAAA) * 55.0 * grade
-        gfx_parse(gfx, function(dl, cmd)
-            if cmd == G_SETENVCOLOR then
-                gfx_set_command(dl, "gsDPSetEnvColor(%i, %i, %i, 255)", r, g, b)
-            end
-        end)
+        gfx_set_command(gfx_get_command(dlHead, 6), "gsDPSetEnvColor(%i, %i, %i, 255)", r, g, b)
+        gfx_set_command(gfx_get_command(dlHead2, 3), "gsDPSetEnvColor(255, 255, 255, %i)", grade * 255.0 - 255.0)
     end
+    gfx.displayList = dlHead
+    cast_graph_node(n.next.next.next).displayList = dlHead2
 end
 
 ---!TODO
