@@ -5,6 +5,7 @@
 TEX_DPAD                 = get_texture_info("dpad_texture")
 TEX_HUDBAR               = get_texture_info("hudbar_texture")
 TEX_MAINMENU             = get_texture_info("mainmenu_texture")
+TEX_SELECTOR             = get_texture_info("selecterhud_texture")
 ability_util             = { str = nil, display = false, seq = false }
 
 -- Defining NULL
@@ -618,6 +619,10 @@ function check_if_swap_ability_allowed(m)
     if m.action == ACT_BUBBLE_HAT_JUMP then
         return false
     end
+
+    if isPaused then
+        return false
+    end
     --[[if cur_obj_nearest_object_with_behavior(bhvShockRocket) ~= nil then
         return false
     end
@@ -626,6 +631,57 @@ function check_if_swap_ability_allowed(m)
     end]]
 
     return true
+end
+
+function set_ability_slot(index, ability_id)
+    local ability_already_on_dpad = false
+    local old_index = 0
+    for i = 0, 3 do
+        if ability_slot[i] == ability_id then
+            ability_already_on_dpad = true
+            old_index = i
+        end
+    end
+
+    if ability_already_on_dpad then
+        -- swap
+        ability_slot[old_index] = ability_slot[index]
+        if old_index == 0 then
+            gGlobalSyncTable.ability_slot0 = ability_slot[index]
+        elseif old_index == 1 then
+            gGlobalSyncTable.ability_slot1 = ability_slot[index]
+        elseif old_index == 2 then
+            gGlobalSyncTable.ability_slot2 = ability_slot[index]
+        elseif old_index == 3 then
+            gGlobalSyncTable.ability_slot3 = ability_slot[index]
+        end
+        ability_slot[index] = ability_id
+
+
+        if index == 0 then
+            gGlobalSyncTable.ability_slot0 = ability_id
+        elseif index == 1 then
+            gGlobalSyncTable.ability_slot1 = ability_id
+        elseif index == 2 then
+            gGlobalSyncTable.ability_slot2 = ability_id
+        elseif index == 3 then
+            gGlobalSyncTable.ability_slot3 = ability_id
+        end
+    else
+        -- replace
+        ability_slot[index] = menuScroll2wayX
+        if index == 0 then
+            gGlobalSyncTable.ability_slot0 = menuScroll2wayX
+        elseif index == 1 then
+            gGlobalSyncTable.ability_slot1 = menuScroll2wayX
+        elseif index == 2 then
+            gGlobalSyncTable.ability_slot2 = menuScroll2wayX
+        elseif index == 3 then
+            gGlobalSyncTable.ability_slot3 = menuScroll2wayX
+        end
+    end
+
+    --save_file_set_ability_dpad()
 end
 
 function using_ability(gMarioState, ability_id)

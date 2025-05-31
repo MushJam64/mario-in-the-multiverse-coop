@@ -7,6 +7,7 @@ local np = gNetworkPlayers[0]
 local restartLevelArea = 1
 
 isPaused = false
+isChangingAbility = false
 
 --* thanks coolio for the hook & function overwriting
 
@@ -26,6 +27,7 @@ local function hook_event_modded(hook, func)
         return real_hook_event(hook, func)
     end
 end
+
 _G.hook_event = hook_event_modded
 
 local function call_pause_exit_hooks(exitToCastle)
@@ -56,6 +58,9 @@ local selectedOption = 1
 local function close_menu()
     if isPaused then
         isPaused = false
+        if isChangingAbility then
+            isChangingAbility = false
+        end
         play_sound(SOUND_MENU_PAUSE_HIGHPRIO, zero)
         m.controller.buttonPressed = 0
     end
@@ -140,15 +145,8 @@ local function exit_course()
     end
 end
 
-local function restart_course()
-    if call_pause_exit_hooks(false) then
-        --warp_restart_level()
-        warp_to_level(gNetworkPlayers[0].currLevelNum, restartLevelArea, gNetworkPlayers[0].currActNum)
-        gMarioStates[0].health = 0x880
-        close_menu()
-    else
-        play_sound(SOUND_MENU_CAMERA_BUZZ, zero)
-    end
+local function change_abil()
+    isChangingAbility = true
 end
 
 local function exit_to_castle()
@@ -165,7 +163,7 @@ end
 
 local pauseMenuLevelOptions = {
     { name = "CONTINUE",         func = close_menu },
-    { name = "CHANGE ABILITIES", func = restart_course },
+    { name = "CHANGE ABILITIES", func = change_abil },
     { name = "EXIT COURSE",      func = exit_course },
     { name = "EXIT TO CASTLE",   func = exit_to_castle },
 }
@@ -237,77 +235,202 @@ local function render_text(text)
     end
 end
 
+
+local menu_ability_y_offset = {}
+local menu_ability_gravity = {}
+for i = 0, 18 do
+    menu_ability_y_offset[i] = 0
+    menu_ability_gravity[i] = 0
+end
+
+local gToPos = {}
+for i = 1, 16 do
+    gToPos[i] = math.ceil(i / 4)
+end
+
+menuScroll2wayX = 0
+local scroll2wayCooldown = 0
+local def_scroll_2waycool = 5
+
+local function bounds_check(isIncreasing, limit, delta)
+    local target = menuScroll2wayX + delta
+    if (isIncreasing and target > limit) or (not isIncreasing and target < limit) then
+        play_sound(SOUND_MENU_CAMERA_BUZZ, zero)
+        return false
+    end
+    return true
+end
+
+local function setscrolltarget()
+    scroll2wayCooldown = def_scroll_2waycool
+end
+
+local function render_ability_icon_at_slot(slot, yOffset, img)
+    local posX = get_middle_x_pos(" ", 3.5) - 150 + (slot % 4) * 33 + 30
+    local posY = yOffset + 195 + (gToPos[slot + 1] * 33) - 135
+    render_ability_icon(posX, posY, 255, img)
+end
+
+local function render_utility_icon_at_slot(slot, yOffset, img)
+    local posX = get_middle_x_pos(" ", 3.5) + (slot % 4) * 33 + 30
+    local posY = yOffset + 195 + (gToPos[16] * 33) - 135
+    render_ability_icon(posX, posY, 255, img)
+end
+
+local function handle_menu_navigation(controller)
+    if controller.rawStickY > 60 then
+        if menuScroll2wayX < 16 and bounds_check(false, 0, -4) then
+            menuScroll2wayX = menuScroll2wayX - 4
+            play_sound(SOUND_MENU_CHANGE_SELECT, zero)
+        else
+            play_sound(SOUND_MENU_CAMERA_BUZZ, zero)
+        end
+        setscrolltarget()
+    elseif controller.rawStickY < -60 then
+        if menuScroll2wayX < 16 and bounds_check(true, 18, 4) then
+            menuScroll2wayX = menuScroll2wayX + 4
+            play_sound(SOUND_MENU_CHANGE_SELECT, zero)
+        else
+            play_sound(SOUND_MENU_CAMERA_BUZZ, zero)
+        end
+        setscrolltarget()
+    elseif controller.rawStickX > 60 then
+        if bounds_check(true, 18, 1) then
+            menuScroll2wayX = menuScroll2wayX + 1
+            play_sound(SOUND_MENU_CHANGE_SELECT, zero)
+        end
+        setscrolltarget()
+    elseif controller.rawStickX < -60 then
+        if bounds_check(false, 0, -1) then
+            menuScroll2wayX = menuScroll2wayX - 1
+            play_sound(SOUND_MENU_CHANGE_SELECT, zero)
+        end
+        setscrolltarget()
+    end
+end
+
 local function hud_render()
+    djui_hud_set_resolution(RESOLUTION_N64)
+    djui_hud_set_font(FONT_TINY)
+
     if not isPaused then return end
 
-    -- Character Select Support
-    if _G.charSelectExists then
-        local csOptionExists = false
-        for _, option in ipairs(pauseMenuLevelOptions) do
-            if option.name == "OPEN CHARACTER SELECT" then
-                csOptionExists = true
-                break
-            end
-        end
-        if not csOptionExists then
+    djui_hud_set_color(0, 0, 0, 180)
+    djui_hud_render_texture(TEX_MAINMENU, get_middle_x_pos(" ", 3.5) - 120, 0, 0.25, 0.25)
+    m.freeze = 1
+
+    if not isChangingAbility then
+        -- Character Select Support
+        --[[if _G.charSelectExists and not table.find(pauseMenuLevelOptions, function(option) return option.name == "OPEN CHARACTER SELECT" end) then
             table.insert(pauseMenuLevelOptions, { name = "OPEN CHARACTER SELECT", func = open_cs })
         end
 
-        if isPaused and _G.charSelect.is_menu_open() then
+        if _G.charSelectExists and _G.charSelect.is_menu_open() then
             close_menu()
         end
-    end
+]]
+        -- Level / course info
+        local screenHeight, screenWidth = djui_hud_get_screen_height(), djui_hud_get_screen_width()
+        local optionPosY = screenHeight * 0.55
+        djui_hud_set_color(255, 255, 255, 255)
 
-    djui_hud_set_resolution(RESOLUTION_N64)
-    djui_hud_set_font(FONT_TINY)
-    local screenHeight = djui_hud_get_screen_height()
-    local screenWidth = djui_hud_get_screen_width()
-    local optionPosY = screenHeight * 0.55
+        local course, level, area, act = np.currCourseNum, np.currLevelNum, np.currAreaIndex, np.currActNum
+        local levelName = course_is_main_course(course) and course ~= COURSE_NONE
+            and get_level_name(course, level, area)
+            or "METAXY ISLES"
 
-    djui_hud_set_color(0, 0, 0, 180)
-    local mscale = 0.25
-    djui_hud_render_texture(TEX_MAINMENU, get_middle_x_pos(" ", 3.5) - 120, 0, mscale, mscale)
-    djui_hud_set_color(255, 255, 255, 255)
+        render_text({
+            {
+                text = levelName,
+                font = FONT_TINY,
+                posX = screenWidth * 0.5 - djui_hud_measure_text(levelName) * 0.5,
+                posY = optionPosY - 60
+            },
+        })
 
-
-    m.freeze = 1
-    local course = np.currCourseNum
-    local level = np.currLevelNum
-    local area = np.currAreaIndex
-    local act = np.currActNum
-    local levelName
-    if course_is_main_course(course) and course ~= COURSE_NONE then
-        levelName = get_level_name(course, level, area)
+        djui_hud_set_font(FONT_TINY)
+        if gLevelValues.pauseExitAnywhere or (gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) ~= 0 then
+            menu_controls(pauseMenuLevelOptions)
+            render_options(pauseMenuLevelOptions, screenHeight, screenWidth, optionPosY)
+        end
     else
-        levelName = "METAXY ISLES"
-    end
-    local ActName = get_star_name(course, act)
-    local starNum = "*@" .. save_file_get_course_star_count(get_current_save_file_num() - 1, course - 1)
-    local coinScore = "$@" .. save_file_get_course_coin_score(get_current_save_file_num() - 1, course - 1)
-    local isStarCollected = is_star_collected(get_current_save_file_num() - 1, course, act - 1)
-    local starString = isStarCollected and "" or "X"
-    local redCoinText = "$@" ..
-        m.area.numRedCoins - obj_count_objects_with_behavior_id(id_bhvRedCoin) .. "/" .. m.area.numRedCoins
+        render_ability_dpad(get_middle_x_pos(" ", 3.5) + 60, 365 - 300, 255);
+        if (gMarioStates[0].controller.buttonPressed & B_BUTTON) ~= 0 then
+            isChangingAbility = false
+        end
 
-    local textPositions = {
-        { text = levelName, font = FONT_TINY, posX = screenWidth * 0.5 - djui_hud_measure_text(levelName) * 0.5, posY = optionPosY - 60 },
-        -- { text = ActName,     font = FONT_TINY, posX = screenWidth * 0.5 - djui_hud_measure_text(ActName) * 0.5,   posY = optionPosY - 40 },
-        --{ text = starString,  font = FONT_TINY, posX = screenWidth * 0.5 - djui_hud_measure_text(ActName) + 16,    posY = optionPosY - 40 },
-        --{ text = starNum,     font = FONT_HUD,  posX = screenWidth * 0.5 + djui_hud_measure_text(ActName) - 16,    posY = optionPosY - 40 },
-        --{ text = redCoinText, font = FONT_HUD,  posX = screenWidth * 0.5 + djui_hud_measure_text(ActName) - 16,    posY = optionPosY,      color = { r = 255, g = 25, b = 25, a = 255 } },
-        --{ text = coinScore,   font = FONT_HUD,  posX = screenWidth * 0.5 + djui_hud_measure_text(ActName) - 16,    posY = optionPosY - 20 },
-        -- { text = "PAUSE",     font = FONT_HUD,  posX = screenWidth * 0.5 - djui_hud_measure_text("PAUSE"),         posY = optionPosY - 80 },
-        --{ text = romhackText, font = FONT_HUD,  posX = screenWidth * 0.5 - djui_hud_measure_text(romhackText),     posY = optionPosY - 120 },
-    }
+        local controller = gMarioStates[0].controller
+        local gPlayer1Controller = controller
 
-    render_text(textPositions)
+        if scroll2wayCooldown == 0 then
+            handle_menu_navigation(controller)
+        end
 
-    djui_hud_set_font(FONT_TINY)
-    if (gLevelValues.pauseExitAnywhere or (gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) ~= 0) then
-        menu_controls(pauseMenuLevelOptions)
-        render_options(pauseMenuLevelOptions, screenHeight, screenWidth, optionPosY)
+        if scroll2wayCooldown > 0 then
+            scroll2wayCooldown = scroll2wayCooldown - 1
+        end
+
+        -- Selector icon
+        local selectorXOffset = (menuScroll2wayX % 4) * 33 + 30 + 8
+        local selectorY = 195 + (gToPos[math.min(menuScroll2wayX + 1, 16)] * 33) - 135 - 50
+        local selectorX = get_middle_x_pos(" ", 3.5) + (menuScroll2wayX < 16 and -150 or 0) + selectorXOffset
+        djui_hud_set_color(255, 255, 255, 255)
+        djui_hud_render_texture(TEX_SELECTOR, selectorX, selectorY, 0.2, 0.2)
+
+        -- Ability / utility icons
+        for k = 0, 18 do
+            local img = (save_file_check_ability_unlocked(k) or k == 0) and k or ABILITY_LOCK_IMAGE_INDEX
+            if k < 16 then
+                render_ability_icon_at_slot(k, menu_ability_y_offset[k], img)
+            else
+                render_utility_icon_at_slot(k, menu_ability_y_offset[k], img)
+            end
+        end
+
+        if save_file_check_ability_unlocked(menuScroll2wayX) or (menuScroll2wayX == 0) then
+            djui_hud_set_color(255, 255, 255, 255)
+            local scale = 0.6
+            if ability_struct[menuScroll2wayX].string then
+                for id = 1, #ability_struct[menuScroll2wayX].string do
+                    local cStr = ability_struct[menuScroll2wayX].string[id]
+                    djui_hud_print_text_anchored(cStr, get_middle_x_pos(" ", 3.5) - 136 + 5 + 21,
+                        40 + 35 - (id * 12) + 10-5,
+                        1,
+                        ANCHOR_LEFT, ANCHOR_BOTTOM)
+                end
+            end
+
+            if (gPlayer1Controller.buttonPressed & U_JPAD) ~= 0 then
+                set_ability_slot(0, menuScroll2wayX)
+            end
+            if (gPlayer1Controller.buttonPressed & R_JPAD) ~= 0 then
+                set_ability_slot(1, menuScroll2wayX)
+            end
+            if (gPlayer1Controller.buttonPressed & D_JPAD) ~= 0 then
+                set_ability_slot(2, menuScroll2wayX)
+            end
+            if (gPlayer1Controller.buttonPressed & L_JPAD) ~= 0 then
+                set_ability_slot(3, menuScroll2wayX)
+            end
+            if (gPlayer1Controller.buttonPressed & A_BUTTON) ~= 0 then
+                --if check_if_swap_ability_allowed() then
+                menu_ability_gravity[menuScroll2wayX] = 2
+                menu_ability_y_offset[menuScroll2wayX] = 1
+                change_ability(menuScroll2wayX)
+                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource)
+                --else
+                --play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource)
+                --end
+            end
+        else
+            djui_hud_print_text_anchored("???", get_middle_x_pos(" ", 3.5) - 136 + 5 + 21,
+                        40 + 35 - (1 * 12) + 10 - 5,
+                        1,
+                        ANCHOR_LEFT, ANCHOR_BOTTOM)
+        end
     end
 end
+
 
 local function pressed_pause()
     if get_dialog_id() >= 0 or (_G.charSelectExists and _G.charSelect.is_menu_open()) then

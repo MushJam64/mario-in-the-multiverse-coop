@@ -240,7 +240,7 @@ end
 
 local lerp_ability_icons = false
 
-local function render_ability_icon(x, y, alpha, index)
+ function render_ability_icon(x, y, alpha, index)
     if index == ABILITY_NONE then return end
 
     if index == ABILITY_UTIL_MILK and milk_drunk then
@@ -279,7 +279,7 @@ local function render_ability_icon(x, y, alpha, index)
 end
 
 
-local function render_ability_dpad(x, y, alpha)
+function render_ability_dpad(x, y, alpha)
     djui_hud_set_color(255, 255, 255, alpha)
     djui_hud_render_texture(TEX_DPAD, x, y, 0.08, 0.08)
 
@@ -359,7 +359,7 @@ local function render_ability_get_hud()
         end
     end
 end
-local hud_alpha = 0
+hud_alpha = 0
 local function render_hud()
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_font(FONT_NORMAL)
@@ -372,7 +372,7 @@ local function render_hud()
     if isPaused then
         hud_alpha = approach_f32_asymptotic(hud_alpha, 0.0, 0.2)
     else
-        hud_alpha = approach_f32_asymptotic(hud_alpha, 255.0, 0.2)
+        hud_alpha = approach_f32_asymptotic(hud_alpha, 220.0, 0.2)
     end
     render_ability_dpad(60, 265 - 240, hud_alpha);
     render_ability_get_hud()
