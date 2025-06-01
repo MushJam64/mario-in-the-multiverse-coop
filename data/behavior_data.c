@@ -411,6 +411,18 @@ const BehaviorScript bhvPaintBullet[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvRotatingFunkyPlatform[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
+    LOAD_COLLISION_DATA(funky_road_collision),
+    SET_FLOAT(oDrawingDistance, 5000),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_rotating_funky_platform),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -2350,18 +2362,6 @@ const BehaviorScript bhvSkrinkingBlackDoor[] = {
     SET_FLOAT(oFloatF4, 1.0f),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_skrinking_black_door),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvRotatingFunkyPlatform[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO)),
-    LOAD_COLLISION_DATA(funky_road_collision),
-    SET_FLOAT(oDrawingDistance, 5000),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_rotating_funky_platform),
-        CALL_NATIVE(load_object_collision_model),
     END_LOOP(),
 };
 

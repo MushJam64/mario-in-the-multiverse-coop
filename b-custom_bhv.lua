@@ -2353,3 +2353,22 @@ function bhv_paint_bullet_loop(o)
     cur_obj_move_xz_using_fvel_and_yaw()
     o.oPosY = o.oPosY - (sins(o.oMoveAnglePitch)) * o.oForwardVel
 end
+
+function bhv_rotating_funky_platform(o)
+    if o.oAction == 0 then
+        -- store default Yaw
+        o.oCapUnkF4 = o.oFaceAngleYaw
+        if o.oDistanceToMario < 1900 then
+            o.oAngleVelYaw = 0x800
+            o.oAction = o.oAction + 1
+        end
+    end
+
+    if o.oAction == 1 and (o.oFaceAngleYaw - o.oCapUnkF4 >= 0x4000) then
+        o.oAngleVelYaw = 0
+        o.oFaceAngleYaw = 0x4000
+        o.oAction = o.oAction + 1
+    end
+
+    cur_obj_rotate_face_angle_using_vel()
+end

@@ -261,6 +261,7 @@ MODEL_SQUID                     = smlua_model_util_get_id("squid_geo")
 MODEL_INK_MOVING_PLATFORM       = smlua_model_util_get_id("ink_moving_platform_geo")
 MODEL_PAINT_GUN                 = smlua_model_util_get_id("paint_gun_geo")
 MODEL_PAINT_BULLET              = smlua_model_util_get_id("paint_bullet_geo")
+MODEL_FUNKY_ROAD                = smlua_model_util_get_id("funky_road_geo")
 
 BP3_ATTACH_ROPE                 = 0xF0
 

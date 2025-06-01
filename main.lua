@@ -22,6 +22,9 @@ smlua_audio_utils_replace_sequence(0x25, 42, 80, "25_custom_peanut_plains")
 smlua_audio_utils_replace_sequence(0x27, 42, 80, "27_custom_save_hut")
 smlua_audio_utils_replace_sequence(0x28, 42, 80, "28_custom_crystal_field")
 smlua_audio_utils_replace_sequence(SEQ_CUSTOM_KIRBY_BOSS, 42, 80, "26_custom_kirby_boss")
+smlua_audio_utils_replace_sequence(0x34, 42, 80, "34_clearleaf_forest")
+smlua_audio_utils_replace_sequence(0x35, 42, 80, "35_level_i_funky_shell")
+smlua_audio_utils_replace_sequence(0x37, 42, 80, "37_level_i_inside")
 smlua_audio_utils_replace_sequence(0x39, 42, 80, "39_jellyfish_fields")
 smlua_audio_utils_replace_sequence(0x3A, 19, 80, "3A_jellyfish_secret")
 smlua_audio_utils_replace_sequence(0x4a, 42, 80, "4A_downtown_bb")
@@ -42,7 +45,6 @@ local function mario_update(m)
 
         m.peakHeight = m.pos.y
         m.numLives = 99
-
     end
 end
 hook_event(HOOK_MARIO_UPDATE, mario_update)

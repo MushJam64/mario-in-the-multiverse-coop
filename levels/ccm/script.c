@@ -22,6 +22,8 @@ const LevelScript level_ccm_entry[] = {
 	LOAD_MIO0(0x7, _ccm_segment_7SegmentRomStart, _ccm_segment_7SegmentRomEnd), 
 	ALLOC_LEVEL_POOL(),
 	MARIO(MODEL_MARIO, 0x00000001, bhvMario),
+	JUMP_LINK(script_func_global_1), 
+	JUMP_LINK(script_func_global_16), 
 	/* Fast64 begin persistent block [level commands] */
 	/* Fast64 end persistent block [level commands] */
 
@@ -83,7 +85,7 @@ const LevelScript level_ccm_entry[] = {
 		OBJECT(MODEL_NONE, 2303, 1518, 4325, 0, 0, 0, (40 << 24) | (11 << 16), bhvWarp),
 		TERRAIN(ccm_area_2_collision),
 		MACRO_OBJECTS(ccm_area_2_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_LEVEL_I_INSIDE),
+		SET_BACKGROUND_MUSIC(0x00, 0x37),
 		TERRAIN_TYPE(TERRAIN_STONE),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -200,7 +202,7 @@ const LevelScript level_ccm_entry[] = {
 		OBJECT(MODEL_NONE, -7452, -816, -4743, 0, -45, 0, (3 << 16), bhvOpenableGrill),
 		TERRAIN(ccm_area_3_collision),
 		MACRO_OBJECTS(ccm_area_3_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_CLEARLEAF_FOREST),
+		SET_BACKGROUND_MUSIC(0x00, 0x34),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -281,7 +283,7 @@ const LevelScript level_ccm_entry[] = {
 		OBJECT(MODEL_NONE, -11386, 725, 21549, 0, -180, 0, (10 << 16), bhvInstantActiveWarp),
 		TERRAIN(ccm_area_4_collision),
 		MACRO_OBJECTS(ccm_area_4_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_FUNKY_SHELL),
+		SET_BACKGROUND_MUSIC(0x00, 0x35),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
@@ -294,7 +296,7 @@ const LevelScript level_ccm_entry[] = {
 		OBJECT(MODEL_NONE, -613, 0, 3463, 0, -180, 0, (10 << 16), bhvInstantActiveWarp),
 		TERRAIN(ccm_area_5_collision),
 		MACRO_OBJECTS(ccm_area_5_macro_objs),
-		//SET_BACKGROUND_MUSIC(0x00, SEQ_CLEARLEAF_FOREST),
+		SET_BACKGROUND_MUSIC(0x00, 0x34),
 		TERRAIN_TYPE(TERRAIN_GRASS),
 		/* Fast64 begin persistent block [area commands] */
 		/* Fast64 end persistent block [area commands] */
