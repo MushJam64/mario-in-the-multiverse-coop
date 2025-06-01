@@ -335,9 +335,18 @@ local function hud_render()
         djui_hud_set_color(255, 255, 255, 255)
 
         local course, level, area, act = np.currCourseNum, np.currLevelNum, np.currAreaIndex, np.currActNum
-        local levelName = course_is_main_course(course) and course ~= COURSE_NONE
-            and get_level_name(course, level, area)
-            or "METAXY ISLES"
+        local levelName = "you should not be here"
+        if gNetworkPlayers[0].currCourseNum ~= COURSE_NONE then
+            for l = 0, #ability_struct do
+                if mitm_levels[l].course == gNetworkPlayers[0].currCourseNum then
+                    levelName = mitm_levels[l].name
+                    break
+                end
+            end
+        else
+            levelName = "METAXY ISLES"
+        end
+
 
         render_text({
             {
@@ -394,7 +403,7 @@ local function hud_render()
                 for id = 1, #ability_struct[menuScroll2wayX].string do
                     local cStr = ability_struct[menuScroll2wayX].string[id]
                     djui_hud_print_text_anchored(cStr, get_middle_x_pos(" ", 3.5) - 136 + 5 + 21,
-                        40 + 35 - (id * 12) + 10-5,
+                        40 + 35 - (id * 12) + 10 - 5,
                         1,
                         ANCHOR_LEFT, ANCHOR_BOTTOM)
                 end
@@ -424,9 +433,9 @@ local function hud_render()
             end
         else
             djui_hud_print_text_anchored("???", get_middle_x_pos(" ", 3.5) - 136 + 5 + 21,
-                        40 + 35 - (1 * 12) + 10 - 5,
-                        1,
-                        ANCHOR_LEFT, ANCHOR_BOTTOM)
+                40 + 35 - (1 * 12) + 10 - 5,
+                1,
+                ANCHOR_LEFT, ANCHOR_BOTTOM)
         end
     end
 end

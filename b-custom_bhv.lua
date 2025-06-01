@@ -703,7 +703,7 @@ local function mario_can_cut_rope(gMarioState)
             return true
         end
     end
-    return true
+    return false
 end
 
 function bhv_g_attached_rope_loop(o)

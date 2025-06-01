@@ -204,7 +204,7 @@ function act_squid(m)
 
     local ray_vec = { 0, 0, 0 }
     local ray_origin = { x = 0, y = 0, z = 0 }
-    local ray_hit_pos = { 0, 0, 0 }
+    local ray_hit_pos = { x = 0, y = 0, z = 0 }
     local ray_surface
     local gPlayer1Controller = m.controller
 
@@ -226,7 +226,7 @@ function act_squid(m)
         mitm.squid_z_vel = approach_f32_asymptotic(mitm.squid_z_vel, coss(m.intendedYaw) * m.intendedMag, 0.2)
 
         mitm.squid_goop_timer = mitm.squid_goop_timer + (math.abs(mitm.squid_x_vel) / 60.0) +
-        (math.abs(mitm.squid_z_vel) / 60.0)
+            (math.abs(mitm.squid_z_vel) / 60.0)
 
         intend_x = m.pos.x + mitm.squid_x_vel
         intend_z = m.pos.z + mitm.squid_z_vel
@@ -295,7 +295,7 @@ function act_squid(m)
 
         local RAY = collision_find_surface_on_ray(ray_origin.x, ray_origin.y, ray_origin.z,
             ray_vec[1], ray_vec[2], ray_vec[3],
-            4)
+            2)
 
         ray_surface = RAY.surface
         vec3f_copy(ray_hit_pos, RAY.hitPos)
@@ -336,7 +336,7 @@ function act_squid(m)
             end
 
             mitm.squid_goop_timer = mitm.squid_goop_timer + (math.abs(mitm.squid_x_vel) / 60.0) +
-            (math.abs(mitm.squid_z_vel) / 60.0) +
+                (math.abs(mitm.squid_z_vel) / 60.0) +
                 (math.abs(mitm.squid_y_vel) / 60.0)
         else
             wall_angle = atan2s(mitm.sqwall_normalz, mitm.sqwall_normalx)

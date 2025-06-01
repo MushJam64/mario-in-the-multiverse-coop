@@ -239,8 +239,8 @@ local function render_mitm_return_to_hub_hud()
 end
 
 local lerp_ability_icons = false
-
- function render_ability_icon(x, y, alpha, index)
+local hud_abil_alpha = 0
+function render_ability_icon(x, y, alpha, index)
     if index == ABILITY_NONE then return end
 
     if index == ABILITY_UTIL_MILK and milk_drunk then
@@ -252,8 +252,11 @@ local lerp_ability_icons = false
     end
 
     gDPSetEnvColor(gDisplayListHead, 255, 255, 255, alpha)]]
-
-    djui_hud_set_color(255, 255, 255, alpha)
+    if isPaused then
+        djui_hud_set_color(255, 255, 255, alpha)
+    else
+        djui_hud_set_color(255, 255, 255, hud_abil_alpha)
+    end
     --if ability_images[index] then
     djui_hud_render_texture(ability_images[index][1], x + 8, y - 50, 0.8, 0.8)
     --end
@@ -277,7 +280,6 @@ local lerp_ability_icons = false
     gDPSetTextureFilter(gDisplayListHead, G_TF_BILERP)
     gSPPopMatrix(gDisplayListHead, G_MTX_MODELVIEW)]]
 end
-
 
 function render_ability_dpad(x, y, alpha)
     djui_hud_set_color(255, 255, 255, alpha)
@@ -359,7 +361,9 @@ local function render_ability_get_hud()
         end
     end
 end
+
 hud_alpha = 0
+
 local function render_hud()
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_font(FONT_NORMAL)
@@ -371,8 +375,10 @@ local function render_hud()
     end
     if isPaused then
         hud_alpha = approach_f32_asymptotic(hud_alpha, 0.0, 0.2)
+        hud_abil_alpha = approach_f32_asymptotic(hud_abil_alpha, 0.0, 0.2)
     else
-        hud_alpha = approach_f32_asymptotic(hud_alpha, 220.0, 0.2)
+        hud_alpha = approach_f32_asymptotic(hud_alpha, 230.0, 0.2)
+        hud_abil_alpha = approach_f32_asymptotic(hud_abil_alpha, 255.0, 0.2)
     end
     render_ability_dpad(60, 265 - 240, hud_alpha);
     render_ability_get_hud()
@@ -387,7 +393,7 @@ local function render_hud()
 
     djui_hud_render_texture(gTextures.star, sw - 165 + 20 + 25 + 25, 265 - 255 + 4, 1, 1)
     djui_hud_print_text(string.format("%03d", hud_get_value(HUD_DISPLAY_STARS)), sw - 165 + 20 + 25 + 20 + 25,
-    265 - 255 + 4,
+        265 - 255 + 4,
         1)
 
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
