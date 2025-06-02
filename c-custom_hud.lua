@@ -381,6 +381,7 @@ local function render_ability_get_hud()
 end
 
 function render_meter(x, y, meterStyle, wedges, a)
+    if wedges < 0 then return end
     if (hud_get_value(HUD_DISPLAY_FLAG_TIMER)) ~= 0 then
         y = y - 24.0
     end
@@ -455,10 +456,10 @@ local function render_hud()
     render_ability_dpad(60, 265 - 240, hud_alpha);
     render_ability_get_hud()
     render_meter(sw - 165 + 20 + 25 + 20 + 25, 280, METER_STYLE_HP, gMarioStates[0].health >> 8, hud_abil_alpha)
-    if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
-        -- djui_chat_message_create(""..abilityMeter)
-        render_meter(sw - 165 + 20 + 25 + 20 + 25, 320, abilityMeterStyle, abilityMeter, hud_alpha);
-    end
+    -- if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
+    -- djui_chat_message_create(""..abilityMeter)
+    render_meter(sw - 165 + 20 + 25 + 20 + 25, 320, abilityMeterStyle, abilityMeter, hud_alpha);
+    -- end
     -- Hud bar
     djui_hud_set_font(FONT_HUD)
     djui_hud_set_color(255, 255, 255, hud_alpha)
@@ -476,6 +477,13 @@ local function render_hud()
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_STAR_COUNT)
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_COIN_COUNT)
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_POWER)
+
+    if charSelect then
+        charSelect.hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
+        charSelect.hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_STAR_COUNT)
+        charSelect.hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_COIN_COUNT)
+        charSelect.hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_POWER)
+    end
     djui_hud_reset_color()
 end
 

@@ -180,7 +180,7 @@ local function ability_functions_update(m)
                 -- stop_cap_music()
             end
         else
-            if (m.controller.buttonDown & L_TRIG) ~= 0 and aku_invincibility == 0 and aku_recharge >= 300 and m.numCoins == 0 and (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
+            if (m.controller.buttonDown & L_TRIG) ~= 0 and aku_invincibility == 0 and aku_recharge >= 300 and m.numCoins >= 10 and (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
                 gPlayerSyncTable[0].aku_invincibility = 300
                 gPlayerSyncTable[0].aku_recharge = 0
                 cool_down_ability(ABILITY_AKU)
@@ -212,6 +212,8 @@ local function ability_functions_update(m)
         else
             if aku_recharge < 300 then
                 gPlayerSyncTable[0].aku_recharge = gPlayerSyncTable[0].aku_recharge + 1
+            else
+                abilityMeter = -1
             end
         end
 
@@ -221,7 +223,7 @@ local function ability_functions_update(m)
             --  abilityMeter = 0;
             toZeroMeter = false;
         else
-            abilityMeter = -1;
+           --== abilityMeter = -1;
         end
 
         if (lastAbility ~= gPlayerSyncTable[0].abilityId) then
