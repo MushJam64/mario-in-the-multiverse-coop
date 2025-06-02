@@ -400,7 +400,7 @@ local function ability_override_sound(p, s)
 end
 
 local function ability_override_int(m, o, t)
-    if gPlayerSyncTable[m.playerIndex].aku_invincibility > 0 and using_ability(m, ABILITY_AKU) then
+    if gPlayerSyncTable[m.playerIndex].aku_recharge == 0 and using_ability(m, ABILITY_AKU) then
         if t == INTERACT_FLAME or t == INTERACT_BULLY or t == INTERACT_HIT_FROM_BELOW or t == INTERACT_BOUNCE_TOP then
             return false
         end
