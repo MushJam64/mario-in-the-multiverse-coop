@@ -27,11 +27,31 @@ Area 3:
 - Krusty Krab subarea not finished
 - Shell Bank subarea not finished
 - Jellyfish King fight not implemented
+- Winding plank bridges not implemented
 
 Course 3: THE PIRANHA PIT
 
 Area 1:
 - bullet bill and npcs missing
+
+Course 4: MARIO IN MUSHROOM HAVOC
+
+Area 1:
+- Guards aren't implemented
+- Shock Rocket with behaviors not implemented yet
+
+Area 2:
+- Toads to rescue aren't there yet
+- Plenty of graphical errors (ignore for now due to it being obvious)
+- Giant Fruit (Star 4 I believe) not in yet
+
+Area 3:
+- Doesn't exist cause no boss yet
+
+Course 12: New N-Sanity Island
+
+Area 1:
+- Nitro crates still need to be put in
 
 METAXY ISLES (Hub):
 - Shop NPC and Shop System not implemented
@@ -39,6 +59,7 @@ METAXY ISLES (Hub):
 - Crazy Redd not implemented (Painting Collector)
 - Professor Layton not implemented (Star Hints)
 - Prof. E. Gadd not implemented (NPC for plot and confirm for final area)
+- You still take damage when on the title card for C3 due to the orange ink below (Damage should be cancelled when in title card)
 
 CUTTER ABILITY:
 - Final Cutter not implemented yet
@@ -48,5 +69,11 @@ CUTTER ABILITY:
 INKLING ABILITY:
 - 
 
+AKU AKU ABILITY:
+- Coin requirement to use not implemented
+- Meter used for timer not fully implemented (It shows it recharging while half faded)
+
 GENERAL STUFF:
-- 
+- Double coin count due to CS support not finished
+- Coin Storage system not fully implemented
+- Dying and respawning takes away 5 coins (part of coin system) not there yet
