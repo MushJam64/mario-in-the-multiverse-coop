@@ -1,10 +1,26 @@
 -- Custom Huds --
 
+-- Ability Meter
+abilityMeter                   = -1
+abilityMeterStyle              = 0
+
+ABILITY_METER_HIDDEN           = 0
+ABILITY_METER_SHOWING          = 1
+ABILITY_METER_HIDING           = 2
+ABILITY_METER_VISIBLE          = 3
+
+local sAbilityMeterStoredValue = 0
+
+sAbilityMeterHUD               = {
+    animation = ABILITY_METER_HIDDEN,
+    x = METER_STYLE_GENERIC, -- style
+}
+
 -- Anchors Enum --
-ANCHOR_LEFT = 0
-ANCHOR_RIGHT = 1
-ANCHOR_TOP = 0
-ANCHOR_BOTTOM = 1
+ANCHOR_LEFT                    = 0
+ANCHOR_RIGHT                   = 1
+ANCHOR_TOP                     = 0
+ANCHOR_BOTTOM                  = 1
 
 
 --- @param message string
@@ -240,6 +256,7 @@ end
 
 local lerp_ability_icons = false
 local hud_abil_alpha = 0
+local clAlpha = 0
 function render_ability_icon(x, y, alpha, index)
     if index == ABILITY_NONE then return end
 
@@ -247,15 +264,16 @@ function render_ability_icon(x, y, alpha, index)
         index = 21
     end
 
-    --[[if ability_is_cooling_down(index) then
-        alpha = 100 + math.sin(get_global_timer() * 0x600) * 30
-    end
-
-    gDPSetEnvColor(gDisplayListHead, 255, 255, 255, alpha)]]
+    clAlpha = hud_abil_alpha
+    --gDPSetEnvColor(gDisplayListHead, 255, 255, 255, alpha)
     if isPaused then
         djui_hud_set_color(255, 255, 255, alpha)
     else
-        djui_hud_set_color(255, 255, 255, hud_abil_alpha)
+        if ability_is_cooling_down(index) then
+            clAlpha = 100 + sins(get_global_timer() * 0x600) * 30
+            -- djui_chat_message_create("s")
+        end
+        djui_hud_set_color(255, 255, 255, clAlpha)
     end
     --if ability_images[index] then
     djui_hud_render_texture(ability_images[index][1], x + 8, y - 50, 0.8, 0.8)
@@ -362,9 +380,62 @@ local function render_ability_get_hud()
     end
 end
 
+function render_meter(x, y, meterStyle, wedges, a)
+    if (hud_get_value(HUD_DISPLAY_FLAG_TIMER)) ~= 0 then
+        y = y - 24.0
+    end
+
+    djui_hud_set_color(0, 0, 0, a)
+    --create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0)
+    local scale = 0.6
+    --gSPDisplayList(gDisplayListHead, meter_bg_meter_bg_mesh)
+    djui_hud_render_texture(TEX_METER_CIRCLE, x, y - 240, scale, scale)
+
+    local icon_dl = meter_style_icon_dl_table[meterStyle]
+    if icon_dl then
+        djui_hud_set_color(255, 255, 255, a)
+        djui_hud_render_texture(icon_dl, x + 10, y - 229, scale, scale)
+    end
+
+    if wedges > 0 then
+        local color = meter_style_color_table[meterStyle + 1][wedges]
+        djui_hud_set_color(color[1], color[2], color[3], a)
+        --gSPDisplayList(gDisplayListHead, meter_wedges_dl_table[wedges])
+        djui_hud_render_texture(meter_wedges_dl_table[wedges], x, y - 240, scale, scale)
+    end
+
+    --gSPPopMatrix(gDisplayListHead, G_MTX_MODELVIEW)
+end
+
+function handle_ability_meter_actions(numAbilityWedges, style)
+    if numAbilityWedges > -1 and sAbilityMeterHUD.animation == ABILITY_METER_HIDDEN then
+        sAbilityMeterHUD.animation = ABILITY_METER_SHOWING
+    end
+    if numAbilityWedges < 0 then
+        sAbilityMeterHUD.animation = ABILITY_METER_HIDDEN
+    end
+    if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
+        sAbilityMeterStoredValue = numAbilityWedges
+        sAbilityMeterHUD.x = style
+    end
+end
+
+function render_hud_ability_meter()
+    local shownAbilityAmount = abilityMeter
+    local shownAbilityStyle = abilityMeterStyle
+    --if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
+    handle_ability_meter_actions(shownAbilityAmount, shownAbilityStyle)
+    --end
+    if sAbilityMeterHUD.animation == ABILITY_METER_HIDDEN then
+        return
+    end
+    -- sAbilityMeterVisibleTimer = sAbilityMeterVisibleTimer + 1
+end
+
 hud_alpha = 0
 
 local function render_hud()
+    render_hud_ability_meter()
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_font(FONT_NORMAL)
     djui_hud_set_color(255, 255, 255, 255)
@@ -380,13 +451,18 @@ local function render_hud()
         hud_alpha = approach_f32_asymptotic(hud_alpha, 230.0, 0.2)
         hud_abil_alpha = approach_f32_asymptotic(hud_abil_alpha, 255.0, 0.2)
     end
+    local sw = djui_hud_get_screen_width()
     render_ability_dpad(60, 265 - 240, hud_alpha);
     render_ability_get_hud()
-
+    render_meter(sw - 165 + 20 + 25 + 20 + 25, 280, METER_STYLE_HP, gMarioStates[0].health >> 8, hud_abil_alpha)
+    if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
+        -- djui_chat_message_create(""..abilityMeter)
+        render_meter(sw - 165 + 20 + 25 + 20 + 25, 320, abilityMeterStyle, abilityMeter, hud_alpha);
+    end
     -- Hud bar
     djui_hud_set_font(FONT_HUD)
     djui_hud_set_color(255, 255, 255, hud_alpha)
-    local sw = djui_hud_get_screen_width()
+
     djui_hud_render_texture(TEX_HUDBAR, sw - 190, 265 - 255, 0.18, 0.18)
     djui_hud_render_texture(gTextures.coin, sw - 165, 265 - 255 + 4, 1, 1)
     djui_hud_print_text(string.format("%03d", hud_get_value(HUD_DISPLAY_COINS)), sw - 165 + 20, 265 - 255 + 4, 1)
@@ -399,6 +475,7 @@ local function render_hud()
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_LIVES)
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_STAR_COUNT)
     hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_COIN_COUNT)
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_POWER)
     djui_hud_reset_color()
 end
 

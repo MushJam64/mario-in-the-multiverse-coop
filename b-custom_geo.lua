@@ -184,10 +184,10 @@ function geo_ability_material(n, m)
     local obj = geo_get_current_object()
     ptr = obj._pointer
 
-    local dlHead = gfx_get_from_name("mitm_g" .. ptr)
+    local dlHead = gfx_get_from_name("mitm_gAA" .. ptr)
 
     if not dlHead then
-        dlHead = gfx_create("mitm_g" .. ptr, 32)
+        dlHead = gfx_create("mitm_gAA" .. ptr, 15)
         if cast_graph_node(n).parameter == 1 then
             gfx_copy(dlHead, ability_mat2, gfx_get_length(ability_mat2))
         else
@@ -251,6 +251,9 @@ local function delete_mod_data(obj)
 
     local gfxx = gfx_get_from_name("mitm_gx" .. ptr)
     if gfxx then gfx_delete(gfxx) end
+
+    local gfaa = gfx_get_from_name("mitm_gAA" .. ptr)
+    if gfaa then gfx_delete(gfaa) end
 
     local vtx = vtx_get_from_name("mitm_v" .. ptr)
     if vtx then vtx_delete(vtx) end

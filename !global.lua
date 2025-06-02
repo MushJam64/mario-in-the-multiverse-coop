@@ -6,6 +6,17 @@ TEX_DPAD                 = get_texture_info("dpad_texture")
 TEX_HUDBAR               = get_texture_info("hudbar_texture")
 TEX_MAINMENU             = get_texture_info("mainmenu_texture")
 TEX_SELECTOR             = get_texture_info("selecterhud_texture")
+TEX_METER1               = get_texture_info("meter_1_hp_circle_ia8")
+TEX_METER2               = get_texture_info("meter_2_hp_circle_ia8")
+TEX_METER3               = get_texture_info("meter_3_hp_circle_ia8")
+TEX_METER4               = get_texture_info("meter_4_hp_circle_ia8")
+TEX_METER5               = get_texture_info("meter_5_hp_circle_ia8")
+TEX_METER6               = get_texture_info("meter_6_hp_circle_ia8")
+TEX_METER7               = get_texture_info("meter_7_hp_circle_ia8")
+TEX_METER8               = get_texture_info("meter_8_hp_circle_ia8")
+TEX_METER_CIRCLE         = get_texture_info("meter_bg_circle_transparent_ia8")
+TEX_HEART_METER          = get_texture_info("meter_hp_heart_ia8")
+TEX_AKU_METER            = get_texture_info("meter_aku_stars_ia8")
 ability_util             = { str = nil, display = false, seq = false }
 
 -- Defining NULL
@@ -273,6 +284,7 @@ SOUND_ABILITY_CUTTER_CATCH      = audio_stream_load("ability_cutter_catch.aiff")
 SOUND_ABILITY_CUTTER_DASH       = audio_stream_load("ability_cutter_dash.aiff")
 SOUND_ABILITY_CUTTER_THROW      = audio_sample_load("ability_cutter_throw.aiff")
 SOUND_MITM_LEVEL_TLIM_TAXI      = audio_sample_load("tlim_taxi.aiff")
+SOUND_ABILITY_AKU_AKU           = audio_stream_load("ability_aku.aiff")
 
 -- Floor
 SURFACE_SQUID_INK               = SURFACE_TRAPDOOR + 16
@@ -364,6 +376,7 @@ cutter_hand_right_hand_open_mesh_layer_1 = gfx_get_from_name("cutter_hand_right_
 bubblehat_hand_hand_mesh                 = gfx_get_from_name("bubblehat_hand_hand_mesh")
 gfx_empty                                = gfx_get_from_name("GFXEMPTY")
 local squid_hat_lunette_mesh             = gfx_get_from_name("squid_hat_lunette_mesh")
+local ability_d_mask_hat_mesh            = gfx_get_from_name("ability_d_mask_hat_mesh")
 
 -- Ability struct
 ability_struct                           = {
@@ -510,30 +523,115 @@ ability_images                           = {
     }
 };
 
+METER_STYLE_GENERIC                      = 0
+METER_STYLE_HP                           = 1
+METER_STYLE_BREATH                       = 2
+METER_STYLE_AKU                          = 3
+METER_STYLE_PHASEWALK                    = 4
+METER_STYLE_PHASEWALK_SUPERJUMP          = 5
+METER_STYLE_PHASEWALK_RECHARGE           = 6
+METER_STYLE_ROCKET                       = 7
+METER_STYLE_CHRONOS                      = 8
+METER_STYLE_DASH_BOOSTER                 = 9
+METER_STYLE_AKU_RECHARGE                 = 10
+METER_STYLE_COUNT                        = 11
+
+meter_wedges_dl_table                    = {
+    TEX_METER1,
+    TEX_METER2,
+    TEX_METER3,
+    TEX_METER4,
+    TEX_METER5,
+    TEX_METER6,
+    TEX_METER7,
+    TEX_METER8,
+}
+
+meter_style_color_table                  = {
+    { -- Generic
+        { 255, 0,   0 }, { 255, 0, 0 }, { 255, 50, 0 }, { 255, 255, 0 },
+        { 255, 255, 0 }, { 0, 255, 0 }, { 0, 255, 0 }, { 0, 200, 255 }
+    },
+    { -- HP
+        { 255, 0,   0 }, { 255, 0, 0 }, { 255, 50, 0 }, { 255, 255, 0 },
+        { 255, 255, 0 }, { 0, 255, 0 }, { 0, 255, 0 }, { 0, 200, 255 }
+    },
+    { -- Breath
+        { 255, 0,   0 }, { 255, 0, 0 }, { 255, 50, 0 }, { 255, 255, 0 },
+        { 255, 255, 0 }, { 0, 255, 0 }, { 0, 255, 0 }, { 0, 200, 255 }
+    },
+    { -- Aku Aku Mask
+        { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 },
+        { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }
+    },
+    { -- Phasewalk
+        { 0, 200, 255 }, { 0, 200, 255 }, { 0, 200, 255 }, { 0, 200, 255 },
+        { 0, 200, 255 }, { 0, 200, 255 }, { 0, 200, 255 }, { 0, 200, 255 }
+    },
+    { -- Phasewalk (Superjump)
+        { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 },
+        { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }, { 255, 255, 0 }
+    },
+    { -- Phasewalk (Recharge)
+        { 0, 100, 127 }, { 0, 100, 127 }, { 0, 100, 127 }, { 0, 100, 127 },
+        { 0, 100, 127 }, { 0, 100, 127 }, { 0, 100, 127 }, { 0, 100, 127 }
+    },
+    { -- Rocket
+        { 255, 156, 0 }, { 255, 156, 0 }, { 255, 156, 0 }, { 255, 156, 0 },
+        { 255, 156, 0 }, { 255, 156, 0 }, { 255, 156, 0 }, { 255, 156, 0 }
+    },
+    { -- Chronos
+        { 240, 19,  226 }, { 208, 47, 230 }, { 176, 74, 234 }, { 144, 102, 237 },
+        { 111, 130, 241 }, { 80, 158, 245 }, { 48, 185, 249 }, { 0, 200, 255 }
+    },
+    { -- Dash Booster
+        { 255, 74,  32 }, { 255, 74, 32 }, { 255, 74, 32 }, { 255, 159, 76 },
+        { 255, 159, 76 }, { 255, 255, 255 }, { 255, 255, 255 }, { 255, 255, 255 }
+    },
+    { -- Aku Aku Mask Recharge
+        { 100, 100, 0 }, { 100, 100, 0 }, { 100, 100, 0 }, { 100, 100, 0 },
+        { 100, 100, 0 }, { 100, 100, 0 }, { 100, 100, 0 }, { 100, 100, 0 }
+    }
+}
+
+meter_style_icon_dl_table                = {
+    TEX_HEART_METER,
+    meter_breath_meter_breath_mesh,
+    TEX_AKU_METER,
+    meter_phase_meter_phase_mesh,
+    meter_phase_meter_phase_mesh,
+    meter_phase_meter_phase_mesh,
+    meter_rocket_meter_rocket_mesh,
+    meter_chronos_meter_chronos_mesh,
+    meter_booster_meter_booster_mesh,
+    TEX_AKU_METER
+}
+
+
 -- Variables
 
-queued_pipe_cutscene                     = false
-dream_comet_enabled                      = false
+queued_pipe_cutscene           = false
+dream_comet_enabled            = false
 
-hub_level_current_index                  = 0
-hub_level_index                          = -1
-hub_titlecard_alpha                      = 0
-hub_returnback_box_alpha                 = 0
-ability_get_alpha                        = 0
-ability_get_box_alpha                    = 0
-hub_dma_index                            = -1
-hub_star_string                          = {}
+hub_level_current_index        = 0
+hub_level_index                = -1
+hub_titlecard_alpha            = 0
+hub_returnback_box_alpha       = 0
+ability_get_alpha              = 0
+ability_get_box_alpha          = 0
+hub_dma_index                  = -1
+hub_star_string                = {}
 
-sCutsceneSplineSegment                   = 0
-sCutsceneSplineSegmentProgress           = 0
+sCutsceneSplineSegment         = 0
+sCutsceneSplineSegmentProgress = 0
 
-milk_drunk                               = false
+milk_drunk                     = false
 
-ability_y_offset                         = { [0] = 0, 0, 0, 0 };
-ability_gravity                          = { [0] = 0, 0, 0, 0 };
-ability_dpad_locked                      = false
+ability_y_offset               = { [0] = 0, 0, 0, 0 };
+ability_gravity                = { [0] = 0, 0, 0, 0 };
+ability_dpad_locked            = false
 
-fb_bowser_phase                          = 0
+fb_bowser_phase                = 0
 
 for i = 0, (MAX_PLAYERS - 1) do
     -- PlayerSyncTable --
@@ -547,6 +645,9 @@ for i = 0, (MAX_PLAYERS - 1) do
     gPlayerSyncTable[i].squid_y_vel = 0.0
     gPlayerSyncTable[i].squid_z_vel = 0.0
     gPlayerSyncTable[i].squid_goop_timer = 0.0
+
+    gPlayerSyncTable[i].aku_invincibility = 0
+    gPlayerSyncTable[i].aku_recharge = 300
 end
 
 local courseToLevel = {
@@ -599,6 +700,20 @@ end
 ---@return boolean
 function dream_comet_unlocked()
     return false
+end
+
+ability_cooldown_flags = 0
+
+function ability_is_cooling_down(ability_id)
+    return (ability_cooldown_flags & (1 << ability_id)) ~= 0
+end
+
+function cool_down_ability(ability_id)
+    ability_cooldown_flags = ability_cooldown_flags | (1 << ability_id)
+end
+
+function ability_ready(ability_id)
+    ability_cooldown_flags = ability_cooldown_flags & ~(1 << ability_id)
 end
 
 ---@return boolean

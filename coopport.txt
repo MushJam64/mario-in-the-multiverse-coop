@@ -5,4 +5,5 @@
 level g (kirby level) -> level bob
 level a  (spongebob lvl)   -> level wf
 level c (squidl) -> level jrb
+level d (grassy thing) -> level ttm
 castle inside (hub)   -> castle inside

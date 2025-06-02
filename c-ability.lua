@@ -10,7 +10,9 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
+local toZeroMeter = false
+local lastAbility = false
 
 function bhv_ability_init(o)
     o.oBehParams = (12 << 24) | (o.oBehParams2ndByte << 16)
@@ -116,7 +118,7 @@ local function control_ability_dpad(m)
 
                         -- Equip Sound Effect
                         if ability_slot[picked_ability] == ABILITY_AKU then
-                            -- play_sound(SOUND_ABILITY_AKU_AKU, gGlobalSoundSource)
+                            audio_stream_play(SOUND_ABILITY_AKU_AKU, false, 1)
                         elseif ability_slot[picked_ability] == ABILITY_KNIGHT then
                             -- play_sound(SOUND_ABILITY_KNIGHT_EQUIP, gGlobalSoundSource)
                         elseif ability_slot[picked_ability] == ABILITY_E_SHOTGUN then
@@ -168,6 +170,69 @@ local function ability_functions_update(m)
                 set_mario_action(m, ACT_BUBBLE_HAT_JUMP, 0);
             end
         end
+
+        local aku_invincibility = gPlayerSyncTable[0].aku_invincibility
+        local aku_recharge = gPlayerSyncTable[0].aku_recharge
+
+        if not using_ability(m, ABILITY_AKU) then
+            if aku_invincibility ~= 0 then
+                gPlayerSyncTable[0].aku_invincibility = 0
+                -- stop_cap_music()
+            end
+        else
+            if (m.controller.buttonDown & L_TRIG) ~= 0 and aku_invincibility == 0 and aku_recharge >= 300 and m.numCoins == 0 and (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
+                gPlayerSyncTable[0].aku_invincibility = 300
+                gPlayerSyncTable[0].aku_recharge = 0
+                cool_down_ability(ABILITY_AKU)
+                --djui_chat_message_create(""..ability_cooldown_flags)
+            end
+
+           -- djui_chat_message_create(""..aku_recharge)
+
+            if aku_invincibility > 0 then
+                abilityMeter = math.min(math.floor((aku_invincibility / 300.0) * 8.0 + 1), 8)
+                abilityMeterStyle = METER_STYLE_AKU
+                toZeroMeter = true
+            else
+                if aku_recharge < 300 then
+                    abilityMeter = math.min(math.floor((aku_recharge / 300.0) * 8.0 + 1), 8)
+                    abilityMeterStyle = METER_STYLE_AKU_RECHARGE
+                    ability_ready(ABILITY_AKU)
+                end
+            end
+        end
+
+        if aku_invincibility > 0 then
+            local sparkleObj = spawn_object(m.marioObj, E_MODEL_SPARKLES, id_bhvCoinSparkles)
+            sparkleObj.oPosX = sparkleObj.oPosX + random_float() * 50.0 - 25.0
+            sparkleObj.oPosY = sparkleObj.oPosY + random_float() * 100.0
+            sparkleObj.oPosZ = sparkleObj.oPosZ + random_float() * 50.0 - 25.0
+
+            gPlayerSyncTable[0].aku_invincibility = gPlayerSyncTable[0].aku_invincibility - 1
+        else
+            if aku_recharge < 300 then
+                gPlayerSyncTable[0].aku_recharge = gPlayerSyncTable[0].aku_recharge + 1
+            end
+        end
+
+
+        --DONT ADD MORE
+        if (toZeroMeter) then --/ Reset ability meter if it's not set past this point
+            --  abilityMeter = 0;
+            toZeroMeter = false;
+        else
+            abilityMeter = -1;
+        end
+
+        if (lastAbility ~= gPlayerSyncTable[0].abilityId) then
+            abilityMeter = -1;
+            lastAbility = gPlayerSyncTable[0].abilityId
+            for k = 0, 18 do
+                if ability_is_cooling_down(k) then
+                    ability_ready(k)
+                end
+            end
+        end
     end
 
     if m.action ~= ACT_SQUID then
@@ -210,7 +275,7 @@ end
 ---@param m MarioState
 local function disable_squid_geometry(m)
     if m.playerIndex == 0 then
-        if m.floor.type == SURFACE_TOXIC_INK then
+        if m.floor and m.floor.type == SURFACE_TOXIC_INK then
             m.input = m.input | INPUT_IN_POISON_GAS
         end
         if using_ability(m, ABILITY_SQUID) and m.action == ACT_SQUID then
@@ -334,9 +399,31 @@ local function ability_override_sound(p, s)
     end
 end
 
+local function ability_override_int(m, o, t)
+    if gPlayerSyncTable[m.playerIndex].aku_invincibility > 0 and using_ability(m, ABILITY_AKU) then
+        if t == INTERACT_FLAME or t == INTERACT_BULLY or t == INTERACT_HIT_FROM_BELOW or t == INTERACT_BOUNCE_TOP then
+            return false
+        end
+    end
+end
+
+local function unfuck_ability_on_die()
+    gPlayerSyncTable[0].aku_invincibility = 0
+    gPlayerSyncTable[0].aku_recharge = 300
+
+    for k = 0, 18 do
+        if ability_is_cooling_down(k) then
+            ability_ready(k)
+        end
+    end
+end
+
 hook_behavior(id_bhvCelebrationStar, OBJ_LIST_DEFAULT, false, nil, celeb_star_override)
 
 hook_event(HOOK_ON_SEQ_LOAD, ability_override_sound)
 hook_event(HOOK_ON_INTERACT, interact_ability_star)
+hook_event(HOOK_ALLOW_INTERACT, ability_override_int)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)
 hook_event(HOOK_MARIO_OVERRIDE_GEOMETRY_INPUTS, disable_squid_geometry)
+hook_event(HOOK_ON_DEATH, unfuck_ability_on_die)
+hook_event(HOOK_ON_WARP, unfuck_ability_on_die)
