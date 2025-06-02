@@ -91,11 +91,11 @@ function geo_update_mverse_pipe(n, m)
     ptr = objectGraphnode._pointer
 
     local dlHead = gfx_get_from_name("mitm_g" .. ptr)
-    local dlHead2 = gfx_get_from_name("mitm_g2" .. ptr)
+    local dlHead2 = gfx_get_from_name("mitm_gx" .. ptr)
 
     if not dlHead then
         dlHead = gfx_create("mitm_g" .. ptr, 14)
-        dlHead2 = gfx_create("mitm_g2" .. ptr, 14)
+        dlHead2 = gfx_create("mitm_gx" .. ptr, 14)
         gfx_copy(dlHead, mversepipe_mat, gfx_get_length(mversepipe_mat))
         gfx_copy(dlHead2, mversepipe_mat2, gfx_get_length(mversepipe_mat2))
     end
@@ -248,6 +248,9 @@ local function delete_mod_data(obj)
 
     local gfx = gfx_get_from_name("mitm_g" .. ptr)
     if gfx then gfx_delete(gfx) end
+
+    local gfxx = gfx_get_from_name("mitm_gx" .. ptr)
+    if gfxx then gfx_delete(gfxx) end
 
     local vtx = vtx_get_from_name("mitm_v" .. ptr)
     if vtx then vtx_delete(vtx) end
