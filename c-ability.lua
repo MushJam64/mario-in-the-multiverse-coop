@@ -10,7 +10,7 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
 local toZeroMeter = false
 local lastAbility = false
 

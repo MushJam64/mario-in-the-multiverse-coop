@@ -464,6 +464,7 @@ function before_mario_update()
     elseif rTrigPressed and isPaused then
         djui_open_pause_menu()
         m.controller.buttonPressed = 0
+        close_menu()
         play_sound(SOUND_MENU_EXIT_A_SIGN, zero)
     end
 end
