@@ -423,6 +423,23 @@ const BehaviorScript bhvRotatingFunkyPlatform[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvNitroBox[] = {
+    BEGIN(OBJ_LIST_GENACTOR),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO)), // or OBJ_FLAG_E__SG_CUSTOM also
+    SET_INT(oIntangibleTimer, 0),
+    SET_INT(oDamageOrCoinValue, 99),
+    SET_INTERACT_TYPE(INTERACT_DAMAGE),
+    SET_HOME(),
+    SET_HITBOX_WITH_OFFSET( 150,150, 0),
+    CALL_NATIVE(bhv_nitro_box_init),
+    BEGIN_LOOP(),
+        SET_INT(oIntangibleTimer, 0),
+        CALL_NATIVE(bhv_bowser_bomb_loop),
+        CALL_NATIVE(bhv_nitro_box_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -1595,21 +1612,6 @@ const BehaviorScript bhvJellyFish[] = {
 /* GROUP C END *\
 
 /* GROUP D START *\
-const BehaviorScript bhvNitroBox[] = {
-    BEGIN(OBJ_LIST_GENACTOR),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_E__SG_CUSTOM)),
-    SET_INT(oIntangibleTimer, 0),
-    SET_INT(oDamageOrCoinValue, 99),
-    SET_INTERACT_TYPE(INTERACT_DAMAGE),
-    SET_HOME(),
-    SET_HITBOX_WITH_OFFSET(/*Radius*\ 150, /*Height*\ 150, /*Downwards offset*\ 0),
-    BEGIN_LOOP(),
-        SET_INT(oIntangibleTimer, 0),
-        CALL_NATIVE(bhv_bowser_bomb_loop),
-        CALL_NATIVE(bhv_nitro_box_loop),
-    END_LOOP(),
-};
 extern void bhv_nitro_boom_loop(void);
 const BehaviorScript bhvNitroBoom[] = {
     BEGIN(OBJ_LIST_LEVEL),

@@ -978,7 +978,8 @@ function bhv_sir_kibble_init(o)
     end
     smlua_anim_util_set_animation(o, "sir_kibble_anim_idle")
     o.oGravity = -4.0
-    network_init_object(o, true, { "oAction", "oTimer", "oShotByShotgun", "oHealth", "oForwardVel", "oVelY", "oInteractStatus" })
+    network_init_object(o, true,
+        { "oAction", "oTimer", "oShotByShotgun", "oHealth", "oForwardVel", "oVelY", "oInteractStatus" })
 end
 
 -- sir_kibble_anim_throw and sir_kibble_anim_idle
@@ -2280,7 +2281,7 @@ function bhv_paint_gun_loop(o)
 
         if (o.oInteractStatus & INT_STATUS_INTERACTED ~= 0 and o.oInteractStatus & INT_STATUS_WAS_ATTACKED ~= 0)
             or o.oShotByShotgun == 2
-        or o.oInteractStatus & INT_STATUS_MARIO_UNK1 ~= 0 then
+            or o.oInteractStatus & INT_STATUS_MARIO_UNK1 ~= 0 then
             o.oAction = o.oAction + 1
             o.oAnimState = 0
         end
@@ -2295,7 +2296,7 @@ function bhv_paint_gun_loop(o)
         elseif o.oSubAction == 2 then -- wait to be controlled
             if dist < 400 then
                 hud_information_string = "Press B to use"
-               --[[ if m.controller.buttonPressed & B_BUTTON ~= 0 then
+                --[[ if m.controller.buttonPressed & B_BUTTON ~= 0 then
                     o.oSubAction = o.oSubAction + 1
                     --obj_set_model(gMarioObject, MODEL_NONE)
                     o.oTimer = 0
@@ -2371,4 +2372,64 @@ function bhv_rotating_funky_platform(o)
     end
 
     cur_obj_rotate_face_angle_using_vel()
+end
+
+function bhv_nitro_box_init(o)
+    network_init_object(o, true, {"oPosY", "oTimer", "oInteractStatus", "oShotByShotgun"})
+end
+
+function bhv_nitro_box_loop(o)
+    o.oPosY = o.oPosY + o.oVelY
+    o.oVelY = o.oVelY - 2.0
+
+    if o.oPosY < o.oHomeY then
+        o.oPosY = o.oHomeY
+        o.oVelY = 0
+    end
+
+    if o.oTimer % 20 == 0 then
+        o.oVelY = 10.0
+    end
+
+    local gMarioState = nearest_mario_state_to_object(o)
+
+    if obj_check_if_collided_with_object(o, gMarioState.marioObj) ~= 0 then
+        o.oInteractStatus = o.oInteractStatus & ~INT_STATUS_INTERACTED
+        o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+
+        if gPlayerSyncTable[0].aku_recharge ~ 0 then
+            --spawn_object2(o, MODEL_NITRO_BOOM, bhvNitroBoom)
+            set_mario_action(gMarioState, ACT_HARD_BACKWARD_GROUND_KB, 0)
+            gMarioState.faceAngle.y = obj_angle_to_object(o, gMarioState.marioObj) + 0x8000
+            gMarioState.health = 0xFF -- die
+        else
+            if should_object_spawn() then
+                spawn_object2(o, E_MODEL_EXPLOSION, id_bhvExplosion)
+            end
+        end
+    end
+
+    set_object_visibility(o, 7000)
+
+    if o.oShotByShotgun > 0 then
+        --spawn_object(o, MODEL_NITRO_BOOM, bhvNitroBoom)
+        set_mario_action(gMarioState, ACT_HARD_BACKWARD_GROUND_KB, 0)
+        gMarioState.faceAngle.y = obj_angle_to_object(o, gMarioState.marioObj) + 0x8000
+        gMarioState.health = 0xFF
+        o.activeFlags = ACTIVE_FLAG_DEACTIVATED
+    end
+end
+
+function bhv_nitro_boom_loop(o)
+    cur_obj_scale(1.0 + (o.oTimer * 2.0))
+
+    if o.oTimer == 0 then
+        o.oOpacity = 150
+    end
+
+    if o.oOpacity > 0 then
+        o.oOpacity = o.oOpacity - 2
+    else
+        obj_mark_for_deletion(o)
+    end
 end
