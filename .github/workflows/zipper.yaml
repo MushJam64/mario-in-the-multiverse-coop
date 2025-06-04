@@ -1,0 +1,32 @@
+name: Upload Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create a ZIP file of the repository
+      run: |
+        zip -r mitm.zip * -x \*.c \*.h \*.png \*.blend \*.blend1 \*.obj
+
+    - name: Push build to Discord webhook
+      uses: MineBartekSA/discord-webhook@v2
+      with:
+        webhook: ${{ env.webhook }}
+        content: |
+          shits pushed yo: ${{ github.event.head_commit.message }}
+        attachment: |
+          file: mitm.zip
