@@ -236,48 +236,63 @@ abstr_util_3             = TEXT_ABILITY_UTIL_3
 
 
 -- Behavior
-MODEL_LEVEL_PIPE                = smlua_model_util_get_id("level_pipe_geo")
-MODEL_G_BANANA_DEE              = smlua_model_util_get_id("g_banana_dee_geo")
-MODEL_G_SPRING                  = smlua_model_util_get_id("g_spring_geo")
-MODEL_G_WADDLE_DEE              = smlua_model_util_get_id("g_waddle_dee_geo")
-MODEL_ATTACHED_ROPE             = smlua_model_util_get_id("attached_rope_geo")
-MODEL_HUBPLATFORM               = smlua_model_util_get_id("hub_platform_geo")
-MODEL_G_BRONTO_BURT             = smlua_model_util_get_id("g_bronto_burt_geo")
-MODEL_G_CANNON                  = smlua_model_util_get_id("g_cannon_geo")
-MODEL_G_CHECKER_BLOCK_1         = smlua_model_util_get_id("checker_block_1_geo")
-MODEL_G_SIR_KIBBLE              = smlua_model_util_get_id("sir_kibble_geo")
-MODEL_CUTTER_BLADE              = smlua_model_util_get_id("cutter_blade_geo")
-MODEL_G_STAR_PROJECTILE         = smlua_model_util_get_id("star_projectile_geo")
-MODEL_G_STAR_BLOCK              = smlua_model_util_get_id("star_block_geo")
-MODEL_ABILITY                   = smlua_model_util_get_id("ability_unlock_geo")
-MODEL_G_CUT_ROCK                = smlua_model_util_get_id("g_cut_rock_geo")
-MODEL_G_CUT_ROCK2               = smlua_model_util_get_id("g_cut_rock2_geo")
-MODEL_G_CUT_ROCK3               = smlua_model_util_get_id("g_cut_rock3_geo")
-MODEL_PAINTING                  = smlua_model_util_get_id("collectable_painting_geo")
-MODEL_G_MOVING_PLATFORM         = smlua_model_util_get_id("g_moving_platform_geo")
-MODEL_JELLY                     = smlua_model_util_get_id("jelly_geo")
-MODEL_TIKI_WOOD                 = smlua_model_util_get_id("tikibox_geo")
-MODEL_TIKI_STONE                = smlua_model_util_get_id("stone_tiki_geo")
-MODEL_TIKI_FLOAT                = 0 --0x15A
-MODEL_TRAMP                     = smlua_model_util_get_id("tramp_geo")
-MODEL_ABILITY_SIGN              = smlua_model_util_get_id("ability_sign_geo")
-MODEL_A_CAGE                    = smlua_model_util_get_id("a_cage_geo")
-MODEL_FLOATING_CHECKER_PLATFORM = smlua_model_util_get_id("floating_checker_platform_geo")
-MODEL_TAXISTOP                  = smlua_model_util_get_id("taxistop_geo")
-MODEL_TSBOAT                    = smlua_model_util_get_id("boat_geo")
-MODEL_OCTOBA                    = smlua_model_util_get_id("octoba_geo")
-MODEL_OCTOBALL                  = smlua_model_util_get_id("octoball_geo")
-MODEL_PAINT_STAIN               = smlua_model_util_get_id("paint_stain_geo")
-MODEL_SQUID                     = smlua_model_util_get_id("squid_geo")
-MODEL_INK_MOVING_PLATFORM       = smlua_model_util_get_id("ink_moving_platform_geo")
-MODEL_PAINT_GUN                 = smlua_model_util_get_id("paint_gun_geo")
-MODEL_PAINT_BULLET              = smlua_model_util_get_id("paint_bullet_geo")
-MODEL_FUNKY_ROAD                = smlua_model_util_get_id("funky_road_geo")
-MODEL_NITRO_BOX                 = smlua_model_util_get_id("nitro_geo")
+MODEL_LEVEL_PIPE                   = smlua_model_util_get_id("level_pipe_geo")
+MODEL_G_BANANA_DEE                 = smlua_model_util_get_id("g_banana_dee_geo")
+MODEL_G_SPRING                     = smlua_model_util_get_id("g_spring_geo")
+MODEL_G_WADDLE_DEE                 = smlua_model_util_get_id("g_waddle_dee_geo")
+MODEL_ATTACHED_ROPE                = smlua_model_util_get_id("attached_rope_geo")
+MODEL_HUBPLATFORM                  = smlua_model_util_get_id("hub_platform_geo")
+MODEL_G_BRONTO_BURT                = smlua_model_util_get_id("g_bronto_burt_geo")
+MODEL_G_CANNON                     = smlua_model_util_get_id("g_cannon_geo")
+MODEL_G_CHECKER_BLOCK_1            = smlua_model_util_get_id("checker_block_1_geo")
+MODEL_G_SIR_KIBBLE                 = smlua_model_util_get_id("sir_kibble_geo")
+MODEL_CUTTER_BLADE                 = smlua_model_util_get_id("cutter_blade_geo")
+MODEL_G_STAR_PROJECTILE            = smlua_model_util_get_id("star_projectile_geo")
+MODEL_G_STAR_BLOCK                 = smlua_model_util_get_id("star_block_geo")
+MODEL_ABILITY                      = smlua_model_util_get_id("ability_unlock_geo")
+MODEL_G_CUT_ROCK                   = smlua_model_util_get_id("g_cut_rock_geo")
+MODEL_G_CUT_ROCK2                  = smlua_model_util_get_id("g_cut_rock2_geo")
+MODEL_G_CUT_ROCK3                  = smlua_model_util_get_id("g_cut_rock3_geo")
+MODEL_PAINTING                     = smlua_model_util_get_id("collectable_painting_geo")
+MODEL_G_MOVING_PLATFORM            = smlua_model_util_get_id("g_moving_platform_geo")
+MODEL_JELLY                        = smlua_model_util_get_id("jelly_geo")
+MODEL_TIKI_WOOD                    = smlua_model_util_get_id("tikibox_geo")
+MODEL_TIKI_STONE                   = smlua_model_util_get_id("stone_tiki_geo")
+MODEL_TIKI_FLOAT                   = 0 --0x15A
+MODEL_TRAMP                        = smlua_model_util_get_id("tramp_geo")
+MODEL_ABILITY_SIGN                 = smlua_model_util_get_id("ability_sign_geo")
+MODEL_A_CAGE                       = smlua_model_util_get_id("a_cage_geo")
+MODEL_FLOATING_CHECKER_PLATFORM    = smlua_model_util_get_id("floating_checker_platform_geo")
+MODEL_TAXISTOP                     = smlua_model_util_get_id("taxistop_geo")
+MODEL_TSBOAT                       = smlua_model_util_get_id("boat_geo")
+MODEL_OCTOBA                       = smlua_model_util_get_id("octoba_geo")
+MODEL_OCTOBALL                     = smlua_model_util_get_id("octoball_geo")
+MODEL_PAINT_STAIN                  = smlua_model_util_get_id("paint_stain_geo")
+MODEL_SQUID                        = smlua_model_util_get_id("squid_geo")
+MODEL_INK_MOVING_PLATFORM          = smlua_model_util_get_id("ink_moving_platform_geo")
+MODEL_PAINT_GUN                    = smlua_model_util_get_id("paint_gun_geo")
+MODEL_PAINT_BULLET                 = smlua_model_util_get_id("paint_bullet_geo")
+MODEL_FUNKY_ROAD                   = smlua_model_util_get_id("funky_road_geo")
+MODEL_NITRO_BOX                    = smlua_model_util_get_id("nitro_geo")
 
-BP3_ATTACH_ROPE                 = 0xF0
+BP3_ATTACH_ROPE                    = 0xF0
 
-OBJ_FLAG_ATTACHABLE_BY_ROPE     = (OBJ_FLAG_30 + 16)
+OBJ_FLAG_ATTACHABLE_BY_ROPE        = OBJ_FLAG_1000
+OBJ_FLAG_NO_DREAM_COMET            = (1 << 22)
+----E SG coll
+OBJ_FLAG_E__SG_ENEMY               = (1 << 24) --Used for common enemies - flattens the enemy against the surface that they were shot against, spawns their coins
+OBJ_FLAG_E__SG_BOSS                = (1 << 25) --Used for bosses mostly. Pushes them back, if they don't take damage from being shot
+OBJ_FLAG_E__SG_BREAKABLE           = (1 << 26) --Usually used for small static objects - creates a small breaking effect and spawns the object's contents
+OBJ_FLAG_E__SG_COLLISION_BREAKABLE = (1 << 27) --Used for larger objects with collision models. If oHealth is set to 0 (or has its default value of 2048), it'll break in one shot.\
+--Otherwise, oHealth will determine how many shots it takes to break, and will increment its model ID by 1, to show that damage is being done to the object\
+--(Load all model IDs of different states of damage in a row, going from least to most damaged)
+
+--[[
+    Note: Objects that use either of these 'custom' flags need to reset oShotByShotgun back to 0 again after they're shot, if you want them to be able to be shot more than once.
+    This is very much like how you reset oInteractStatus to 0, when managing interactions on a more manual level.
+    ]]
+OBJ_FLAG_E__SG_CUSTOM           = (1 << 28) --Only adds to oShotByShotgun to let the object know that it was shot, so that the object's behavior can do what it needs to from there
+OBJ_FLAG_E__SG_COLLISION_CUSTOM = (1 << 29) --Same as OBJ_FLAG_E__SG_CUSTOM, but for objects with collision models
 
 -- Music
 SEQ_CUSTOM_KIRBY_BOSS           = 0x26

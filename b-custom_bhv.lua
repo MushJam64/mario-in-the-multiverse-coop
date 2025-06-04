@@ -553,6 +553,7 @@ G_SPRING_ACTION_COOLDOWN = 2
 G_SPRING_ACTION_TIED = 3
 
 function bhv_g_spring_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_ATTACHABLE_BY_ROPE
     if (o.oBehParams >> 8) & 0xff == 240 then
         o.oAction = G_SPRING_ACTION_TIED
     end
@@ -617,6 +618,7 @@ local sWaddleDeeAttackHandlers = {
 }
 
 function bhv_g_waddle_dee_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_ENEMY
     o.oGravity = 2.5
     o.oFriction = 0.8
     o.oBuoyancy = 1.3
@@ -784,6 +786,7 @@ local sBrontoBurtAttackHandlers = {
 }
 
 function bhv_g_bronto_burt_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_ENEMY
     smlua_anim_util_set_animation(o, "g_bronto_burt_anim_ArmatureAction")
     if o.oBehParams2ndByte % 2 == 0 then
         o.oMoveAngleYaw = o.oFaceAngleYaw + 0x4000 + (0x4000 * o.oBehParams2ndByte)
@@ -882,7 +885,7 @@ end
 -- attahced block
 function bhv_g_attached_block_init(o)
     -- o.parentObj = spawn_object_relative(0, 0, 200, 0, o, MODEL_ATTACHED_ROPE, bhvGAttachedRope)
-
+    o.oFlags = o.oFlags|OBJ_FLAG_ATTACHABLE_BY_ROPE
     o.oGravity = 2.0
     o.oBounciness = 2.0
 
@@ -968,7 +971,7 @@ local sSirKibbleAttackHandlers = {
 }
 
 function bhv_sir_kibble_init(o)
-    o.oFlags = (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW) --OR OBJ_FLAG_E__SG_CUSTOM also
+    o.oFlags = (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW|OBJ_FLAG_E__SG_CUSTOM)
     o.oAction = SIR_KIBBLE_ACT_CUTSCENE
     if o.oBehParams2ndByte == 1 then
         obj_set_hitbox(o, sBossSirKibbleHitbox)
@@ -1223,6 +1226,7 @@ local sStarProjectileHitbox = {
 }
 
 function bhv_star_projectile_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_BREAKABLE
     o.oGravity = 0.0
     o.oFriction = 0.99
     o.oBuoyancy = 1.4
@@ -1412,6 +1416,7 @@ function bhv_star_drop_loop(o)
 end
 
 function bhv_g_cut_rock_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_ATTACHABLE_BY_ROPE
     o.oGravity = 2.0
     o.oBounciness = 2.0
     o.hookRender = 1
@@ -1589,6 +1594,7 @@ end
 
 -- Initialize jelly object
 function jelly_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_ENEMY
     o.oGravity = 0.0
     o.oFriction = 0.999
     o.header.gfx.pos.y = 5 -- Y position in Lua (1-based)
@@ -1941,6 +1947,7 @@ function spawn_multiple_enemies(o, behavior, modelId, amount)
 end
 
 function bhv_fight_waves_manager_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_NO_DREAM_COMET
     network_init_object(o, true, { "oAction", "oTimer" })
     --obj_scale(o, 5)
     --obj_set_model_extended(o, E_MODEL_MARIO)
@@ -1999,6 +2006,7 @@ local sOctoballHitbox = {
 }
 
 function bhv_octoball_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_CUSTOM
     o.oGravity = 2.5
     o.oFriction = 0.8
     o.oBuoyancy = 1.3
@@ -2259,6 +2267,7 @@ local function remove_mario_from_paint_gun()
 end
 
 function bhv_paint_gun_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_NO_DREAM_COMET
     network_init_object(o, true,
         { "oInteractStatus", "oSubAction", "oAction", "oAngleVelYaw", "oShotByShotgun", "oAnimState", "oFaceAnglePitch",
             "oMoveAngleYaw" })
@@ -2375,7 +2384,8 @@ function bhv_rotating_funky_platform(o)
 end
 
 function bhv_nitro_box_init(o)
-    network_init_object(o, true, {"oPosY", "oTimer", "oInteractStatus", "oShotByShotgun"})
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_CUSTOM
+    network_init_object(o, true, { "oPosY", "oTimer", "oInteractStatus", "oShotByShotgun" })
 end
 
 function bhv_nitro_box_loop(o)
@@ -2397,7 +2407,7 @@ function bhv_nitro_box_loop(o)
         o.oInteractStatus = o.oInteractStatus & ~INT_STATUS_INTERACTED
         o.activeFlags = ACTIVE_FLAG_DEACTIVATED
 
-        if gPlayerSyncTable[0].aku_recharge ~ 0 then
+        if gPlayerSyncTable[0].aku_recharge ~= 0 then
             --spawn_object2(o, MODEL_NITRO_BOOM, bhvNitroBoom)
             set_mario_action(gMarioState, ACT_HARD_BACKWARD_GROUND_KB, 0)
             gMarioState.faceAngle.y = obj_angle_to_object(o, gMarioState.marioObj) + 0x8000
