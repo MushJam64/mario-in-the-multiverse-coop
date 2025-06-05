@@ -1,12 +1,3 @@
-function for_each_object_with_behavior(behavior, func) --* function by Isaac
-    local o = obj_get_first_with_behavior_id(behavior)
-    if o == nil then return end
-    while o ~= nil do
-        func(o)
-        o = obj_get_next_with_same_behavior_id(o)
-    end
-end
-
 local function update_coin_attach(o)
    o.oFlags = o.oFlags | OBJ_FLAG_ATTACHABLE_BY_ROPE o.hookRender = 1
 end
