@@ -36,9 +36,6 @@ smlua_audio_utils_replace_sequence(0x50, 42, 80, "50_mitm_ability_get")
 
 local function mario_update(m)
     if m.playerIndex == 0 then
-        if (gPlayerSyncTable[0].abilityId == ABILITY_CUTTER) or using_ability(m, ABILITY_GADGET_WATCH) then
-            m.marioBodyState.capState = m.marioBodyState.capState | MARIO_HAS_DEFAULT_CAP_OFF
-        end
         if m.action == ACT_TWIRLING and (m.controller.buttonDown & Z_TRIG) ~= 0 then
             m.vel.y = m.vel.y + -15
             gPlayerSyncTable[0].rotAngle = gPlayerSyncTable[0].rotAngle + 8500
@@ -48,5 +45,20 @@ local function mario_update(m)
         m.peakHeight = m.pos.y
         m.numLives = 99
     end
+    if gGlobalSyncTable.coins > 999 then
+        gGlobalSyncTable.coins = 999
+    end
+
+    if (gPlayerSyncTable[0].abilityId == ABILITY_CUTTER) or using_ability(m, ABILITY_GADGET_WATCH) then
+        m.marioBodyState.capState = m.marioBodyState.capState | MARIO_HAS_DEFAULT_CAP_OFF
+    end
 end
+
+local function global_coins(m, o, b)
+    if obj_is_coin(o) then
+        gGlobalSyncTable.coins = gGlobalSyncTable.coins + o.oDamageOrCoinValue
+    end
+end
+
+hook_event(HOOK_ON_INTERACT, global_coins)
 hook_event(HOOK_MARIO_UPDATE, mario_update)

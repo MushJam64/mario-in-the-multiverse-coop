@@ -306,7 +306,7 @@ SOUND_ABILITY_AKU_AKU           = audio_stream_load("ability_aku.aiff")
 SURFACE_SQUID_INK               = SURFACE_TRAPDOOR + 16
 SURFACE_TOXIC_INK               = SURFACE_TRAPDOOR + 32
 
-CAMERA_MODE_PAINT_GUN           = CAMERA_MODE_ROM_HACK + 0X01
+CAMERA_MODE_PAINT_GUN           = CAMERA_MODE_ROM_HACK + 0x01
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
@@ -778,42 +778,14 @@ function set_ability_slot(index, ability_id)
     if ability_already_on_dpad then
         -- swap
         ability_slot[old_index] = ability_slot[index]
-        if old_index == 0 then
-            gGlobalSyncTable.ability_slot0 = ability_slot[index]
-        elseif old_index == 1 then
-            gGlobalSyncTable.ability_slot1 = ability_slot[index]
-        elseif old_index == 2 then
-            gGlobalSyncTable.ability_slot2 = ability_slot[index]
-        elseif old_index == 3 then
-            gGlobalSyncTable.ability_slot3 = ability_slot[index]
-        end
+
         ability_slot[index] = ability_id
-
-
-        if index == 0 then
-            gGlobalSyncTable.ability_slot0 = ability_id
-        elseif index == 1 then
-            gGlobalSyncTable.ability_slot1 = ability_id
-        elseif index == 2 then
-            gGlobalSyncTable.ability_slot2 = ability_id
-        elseif index == 3 then
-            gGlobalSyncTable.ability_slot3 = ability_id
-        end
     else
         -- replace
         ability_slot[index] = menuScroll2wayX
-        if index == 0 then
-            gGlobalSyncTable.ability_slot0 = menuScroll2wayX
-        elseif index == 1 then
-            gGlobalSyncTable.ability_slot1 = menuScroll2wayX
-        elseif index == 2 then
-            gGlobalSyncTable.ability_slot2 = menuScroll2wayX
-        elseif index == 3 then
-            gGlobalSyncTable.ability_slot3 = menuScroll2wayX
-        end
     end
 
-    --save_file_set_ability_dpad()
+    save_file_set_ability_dpad()
 end
 
 function using_ability(gMarioState, ability_id)
@@ -853,10 +825,6 @@ gGlobalSyncTable.levels_unlocked = 1 ---default
 
 ability_slot                     = { [0] = ABILITY_NONE, ABILITY_NONE, ABILITY_NONE, ABILITY_NONE };
 gGlobalSyncTable.abilities       = 0
-gGlobalSyncTable.ability_slot0   = ABILITY_NONE
-gGlobalSyncTable.ability_slot1   = ABILITY_NONE
-gGlobalSyncTable.ability_slot2   = ABILITY_NONE
-gGlobalSyncTable.ability_slot3   = ABILITY_NONE
 
 function save_unlocked_levels()
     mod_storage_save_number("levels_unlocked_" .. (get_current_save_file_num() - 1), gGlobalSyncTable.levels_unlocked)
@@ -870,10 +838,10 @@ end
 
 function save_file_set_ability_dpad()
     local currSave = get_current_save_file_num() - 1
-    mod_storage_save_number("ability_slot0" .. (currSave), gGlobalSyncTable.ability_slot0)
-    mod_storage_save_number("ability_slot1" .. (currSave), gGlobalSyncTable.ability_slot1)
-    mod_storage_save_number("ability_slot2" .. (currSave), gGlobalSyncTable.ability_slot2)
-    mod_storage_save_number("ability_slot3" .. (currSave), gGlobalSyncTable.ability_slot3)
+    mod_storage_save_number("ability_slot0" .. (currSave), ability_slot[0])
+    mod_storage_save_number("ability_slot1" .. (currSave), ability_slot[1])
+    mod_storage_save_number("ability_slot2" .. (currSave), ability_slot[2])
+    mod_storage_save_number("ability_slot3" .. (currSave), ability_slot[3])
 end
 
 function save_file_check_ability_unlocked(ability_id)
@@ -895,14 +863,25 @@ end
 
 function load_ability_slots()
     local currSave = get_current_save_file_num() - 1
-    gGlobalSyncTable.ability_slot0 = mod_storage_load_number("ability_slot0" .. (currSave)) or ABILITY_NONE
-    gGlobalSyncTable.ability_slot1 = mod_storage_load_number("ability_slot1" .. (currSave)) or ABILITY_NONE
-    gGlobalSyncTable.ability_slot2 = mod_storage_load_number("ability_slot2" .. (currSave)) or ABILITY_NONE
-    gGlobalSyncTable.ability_slot3 = mod_storage_load_number("ability_slot3" .. (currSave)) or ABILITY_NONE
-    ability_slot[0] = gGlobalSyncTable.ability_slot0
-    ability_slot[1] = gGlobalSyncTable.ability_slot1
-    ability_slot[2] = gGlobalSyncTable.ability_slot2
-    ability_slot[3] = gGlobalSyncTable.ability_slot3
+
+    ability_slot[0] = mod_storage_load_number("ability_slot0" .. (currSave)) or ABILITY_NONE
+    ability_slot[1] = mod_storage_load_number("ability_slot1" .. (currSave)) or ABILITY_NONE
+    ability_slot[2] = mod_storage_load_number("ability_slot2" .. (currSave)) or ABILITY_NONE
+    ability_slot[3] = mod_storage_load_number("ability_slot3" .. (currSave)) or ABILITY_NONE
+end
+
+local function load_global_coins()
+    local currSave = get_current_save_file_num() - 1
+    if network_is_server() then
+        gGlobalSyncTable.coins = mod_storage_load_number("coins" .. (currSave))
+    end
+end
+
+function save_global_coins()
+    local currSave = get_current_save_file_num() - 1
+    if network_is_server() then
+        mod_storage_save_number("coins" .. (currSave), gGlobalSyncTable.coins)
+    end
 end
 
 if network_is_server() then
@@ -910,15 +889,18 @@ if network_is_server() then
     load_unlocked_levels()
     load_ability_slots()
     load_abilities()
+    load_global_coins()
     if save_file_get_flags() == 0 or gGlobalSyncTable.levels_unlocked == 0 then -- has nothing
         gGlobalSyncTable.levels_unlocked = 1
         save_unlocked_levels()
-        gGlobalSyncTable.ability_slot0 = ABILITY_NONE
-        gGlobalSyncTable.ability_slot1 = ABILITY_NONE
-        gGlobalSyncTable.ability_slot2 = ABILITY_NONE
-        gGlobalSyncTable.ability_slot3 = ABILITY_NONE
+        ability_slot[0] = ABILITY_NONE
+        ability_slot[1] = ABILITY_NONE
+        ability_slot[2] = ABILITY_NONE
+        ability_slot[3] = ABILITY_NONE
         save_file_set_ability_dpad()
         gGlobalSyncTable.abilities = 0
         mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
+        gGlobalSyncTable.coins = 0
+        save_global_coins()
     end
 end

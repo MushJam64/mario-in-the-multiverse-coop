@@ -51,7 +51,7 @@ Area 3:
 Course 12: New N-Sanity Island
 
 Area 1:
-- Nitro crates still need to be put in
+- 
 
 METAXY ISLES (Hub):
 - Shop NPC and Shop System not implemented
@@ -70,10 +70,7 @@ INKLING ABILITY:
 - 
 
 AKU AKU ABILITY:
-- Coin requirement to use not implemented
-- Meter used for timer not fully implemented (It shows it recharging while half faded)
+- 
 
 GENERAL STUFF:
-- Double coin count due to CS support not finished
-- Coin Storage system not fully implemented
 - Dying and respawning takes away 5 coins (part of coin system) not there yet

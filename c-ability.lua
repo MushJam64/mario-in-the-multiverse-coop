@@ -10,7 +10,7 @@ local sCollectAbilityHitbox = {
     hurtboxHeight = 0,
 }
 
-UNLOCK_ABILITIES_DEBUG = false
+UNLOCK_ABILITIES_DEBUG = true
 local toZeroMeter = false
 local lastAbility = false
 
@@ -47,23 +47,13 @@ function bhv_ability(o)
             for i = 0, 3 do
                 if ability_slot[i] == ABILITY_NONE then
                     ability_slot[i] = o.oBehParams2ndByte
-                    if i == 0 then
-                        gGlobalSyncTable.ability_slot0 = o.oBehParams2ndByte
-                    elseif i == 1 then
-                        gGlobalSyncTable.ability_slot1 = o.oBehParams2ndByte
-                    elseif i == 2 then
-                        gGlobalSyncTable.ability_slot2 = o.oBehParams2ndByte
-                    elseif i == 3 then
-                        gGlobalSyncTable.ability_slot3 = o.oBehParams2ndByte
-                    end
+
                     break
                 end
             end
             --gGlobalSyncTable.ability_slot0 = o.oBehParams2ndByte
-            if o.oBehParams2ndByte ~= ABILITY_MARBLE then -- hamsterball is a weird one
+            if o.oBehParams2ndByte ~= ABILITY_MARBLE and nearest_mario_state_to_object(o).playerIndex == 0 then -- hamsterball is a weird one
                 change_ability(o.oBehParams2ndByte)
-            end
-            if network_is_server() then
                 save_file_set_ability_dpad()
             end
             o.oAction = 2
@@ -74,13 +64,10 @@ end
 local function save_abilities()
     local currSave = get_current_save_file_num() - 1
     --reduce stress
-    if get_global_timer() % 32 ~= 0 then return end
-    ability_slot[0] = gGlobalSyncTable.ability_slot0
-    ability_slot[1] = gGlobalSyncTable.ability_slot1
-    ability_slot[2] = gGlobalSyncTable.ability_slot2
-    ability_slot[3] = gGlobalSyncTable.ability_slot3
+    if get_global_timer() % 37 ~= 0 then return end
+    save_global_coins()
     if network_is_server() then
-        save_file_set_ability_dpad()
+        --save_file_set_ability_dpad()
         mod_storage_save_number("abilities" .. (currSave), gGlobalSyncTable.abilities)
     end
 end
@@ -180,14 +167,15 @@ local function ability_functions_update(m)
                 -- stop_cap_music()
             end
         else
-            if (m.controller.buttonDown & L_TRIG) ~= 0 and aku_invincibility == 0 and aku_recharge >= 300 and m.numCoins >= 10 and (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
+            if (m.controller.buttonDown & L_TRIG) ~= 0 and aku_invincibility == 0 and aku_recharge >= 300 and gGlobalSyncTable.coins >= 10 and (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE then
                 gPlayerSyncTable[0].aku_invincibility = 300
                 gPlayerSyncTable[0].aku_recharge = 0
                 cool_down_ability(ABILITY_AKU)
+                gGlobalSyncTable.coins = gGlobalSyncTable.coins - 10
                 --djui_chat_message_create(""..ability_cooldown_flags)
             end
 
-           -- djui_chat_message_create(""..aku_recharge)
+            -- djui_chat_message_create(""..aku_recharge)
 
             if aku_invincibility > 0 then
                 abilityMeter = math.min(math.floor((aku_invincibility / 300.0) * 8.0 + 1), 8)
@@ -223,7 +211,7 @@ local function ability_functions_update(m)
             --  abilityMeter = 0;
             toZeroMeter = false;
         else
-           --== abilityMeter = -1;
+            --== abilityMeter = -1;
         end
 
         if (lastAbility ~= gPlayerSyncTable[0].abilityId) then
@@ -338,9 +326,34 @@ end
 hook_event(HOOK_OBJECT_SET_MODEL, function(o)
     if obj_has_behavior_id(o, id_bhvMario) ~= 0 then
         local i = network_local_index_from_global(o.globalPlayerIndex)
-        if gPlayerSyncTable[i].modelId ~= nil and obj_has_model_extended(o, gPlayerSyncTable[i].modelId) == 0 then
-            obj_set_model_extended(o, gPlayerSyncTable[i].modelId)
+
+        if charSelect then
+            local chtable = charSelect.character_get_full_table()
+
+            local chModel = {
+                [CT_MARIO] = E_MODEL_MARIO,
+                [CT_LUIGI] = E_MODEL_LUIGI,
+                [CT_TOAD] = E_MODEL_TOAD_PLAYER,
+                [CT_WALUIGI] = E_MODEL_WALUIGI,
+                [CT_WARIO] = E_MODEL_WARIO,
+            }
+            local setModel = gPlayerSyncTable[i].modelId
+
+            if not gPlayerSyncTable[i].modelId then
+                setModel = chModel[gMarioStates[i].character.type]
+            end
+            if obj_has_model_extended(o, setModel) == 0 then
+                charSelect.character_edit_costume(1, chtable[1] and chtable[1].currAlt or 1, nil, nil, nil, nil,
+                    setModel, nil, nil,
+                    nil)
+            end
+        else
+            if gPlayerSyncTable[i].modelId ~= nil and obj_has_model_extended(o, gPlayerSyncTable[i].modelId) == 0 then
+                obj_set_model_extended(o, gPlayerSyncTable[i].modelId)
+            end
         end
+
+       -- gPlayerSyncTable[i].modelId = nil
     end
 end)
 
@@ -403,7 +416,16 @@ end
 
 local function ability_override_int(m, o, t)
     if gPlayerSyncTable[m.playerIndex].aku_recharge == 0 and using_ability(m, ABILITY_AKU) then
-        if t == INTERACT_FLAME or t == INTERACT_BULLY or t == INTERACT_HIT_FROM_BELOW or t == INTERACT_BOUNCE_TOP then
+        if t == INTERACT_FLAME or t == INTERACT_BULLY or t == INTERACT_HIT_FROM_BELOW or t == INTERACT_BOUNCE_TOP or t == INTERACT_DAMAGE then
+            --  djui_chat_message_create("shit")
+            return false
+        end
+    end
+end
+
+local function ability_override_hazard(m, s)
+    if gPlayerSyncTable[m.playerIndex].aku_recharge == 0 and using_ability(m, ABILITY_AKU) then
+        if s == HAZARD_TYPE_LAVA_FLOOR then
             return false
         end
     end
@@ -425,6 +447,7 @@ hook_behavior(id_bhvCelebrationStar, OBJ_LIST_DEFAULT, false, nil, celeb_star_ov
 hook_event(HOOK_ON_SEQ_LOAD, ability_override_sound)
 hook_event(HOOK_ON_INTERACT, interact_ability_star)
 hook_event(HOOK_ALLOW_INTERACT, ability_override_int)
+hook_event(HOOK_ALLOW_HAZARD_SURFACE, ability_override_hazard)
 hook_event(HOOK_MARIO_UPDATE, ability_functions_update)
 hook_event(HOOK_MARIO_OVERRIDE_GEOMETRY_INPUTS, disable_squid_geometry)
 hook_event(HOOK_ON_DEATH, unfuck_ability_on_die)
