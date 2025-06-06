@@ -20,7 +20,7 @@ Area 1:
 - Water under bridge isn't water
 
 Area 2:
-- 
+- No issues found yet
 
 Area 3:
 - Chum Bucket subarea not finished
@@ -29,10 +29,14 @@ Area 3:
 - Jellyfish King fight not implemented
 - Winding plank bridges not implemented
 
+Area 4:
+- King Jellyfish fight not implemented
+
 Course 3: THE PIRANHA PIT
 
 Area 1:
 - bullet bill and npcs missing
+- Paintgun doesn't damage enemies yet
 
 Course 4: MARIO IN MUSHROOM HAVOC
 
@@ -51,6 +55,9 @@ Area 3:
 Course 12: New N-Sanity Island
 
 Area 1:
+- Nitro crates functional just missing unique explosion animation if hit without mask invis or anything else that isn't invis
+
+Area 2:
 - 
 
 METAXY ISLES (Hub):
@@ -70,7 +77,7 @@ INKLING ABILITY:
 - 
 
 AKU AKU ABILITY:
-- 
+- Mask is completely gone for some reason
 
 GENERAL STUFF:
 - Dying and respawning takes away 5 coins (part of coin system) not there yet
