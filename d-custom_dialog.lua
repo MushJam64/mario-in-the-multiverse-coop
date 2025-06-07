@@ -1,9 +1,10 @@
 local DEFINE_DIALOG = smlua_text_utils_dialog_replace
 
-DIALOG_G_BANANADEE = 15
 DIALOG_D_INTROBOMB = 12
 DIALOG_D_NITROWARNING = 13
 DIALOG_D_EASTEREGG = 14
+DIALOG_G_BANANADEE = 15
+DIALOG_I_START_TOAD = 16
 
 DEFINE_DIALOG(DIALOG_G_BANANADEE, 1, 6, 95, 190, ("Wow, it's Mario! I\
 haven't seen you since\
@@ -98,3 +99,19 @@ the memory of the\
 Power Crystals from\
 the old world, sources of\
 great powers.")
+
+DEFINE_DIALOG(DIALOG_I_START_TOAD, 1, 5, 95, 190, ("Mario Glad to see you\
+there! Be careful, these\
+guys are Hoodlums, if one\
+of them spots you he'll\
+alert the others!\
+Their weapons are loaded\
+and can hurt quite a bit.\
+Don't try to attack them\
+hand-to-hand, they know\
+how to defend themselves!\
+Their cloth bodies are\
+quite fragile and can be\
+damaged if you use a\
+sharp object. Other Toads\
+are here, find them!"))

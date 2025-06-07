@@ -2262,6 +2262,9 @@ local function remove_mario_from_paint_gun()
     local m = nearest_mario_state_to_object(get_current_object())
     set_mario_action(m, ACT_IDLE, 0)
     m.usedObj = nil
+    if m.playerIndex == 0 then
+        camera_unfreeze()
+    end
     --gLakituState.mode = CAMERA_MODE_8_DIRECTIONS
     --gMarioObject.header.gfx.sharedChild = gLoadedGraphNodes[ability_struct[m.abilityId].model_id]
 end
@@ -2313,59 +2316,59 @@ function bhv_paint_gun_loop(o)
                 end
             end
         elseif o.oSubAction == 3 then -- Mario controls it
-            --[[if set_cam_angle(0) == 3 then
-                set_cam_angle(CAM_ANGLE_LAKITU)
-            end
-            local c = m.area.camera
-            local paintGun = m.usedObj
-
-            local yaw = paintGun.oMoveAngleYaw
-            local pitch = paintGun.oMoveAnglePitch
-            local cossPitch = coss(pitch)
-
-            local camDecrement
-            if paintGun.oAction ~= 1 then
-                camDecrement = 500
-            else
-                camDecrement = 500
-            end
-
-            local velocityFactor = paintGun.oForwardVel --* ability_chronos_current_slow_factor()
-
-            local camOffset = {
-                x = (sins(yaw) * cossPitch) * (velocityFactor - camDecrement),
-                y = (sins(pitch)) * (velocityFactor + camDecrement),
-                z = (coss(yaw) * cossPitch) * (velocityFactor - camDecrement)
-            }
-
-            local newPos = { x = 0, y = 0, z = 0 }
-
-            vec3f_copy(c.focus, { x = paintGun.oPosX, y = paintGun.oPosY, z = paintGun.oPosZ })
-            vec3f_copy(newPos, c.focus)
-            vec3f_add(newPos, camOffset)
-            vec3f_copy(c.pos, newPos)
-]]
-
             --shock_rocket_stick_control() --todo add
             set_mario_action(m, ACT_CUTSCENE_CONTROLLED, 0)
             m.usedObj = o
             if m.playerIndex == 0 then
-                -- gLakituState.mode = CAMERA_MODE_PAINT_GUN
+                camera_freeze()
+                --  vec3f_copy(gLakituState.pos, oPosVec)
+                -- gLakituState.pos.y=o.oPosY+100
+                --gLakituState.yaw = o.oMoveAngleYaw
+                -- gLakituState.oldPitch = o.oMoveAnglePitch
+
+                local c = gLakituState
+                local paintGun = m.usedObj
+
+                local yaw = paintGun.oMoveAngleYaw
+                local pitch = paintGun.oMoveAnglePitch
+                local cossPitch = coss(pitch)
+
+                local camDecrement
+                if paintGun.oAction ~= 1 then
+                    camDecrement = 500
+                else
+                    camDecrement = 500
+                end
+
+                local velocityFactor = paintGun.oForwardVel --* ability_chronos_current_slow_factor()
+
+                local camOffset = {
+                    x = (sins(yaw) * cossPitch) * (velocityFactor - camDecrement),
+                    y = (sins(pitch)) * (velocityFactor + camDecrement),
+                    z = (coss(yaw) * cossPitch) * (velocityFactor - camDecrement)
+                }
+
+                local newPos = { x = 0, y = 0, z = 0 }
+
+                vec3f_copy(c.focus, { x = paintGun.oPosX, y = paintGun.oPosY, z = paintGun.oPosZ })
+                vec3f_copy(newPos, c.focus)
+                vec3f_add(newPos, camOffset)
+                vec3f_copy(c.pos, newPos)
             end
 
             local controller = m.controller
             if controller.rawStickY > 60 then
                 --up
-                o.oMoveAnglePitch = o.oMoveAnglePitch + 700
+                o.oMoveAnglePitch = o.oMoveAnglePitch + 500
             elseif controller.rawStickY < -60 then
                 --down
-                o.oMoveAnglePitch = o.oMoveAnglePitch - 700
+                o.oMoveAnglePitch = o.oMoveAnglePitch - 500
             elseif controller.rawStickX > 60 then
                 --right
-                o.oMoveAngleYaw = o.oMoveAngleYaw - 700
+                o.oMoveAngleYaw = o.oMoveAngleYaw - 500
             elseif controller.rawStickX < -60 then
                 --left
-                o.oMoveAngleYaw = o.oMoveAngleYaw + 700
+                o.oMoveAngleYaw = o.oMoveAngleYaw + 500
             end
 
             if m.controller.buttonPressed & A_BUTTON ~= 0 then
@@ -2489,4 +2492,10 @@ function bhv_nitro_boom_loop(o)
     else
         obj_mark_for_deletion(o)
     end
+end
+
+function bhv_moving_funky_platform(o)
+    local reverse = 1;
+    if (((o.oBehParams >> 24) & 0xff) ~= 0) then reverse = -1; end
+    o.oPosX = o.oPosX + (10.0 * coss(1000 * o.oTimer)) * reverse;
 end

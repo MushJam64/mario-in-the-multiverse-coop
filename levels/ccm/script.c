@@ -48,7 +48,7 @@ const LevelScript level_ccm_entry[] = {
 		OBJECT(MODEL_HOODMONGER, -4922, 23, -4078, 0, 45, 0, (1 << 16), bhvHoodmonger),
 		OBJECT(MODEL_PIGPOT, -5358, 225, -898, 0, 174, 0, 0x00000000, bhvPigpot),
 		OBJECT(MODEL_PIGPOT, -5138, 225, -1267, 0, -149, 0, 0x00000000, bhvPigpot),
-		OBJECT(MODEL_TOAD, -5936, 630, -129, 0, -12, 0, 0x00000000, bhvLevelIStartToad),
+		OBJECT(MODEL_TOAD, -5936, 630, -129, 0, -12, 0, (16 << 24), bhvToadMessage),
 		OBJECT(MODEL_NONE, -6899, 360, -6949, 0, 25, 0, (14 << 16), bhvAirborneWarp),
 		OBJECT(MODEL_NONE, -3780, 1115, -7487, 0, 65, 0, (12 << 16), bhvAirborneWarp),
 		OBJECT(MODEL_NONE, -6443, 590, -1869, 0, -180, 0, (0x01 << 16), bhvDeathWarp),

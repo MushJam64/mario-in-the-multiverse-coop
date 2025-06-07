@@ -818,6 +818,7 @@ function change_ability(picked_ability)
 end
 
 -- Saving
+gGlobalSyncTable.coins = 0
 
 --levels_unlocked = 1 means first course is open
 

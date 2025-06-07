@@ -459,7 +459,7 @@ local function render_hud()
     render_meter(sw - 165 + 20 + 25 + 20 + 25, 280, METER_STYLE_HP, gMarioStates[0].health >> 8, hud_abil_alpha)
     -- if sAbilityMeterHUD.animation ~= ABILITY_METER_HIDDEN then
     -- djui_chat_message_create(""..abilityMeter)
-    render_meter(sw - 165 + 20 + 25 + 20 + 25-42, 280, abilityMeterStyle, abilityMeter, hud_alpha);
+    render_meter(sw - 165 + 20 + 25 + 20 + 25 - 42, 280, abilityMeterStyle, abilityMeter, hud_alpha);
     -- end
     -- Hud bar
     djui_hud_set_font(FONT_HUD)
@@ -468,6 +468,7 @@ local function render_hud()
     djui_hud_render_texture(TEX_HUDBAR, sw - 190, 265 - 255, 0.18, 0.18)
     djui_hud_render_texture(gTextures.coin, sw - 165, 265 - 255 + 4, 1, 1)
     djui_hud_print_text(string.format("%03d", gGlobalSyncTable.coins), sw - 165 + 20, 265 - 255 + 4, 1)
+
 
     djui_hud_render_texture(gTextures.star, sw - 165 + 20 + 25 + 25, 265 - 255 + 4, 1, 1)
     djui_hud_print_text(string.format("%03d", hud_get_value(HUD_DISPLAY_STARS)), sw - 165 + 20 + 25 + 20 + 25,
