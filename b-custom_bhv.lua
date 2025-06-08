@@ -211,11 +211,40 @@ function spawn_object_relative(behaviorParam, relativePosX, relativePosY, relati
     obj_set_parent_relative_pos(obj, relativePosX, relativePosY, relativePosZ)
     obj_build_relative_transform(obj)
 
+    obj.parentObj = parent
+
     obj.oBehParams2ndByte = behaviorParam
     obj.oBehParams = (behaviorParam << 16)
 
     return obj
 end
+
+local function spawn_object_relative_with_scale(behaviorParam, relativePosX, relativePosY, relativePosZ, scale,
+                                                parent, model, behavior)
+    local obj = spawn_object_relative(behaviorParam, relativePosX, relativePosY, relativePosZ,
+        parent, model, behavior)
+    if obj then
+        obj_scale(obj, scale)
+    end
+
+    return obj
+end
+
+local function spawn_object_relative_with_scale2(behaviorParam, relativePosX, relativePosY, relativePosZ, scale,
+                                                 parent, model, behavior)
+    local obj = spawn_sync_object(behavior, model,
+        parent.oPosX + relativePosX,
+        parent.oPosY + relativePosY,
+        parent.oPosZ + relativePosZ, function(s)
+            s.oBehParams2ndByte = behaviorParam
+            obj_scale(s, scale)
+            s.parentObj = parent
+        end)
+
+
+    return obj
+end
+
 
 function spawn_object_relative2(behaviorParam, relativePosX, relativePosY, relativePosZ,
                                 parent, model, behavior)
@@ -2754,5 +2783,178 @@ function bhv_star_piece_loop(o)
 
     if sps.oAction == BLUE_COIN_SWITCH_ACT_IDLE then
         o.oAction = 0
+    end
+end
+
+--crane
+local PURPLE_SWITCH_ACT_IDLE                      = 0x0
+local PURPLE_SWITCH_ACT_PRESSED                   = 0x1
+local PURPLE_SWITCH_ACT_TICKING                   = 0x2
+local PURPLE_SWITCH_ACT_UNPRESSED                 = 0x3
+local PURPLE_SWITCH_ACT_WAIT_FOR_MARIO_TO_GET_OFF = 0x4
+
+local OFFSET                                      = 180
+
+---@param o Object
+function bhv_crane_arrow_controller_init(o)
+end
+
+function bhv_crane_arrow_controller_loop(o)
+    -- Empty function body
+    o.oFlameBowser = obj_get_nearest_object_with_behavior_id(o, (bhvCrane))
+
+    if should_object_spawn() and count_objects_with_behavior(get_behavior_from_id(bhvCraneArrow)) < 2 then
+        if not o.oHiddenObjectUnkF4 then
+            -- o.oHiddenObjectUnkF4 = spawn_object_relative_with_scale2(0, OFFSET, 0, 0, 2.0, o, MODEL_CRANE_ARROW,
+            --bhvCraneArrow)
+
+            -- o.oHiddenObjectUnkF4.oFaceAngleYaw = o.oHiddenObjectUnkF4.oFaceAngleYaw + 0x8000
+
+            o.oHiddenObjectUnkF4 = spawn_sync_object(bhvCraneArrow, MODEL_CRANE_ARROW, o.oPosX + 180, o.oPosY, o.oPosZ,
+                function(j)
+                    j.oFaceAngleYaw = o.oFaceAngleYaw
+                    j.oFaceAngleYaw = j.oFaceAngleYaw + 0x8000
+                    --  j.oBehParams2ndByte = behaviorParam
+                    obj_scale(j, 2)
+                    j.parentObj = o
+                end)
+        end
+        if not o.oHiddenBlueCoinSwitch then
+            o.oHiddenBlueCoinSwitch = spawn_sync_object(bhvCraneArrow, MODEL_CRANE_ARROW, o.oPosX + -180, o.oPosY, o
+                .oPosZ,
+                function(j)
+                    j.oFaceAngleYaw = o.oFaceAngleYaw
+                    --j.oFaceAngleYaw = j.oFaceAngleYaw + 0x8000
+                    j.oBehParams2ndByte = 1
+                    j.oBehParams = (1 << 16)
+                    obj_scale(j, 2)
+                    j.parentObj = o
+                end)
+        end
+    end
+end
+
+function bhv_crane_arrow_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_NO_DREAM_COMET
+end
+
+---@param o Object
+function bhv_crane_arrow_loop(o)
+    o.header.gfx.skipInViewCheck = true
+    local m = nearest_mario_state_to_object(o)
+    local gMarioObject = m.marioObj
+    if o.oAction == PURPLE_SWITCH_ACT_IDLE then
+        if (
+                gMarioObject.platform == o and
+                (m.action & 0x00002000) == 0 and
+                lateral_dist_between_objects(o, gMarioObject) < 150.5
+            ) or (o.oShotByShotgun == 2) then -- --E
+            o.oAction = PURPLE_SWITCH_ACT_PRESSED
+        end
+    elseif o.oAction == PURPLE_SWITCH_ACT_PRESSED then
+        cur_obj_scale_over_time(2, 3, 2.0, 0.2)
+        if o.oTimer == 3 then
+            cur_obj_play_sound_2(SOUND_GENERAL2_PURPLE_SWITCH)
+            o.oAction = PURPLE_SWITCH_ACT_TICKING
+            cur_obj_shake_screen(SHAKE_POS_SMALL)
+            if m.playerIndex == 0 then
+                local crane = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvCrane));
+                --m.area.camera.cutscene = 1
+                --vec3f_copy(m.area.camera.focus, { x = crane.oPosX, y = crane.oPosY, z = crane.oPosZ });
+                --vec3f_copy(m.area.camera.pos, { x = crane.oPosX, y = crane.oPosY, z = crane.oPosZ });
+
+                -- struct Object *camera = cur_obj_nearest_object_with_behavior(bhvCamera);
+                --vec3f_copy(c->pos, &camera->oPosVec);
+                --gLakituState.mode = CAMERA_MODE_CRANE
+                -- if ENABLE_RUMBLE then
+            end
+            queue_rumble_data(5, 80)
+            -- end
+        end
+    elseif o.oAction == PURPLE_SWITCH_ACT_TICKING then
+        if gMarioObject.platform ~= o then
+            o.oAction = o.oAction + 1
+        end
+
+        local crane = o.parentObj.oFlameBowser
+        if crane ~= nil then
+            crane.oMoveAngleYaw = crane.oMoveAngleYaw + 110 * (1 - ((o.oBehParams >> 16) & 0xff) * 2)
+            cur_obj_play_sound_1(SOUND_ENV_ELEVATOR1)
+        end
+    elseif o.oAction == PURPLE_SWITCH_ACT_UNPRESSED then
+        cur_obj_scale_over_time(2, 3, 0.2, 2.0)
+        if o.oTimer == 3 then
+            o.oAction = PURPLE_SWITCH_ACT_IDLE
+            if m.playerIndex == 0 then
+                m.area.camera.cutscene = 0
+            end
+            --gLakituState.mode = CAMERA_MODE_8_DIRECTIONS
+        end
+    end
+
+    o.oShotByShotgun = 0 -- --E
+end
+
+function bhv_crane_init(o)
+    o.header.gfx.skipInViewCheck = true
+    -- o.oHiddenObjectUnkF4 = spawn_object_relative_with_scale(0, 0, 800, 4000, 1.0, o, MODEL_CRANE_HEAD, bhvCraneHead)
+end
+
+function bhv_crane_loop(o)
+    o.header.gfx.skipInViewCheck = true
+    if should_object_spawn() and count_objects_with_behavior(get_behavior_from_id(bhvCraneHead)) == 0 then
+        o.oHiddenObjectUnkF4 = spawn_object_relative_with_scale2(0, 0, 800, 4000, 1.0, o, MODEL_CRANE_HEAD, bhvCraneHead)
+    end
+    -- djui_chat_message_create(tostring(o.oHiddenObjectUnkF4~=nil))
+end
+
+function bhv_crane_head_loop(o)
+    o.header.gfx.skipInViewCheck = true
+    cur_obj_set_pos_relative(o.parentObj, 0, 900, 4200)
+    o.oMoveAngleYaw = o.parentObj.oMoveAngleYaw
+    o.oFaceAnglePitch = o.oFaceAnglePitch + 300
+end
+
+function bhv_crane_rock_init(o)
+    o.header.gfx.skipInViewCheck = true
+    o.oHomeY = o.oPosY
+    o.oHiddenBlueCoinSwitch = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvCraneHead))
+    o.oCapUnkF4 = 0
+end
+
+function bhv_crane_rock_loop(o)
+    o.header.gfx.skipInViewCheck = true
+    if o.oAction == 0 then
+        o.oHiddenBlueCoinSwitch = obj_get_nearest_object_with_behavior_id(o, (bhvCraneHead))
+        if o.oHiddenBlueCoinSwitch ~= nil then
+            if dist_between_objects(o.oHiddenBlueCoinSwitch, o) < 1700 then
+                o.oAction = o.oAction + 1
+            end
+        end
+    elseif o.oAction == 1 then
+        o.oCapUnkF4 = o.oCapUnkF4 + 1
+        cur_obj_play_sound_1(SOUND_ENV_METAL_BOX_PUSH)
+        o.oPosY = (o.oTimer % 2 == 1) and (o.oHomeY + 20.0) or (o.oHomeY - 20.0)
+
+        if o.oCapUnkF4 > 150 then
+            o.oAction = o.oAction + 1
+        end
+
+        if dist_between_objects(o.oHiddenBlueCoinSwitch, o) > 2000 then
+            o.oCapUnkF4 = 0
+            o.oAction = 0
+        end
+    elseif o.oAction == 2 then
+        create_sound_spawner(SOUND_GENERAL2_PYRAMID_TOP_EXPLOSION)
+        spawn_mist_particles_variable(0, 0, 500.0)
+        spawn_triangle_break_particles(30, 0x8a, 3.0, 4)
+
+        if count_objects_with_behavior(get_behavior_from_id(bhvCraneRock)) == 1 then
+            -- play_puzzle_jingle()
+            local m = nearest_mario_state_to_object(o)
+            spawn_default_star(m.pos.x, m.pos.y + 200, m.pos.z)
+        end
+
+        obj_mark_for_deletion(o)
     end
 end

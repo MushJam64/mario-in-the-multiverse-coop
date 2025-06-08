@@ -12,6 +12,7 @@ end
 gLevelValues.disableActs = true
 gLevelValues.fixCollisionBugs = true
 gLevelValues.fixCollisionBugsPickBestWall = true
+gLevelValues.fixCollisionBugsRoundedCorners = true
 gBehaviorValues.ShowStarMilestones = false
 gBehaviorValues.ShowStarDialog = false
 gServerSettings.skipIntro = true

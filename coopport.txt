@@ -7,4 +7,5 @@ level a  (spongebob lvl)   -> level wf
 level c (squidl) -> level jrb
 level i -> level ccm
 level d (grassy thing) -> level ttm
+level b -> level hmc
 castle inside (hub)   -> castle inside

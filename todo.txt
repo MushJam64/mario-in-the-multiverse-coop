@@ -50,7 +50,6 @@ Area 2:
 - All guard mooks not fully implemented here as well
 - Plenty of graphical errors (ignore for now due to it being obvious)
 - Giant Fruit (Star 4 I believe, along with rope to cut to create paths with wood) not in yet
-- Aku Aku Ability sign right by large waterfall isn't there yet
 - Audiosurf subarea not finished
 
 Area 3:
@@ -70,7 +69,6 @@ Area 2:
 - Sea doors not all implemented in yet
 - Elevators not all implemented yet
 - Apu Apu Bully Boss not implemented yet
-- Signs for both Phasewalk and Shotgun near gratted walls further in the level aren't there yet
 - Seesaw near lava room is not there
 
 METAXY ISLES (Hub):
