@@ -1033,7 +1033,18 @@ function bhv_sir_kibble_loop(o)
             end
         elseif o.oAction == SIR_KIBBLE_ACT_THROWING then
             if o.oTimer == 17 then
-                spawn_object_relative2(2, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
+                -- spawn_object_relative2(2, 0, 100, 0, o, MODEL_CUTTER_BLADE, bhvCutterBlade) --todo sync?
+
+                spawn_sync_object(bhvCutterBlade, MODEL_CUTTER_BLADE, o.oPosX, o.oPosY, o.oPosZ,
+                    function(obj)
+                        obj.parentObj = o
+                        obj_copy_angle(obj, o)
+                        obj_set_parent_relative_pos(obj, 0, 100, 0)
+                        obj_build_relative_transform(obj)
+
+                        obj.oBehParams2ndByte = 2
+                        obj.oBehParams = (2 << 16)
+                    end)
 
                 --cutterblade.activeFlags = (cutterblade.activeFlags | ACTIVE_FLAG_INITIATED_TIME_STOP)
             end
@@ -1205,7 +1216,10 @@ function bhv_cutter_blade_loop(o)
         local other = o.collidedObjs[i]
         if other ~= o.parentObj then
             if other ~= gMarioObject then
-                attack_object(other, 2)
+                local sirkibb = get_behavior_from_id(bhvSirKibble)
+                if not (other.parentObj.behavior == sirkibb and other.behavior == sirkibb) then
+                    attack_object(other, 2)
+                end
             end
         end
     end
