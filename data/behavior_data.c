@@ -452,6 +452,97 @@ const BehaviorScript bhvMovingFunkyPlatform[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvBhButton[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(bh_red_button_collision),
+    CALL_NATIVE(bridgesbutton_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(button_for_bridge_loop),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvBhButton2[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(bh_red_button_collision),
+    CALL_NATIVE(bridgesbutton_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(button_for_bridge_loop_2),
+        CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+extern const Collision bhbridge_collision[];
+extern const struct Animation *const bhbridge_anims[];
+const BehaviorScript bhvRBridge[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    LOAD_COLLISION_DATA(bhbridge_collision),
+    //LOAD_ANIMATIONS(oAnimations, bhbridge_anims),
+    //ANIMATE(0),
+    CALL_NATIVE(bridgesbutton_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bridge_loop),
+        //CALL_NATIVE(load_object_collision_model),
+    END_LOOP(),
+};
+
+extern const Collision a_plank_collision[];
+extern const struct Animation *const a_plank_anims[];
+const BehaviorScript bhvRPlank[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    //LOAD_ANIMATIONS(oAnimations, a_plank_anims),
+    //ANIMATE(0),
+    CALL_NATIVE(bridgesbutton_init),
+    LOAD_COLLISION_DATA(a_plank_collision),
+    BEGIN_LOOP(),
+        //CALL_NATIVE(load_object_collision_model),
+        CALL_NATIVE(bridge2_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvNitroBoom[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_nitro_boom_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvStarPieceSwitch[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),//--E
+    LOAD_COLLISION_DATA(blue_coin_switch_seg8_collision_08000E98),
+    SET_INT(oIntangibleTimer, 0),//--E
+    SET_HITBOX(/*Radius*/ 120, /*Height*/ 100),//--E
+    SET_INT(oAnimState, 1),
+    SET_HOME(),//prevent fucking the bcs with timeslow
+    CALL_NATIVE(bhv_star_piece_switch_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_star_piece_switch_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvStarPiece[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    SET_HOME(),
+    CALL_NATIVE(bhv_star_piece_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_star_piece_loop),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -512,30 +603,6 @@ const BehaviorScript bhvNoteblock[] = {
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_noteblock),
         CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvStarPieceSwitch[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_ABILITY_CHRONOS_SMOOTH_SLOW | OBJ_FLAG_NO_DREAM_COMET),//--E
-    LOAD_COLLISION_DATA(blue_coin_switch_seg8_collision_08000E98),
-    SET_INT(oIntangibleTimer, 0),//--E
-    SET_HITBOX(/*Radius*\ 120, /*Height*\ 100),//--E
-    SET_INT(oAnimState, 1),
-    SET_HOME(),//prevent fucking the bcs with timeslow
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_star_piece_switch_loop),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvStarPiece[] = {
-    BEGIN(OBJ_LIST_LEVEL),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    SET_HOME(),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_star_piece_loop),
     END_LOOP(),
 };
 
@@ -1276,57 +1343,6 @@ const BehaviorScript bhvKKB[] = {
 };
 
 extern const Collision bh_red_button_collision[];
-const BehaviorScript bhvBhButton[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(bh_red_button_collision),
-    BEGIN_LOOP(),
-        CALL_NATIVE(button_for_bridge_loop),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-const BehaviorScript bhvBhButton2[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(bh_red_button_collision),
-    BEGIN_LOOP(),
-        CALL_NATIVE(button_for_bridge_loop_2),
-        CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-extern const Collision bhbridge_collision[];
-extern const struct Animation *const bhbridge_anims[];
-const BehaviorScript bhvRBridge[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_COLLISION_DATA(bhbridge_collision),
-    LOAD_ANIMATIONS(oAnimations, bhbridge_anims),
-    ANIMATE(0),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bridge_loop),
-        //CALL_NATIVE(load_object_collision_model),
-    END_LOOP(),
-};
-
-extern const Collision a_plank_collision[];
-extern const struct Animation *const a_plank_anims[];
-const BehaviorScript bhvRPlank[] = {
-    BEGIN(OBJ_LIST_SURFACE),
-    ID(id_bhvNewId),
-    OR_LONG(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
-    LOAD_ANIMATIONS(oAnimations, a_plank_anims),
-    ANIMATE(0),
-    LOAD_COLLISION_DATA(a_plank_collision),
-    BEGIN_LOOP(),
-        //CALL_NATIVE(load_object_collision_model),
-        CALL_NATIVE(bridge2_loop),
-    END_LOOP(),
-};
 
 const BehaviorScript bhvGooSwitch[] = {
     BEGIN(OBJ_LIST_SURFACE),
@@ -1625,14 +1641,6 @@ const BehaviorScript bhvJellyFish[] = {
 
 /* GROUP D START *\
 extern void bhv_nitro_boom_loop(void);
-const BehaviorScript bhvNitroBoom[] = {
-    BEGIN(OBJ_LIST_LEVEL),
-    ID(id_bhvNewId),
-    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_COMPUTE_DIST_TO_MARIO),
-    BEGIN_LOOP(),
-        CALL_NATIVE(bhv_nitro_boom_loop),
-    END_LOOP(),
-};
 extern void bhv_d_elevator(void);
 const BehaviorScript bhvDelevator[] = {
     BEGIN(OBJ_LIST_SURFACE),

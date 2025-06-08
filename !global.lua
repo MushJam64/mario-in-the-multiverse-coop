@@ -274,6 +274,11 @@ MODEL_PAINT_GUN                    = smlua_model_util_get_id("paint_gun_geo")
 MODEL_PAINT_BULLET                 = smlua_model_util_get_id("paint_bullet_geo")
 MODEL_FUNKY_ROAD                   = smlua_model_util_get_id("funky_road_geo")
 MODEL_NITRO_BOX                    = smlua_model_util_get_id("nitro_geo")
+MODEL_BUBBLENET_RED_BUTTON         = smlua_model_util_get_id("bh_red_button_geo")
+MODEL_BHBRIDGE                     = smlua_model_util_get_id("bhbridge_geo")
+MODEL_A_PLANK                      = smlua_model_util_get_id("a_plank_geo")
+MODEL_NITRO_BOOM                   = smlua_model_util_get_id("nitroboom_geo")
+MODEL_STAR_PIECE                   = smlua_model_util_get_id("star_piece_geo")
 
 BP3_ATTACH_ROPE                    = 0xF0
 
@@ -291,22 +296,23 @@ OBJ_FLAG_E__SG_COLLISION_BREAKABLE = (1 << 27) --Used for larger objects with co
     Note: Objects that use either of these 'custom' flags need to reset oShotByShotgun back to 0 again after they're shot, if you want them to be able to be shot more than once.
     This is very much like how you reset oInteractStatus to 0, when managing interactions on a more manual level.
     ]]
-OBJ_FLAG_E__SG_CUSTOM           = (1 << 28) --Only adds to oShotByShotgun to let the object know that it was shot, so that the object's behavior can do what it needs to from there
-OBJ_FLAG_E__SG_COLLISION_CUSTOM = (1 << 29) --Same as OBJ_FLAG_E__SG_CUSTOM, but for objects with collision models
+OBJ_FLAG_E__SG_CUSTOM                = (1 << 28) --Only adds to oShotByShotgun to let the object know that it was shot, so that the object's behavior can do what it needs to from there
+OBJ_FLAG_E__SG_COLLISION_CUSTOM      = (1 << 29) --Same as OBJ_FLAG_E__SG_CUSTOM, but for objects with collision models
+OBJ_FLAG_ABILITY_CHRONOS_SMOOTH_SLOW = (1 << 31)
 
 -- Music
-SEQ_CUSTOM_KIRBY_BOSS           = 0x26
-SOUND_ABILITY_CUTTER_CATCH      = audio_stream_load("ability_cutter_catch.aiff")
-SOUND_ABILITY_CUTTER_DASH       = audio_stream_load("ability_cutter_dash.aiff")
-SOUND_ABILITY_CUTTER_THROW      = audio_sample_load("ability_cutter_throw.aiff")
-SOUND_MITM_LEVEL_TLIM_TAXI      = audio_sample_load("tlim_taxi.aiff")
-SOUND_ABILITY_AKU_AKU           = audio_stream_load("ability_aku.aiff")
+SEQ_CUSTOM_KIRBY_BOSS                = 0x26
+SOUND_ABILITY_CUTTER_CATCH           = audio_stream_load("ability_cutter_catch.aiff")
+SOUND_ABILITY_CUTTER_DASH            = audio_stream_load("ability_cutter_dash.aiff")
+SOUND_ABILITY_CUTTER_THROW           = audio_sample_load("ability_cutter_throw.aiff")
+SOUND_MITM_LEVEL_TLIM_TAXI           = audio_sample_load("tlim_taxi.aiff")
+SOUND_ABILITY_AKU_AKU                = audio_stream_load("ability_aku.aiff")
 
 -- Floor
-SURFACE_SQUID_INK               = SURFACE_TRAPDOOR + 16
-SURFACE_TOXIC_INK               = SURFACE_TRAPDOOR + 32
+SURFACE_SQUID_INK                    = SURFACE_TRAPDOOR + 16
+SURFACE_TOXIC_INK                    = SURFACE_TRAPDOOR + 32
 
-CAMERA_MODE_PAINT_GUN           = CAMERA_MODE_ROM_HACK + 0x01
+CAMERA_MODE_PAINT_GUN                = CAMERA_MODE_ROM_HACK + 0x01
 
 function set_custom_mario_animation_with_accel(m, targetAnimID, accel, a)
     local o = m.marioObj
@@ -818,7 +824,7 @@ function change_ability(picked_ability)
 end
 
 -- Saving
-gGlobalSyncTable.coins = 0
+gGlobalSyncTable.coins           = 0
 
 --levels_unlocked = 1 means first course is open
 

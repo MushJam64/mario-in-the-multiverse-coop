@@ -26,60 +26,6 @@ local function make_vertex(gfx, n, x, y, z, tx, ty, r, g, b, a)
     end
 end
 
--- scroll ported from ex alo
-local SCROLL_X = 0
-local SCROLL_Y = 1
-local SCROLL_Z = 2
-local SCROLL_UV_X = 4
-local SCROLL_UV_Y = 5
-local MODE_SCROLL_UV = 0
-local MODE_SCROLL_SINE = 1
-local MODE_SCROLL_JUMP = 2
-
-local function shift_UV_NORMAL(gfx, vertcount, speed, bhv, cycle)
-    --[[local overflownum = 0x1000;
-    --Vtx* *verts = get_scroll_targets(vtxIndex);
-    local correction = 0;
-    local vtx0 = gfx_get_vertex_buffer(gfx)
-
-    if (bhv < SCROLL_UV_X) then
-        if (vtx0.flag >= cycle) then
-            correction = vtx0.flag * speed;
-            vtx0.flag = 0;
-        end
-
-        for i = 0, vertcount do
-            local vtxi = gfx_get_vtx(gfx, i)
-            if (correction == 0) then
-                vtxi.ob[math.min(bhv, 2)] = vtxi.ob[math.min(bhv, 2)] + speed;
-            else
-                vtxi.ob[math.min(bhv, 2)] = vtxi.ob[math.min(bhv, 2)] - correction;
-            end
-        end
-    else
-        if (vtx0.flag * math.abs(speed) > overflownum) then
-            correction = overflownum * signum_positive(speed);
-            vtx0.flag = 0;
-        end
-        local infix = 1
-        for i = 0, vertcount do
-            local vtxi = gfx_get_vertex_buffer(gfx)
-            if (correction == 0) then
-                vtxi.tc[math.min(bhv - SCROLL_UV_X, 1) + (infix)] = vtxi.tc
-                    [math.min(bhv - SCROLL_UV_X, 1) + (infix)] + speed;
-            else
-                vtxi.tc[math.min(bhv - SCROLL_UV_X, 1) + (infix)] = vtxi.tc
-                    [math.min(bhv - SCROLL_UV_X, 1) + (infix)] - correction;
-            end
-            vtx_get_vertex(vtxi, i)
-        end
-    end
-
-    if (correction == 0) then
-        vtx0.flag = vtx0.flag + 1;
-    end]]
-end
-
 local mversepipe_mat = gfx_get_from_name("mat_level_pipe_MversePipe1_layer1")
 local mversepipe_mat2 = gfx_get_from_name("mat_level_pipe_MversePipe2_layer1")
 

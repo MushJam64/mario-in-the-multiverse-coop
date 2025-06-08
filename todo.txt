@@ -10,7 +10,6 @@ Area 3:
 Area 4:
 - Checkpoint flags missing
 - Pipe to warp back to Area 3 isn't there
-- Star Piece block with behavior isn't implemented
 - Hidden buttons for one of the stars isn't implemented yet
 - Grate that blocks entry to Marx fight not implemented
 - Marx fight not in yet
@@ -24,13 +23,12 @@ Area 2:
 - No issues found yet
 
 Area 3:
+- King Jellyfish fight not implemented
+
+Area 4:
 - Chum Bucket subarea not finished
 - Krusty Krab subarea not finished
 - Shell Bank subarea not finished
-- Winding plank bridges not implemented
-
-Area 4:
-- King Jellyfish fight not implemented
 
 Course 3: THE PIRANHA PIT
 
@@ -61,14 +59,12 @@ Area 3:
 Course 12: New N-Sanity Island
 
 Area 1:
-- Nitro crates functional just missing unique explosion animation if hit without mask invis or anything else that isn't invis
 - Seesaw's toward star on shipwreck aren't there yet
 - Button to spawn breakable boxes toward star on same path as above not there yet
 - Gate locking away a star in a building not fully implemented yet
 - Pokeball Sign beyond small hole to big mushrooms to fly across not there yet
 - A tree at the very end of said place mentioned above is not there
 - Wind currents at the bottom of the slide area aren't there (?)
-
 
 Area 2:
 - Sea doors not all implemented in yet

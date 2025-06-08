@@ -23,7 +23,7 @@ const LevelScript level_bob_entry[] = {
 	LOAD_MIO0(0xa, _bits_skybox_mio0SegmentRomStart, _bits_skybox_mio0SegmentRomEnd), 
 	ALLOC_LEVEL_POOL(),
 	MARIO(MODEL_MARIO, 0x00000001, bhvMario),
-	LOAD_MODEL_FROM_GEO(MODEL_GOOMBA, goomba_geo),
+	JUMP_LINK(script_func_global_1), 
 	/* Fast64 begin persistent block [level commands] */
 	/* Fast64 end persistent block [level commands] */
 

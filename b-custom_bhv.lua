@@ -245,7 +245,7 @@ function approach_s32_symmetric(current, target, inc)
     return approach_s32(current, target, inc, inc)
 end
 
-local function should_object_spawn()
+function should_object_spawn()
     return (is_nearest_mario_state_to_object(gMarioStates[0], get_current_object()) ~= 0)
 end
 
@@ -1366,8 +1366,10 @@ function bhv_level_g_cutscenes_loop(o)
             local sirKibble = obj_get_nearest_object_with_behavior_id(o, bhvSirKibble)
 
             if not sirKibble or (sirKibble and (sirKibble.activeFlags & ACTIVE_FLAG_DEACTIVATED) ~= 0) then
-                spawn_non_sync_object(bhvStarDrop, MODEL_G_STAR_PROJECTILE, o.oHealth, o.oAnimState + 100, o.oDoorUnk100,
-                    nil)
+                if should_object_spawn() then
+                    spawn_sync_object(bhvStarDrop, MODEL_G_STAR_PROJECTILE, o.oHealth, o.oAnimState + 100, o.oDoorUnk100,
+                        nil)
+                end
                 o.oAction = 1
             else
                 o.oHealth = sirKibble.oPosX
@@ -1382,7 +1384,7 @@ end
 function bhv_star_drop_init(o)
     -- gMarioStates[0].area.camera.cutscene = 1
     stop_secondary_music(180)
-    --network_init_object(o, true, nil) no syncing
+    network_init_object(o, true, { "oTimer", "oFaceAnglePitch", "oPosY" })
 end
 
 function bhv_star_drop_loop(o)
@@ -1401,7 +1403,11 @@ function bhv_star_drop_loop(o)
         o.oPosY = o.oPosY + 4 * coss(0x222 * (o.oTimer - 90))
 
         if o.oTimer == 110 then
-            spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
+            --spawn_object_relative2(ABILITY_CUTTER, 0, 0, 0, o, MODEL_ABILITY, bhvAbilityUnlock)
+            if should_object_spawn() then
+                spawn_sync_object(bhvAbilityUnlock, MODEL_ABILITY, o.oPosX, o.oPosY, o.oPosZ,
+                    function(j) j.oBehParams2ndByte = ABILITY_CUTTER end)
+            end
             cur_obj_hide()
             spawn_mist_particles()
             spawn_triangle_break_particles(20, 0x8B, 0.2, 3)
@@ -1789,8 +1795,8 @@ function trampoline_loop(o)
 end
 
 function a_cage_init(o)
-    network_init_object(o, true, { "oAction", "oHomeY", "oPosY", "oVelY" })
     o.hookRender = 1
+    network_init_object(o, true, { "oAction", "oHomeY", "oPosY", "oVelY" })
 end
 
 function a_cage_loop(o)
@@ -2457,7 +2463,7 @@ function bhv_nitro_box_loop(o)
 
         if gPlayerSyncTable[0].aku_recharge ~= 0 then
             --  djui_chat_message_create("dont")
-            --spawn_object2(o, MODEL_NITRO_BOOM, bhvNitroBoom)
+            spawn_object(o, MODEL_NITRO_BOOM, bhvNitroBoom)
             set_mario_action(gMarioState, ACT_HARD_BACKWARD_GROUND_KB, 0)
             gMarioState.faceAngle.y = obj_angle_to_object(o, gMarioState.marioObj) + 0x8000
             gMarioState.health = 0xFF -- die
@@ -2472,7 +2478,7 @@ function bhv_nitro_box_loop(o)
     set_object_visibility(o, 7000)
 
     if o.oShotByShotgun > 0 then
-        --spawn_object(o, MODEL_NITRO_BOOM, bhvNitroBoom)
+        spawn_object(o, MODEL_NITRO_BOOM, bhvNitroBoom)
         set_mario_action(gMarioState, ACT_HARD_BACKWARD_GROUND_KB, 0)
         gMarioState.faceAngle.y = obj_angle_to_object(o, gMarioState.marioObj) + 0x8000
         gMarioState.health = 0xFF
@@ -2498,4 +2504,255 @@ function bhv_moving_funky_platform(o)
     local reverse = 1;
     if (((o.oBehParams >> 24) & 0xff) ~= 0) then reverse = -1; end
     o.oPosX = o.oPosX + (10.0 * coss(1000 * o.oTimer)) * reverse;
+end
+
+-- Globals
+gGlobalSyncTable.ifPushed = 0
+gGlobalSyncTable.ifPushedAgain = 0
+
+sBHButtonHitbox = {
+    interactType      = INTERACT_BREAKABLE,
+    downOffset        = 20,
+    damageOrCoinValue = 0,
+    health            = 1,
+    numLootCoins      = 0,
+    radius            = 150,
+    height            = 200,
+    hurtboxRadius     = 150,
+    hurtboxHeight     = 200
+}
+
+function bridgesbutton_init(o)
+    o.oCollisionDistance = 9000
+    network_init_object(o, true, { "oAction", "oInteractStatus", "oVelY", "oTimer", "oPosY" })
+end
+
+function button_for_bridge_loop(o)
+    local yVel = 30.0
+    local yaw = 0x1000
+
+    if o.oAction == 0 then
+        if (o.oInteractStatus & INT_STATUS_INTERACTED) ~= 0 and (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
+            gGlobalSyncTable.ifPushed = 1
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        obj_scale_xyz(o, 1.4 * sins(o.oTimer * 0x555), 1.9 * sins(o.oTimer * 555), 1.0)
+        if o.oTimer >= 10 then
+            o.oAction = 2
+        end
+    elseif o.oAction == 2 then
+        o.oVelY = yVel
+        o.oAngleVelYaw = yaw
+        if should_object_spawn() then
+            gLakituState.focus.x = 1134
+            gLakituState.focus.y = 28
+            gLakituState.focus.z = 1775
+        end
+        if o.oTimer >= 20 then
+            o.oAction = 3
+        end
+    elseif o.oAction == 3 then
+        o.oVelY = 0
+        obj_mark_for_deletion(o)
+        cur_obj_disable_rendering()
+        cur_obj_become_intangible()
+    end
+
+    o.oPosY = o.oPosY + o.oVelY
+    obj_set_hitbox(o, sBHButtonHitbox)
+    o.oInteractStatus = 0
+    o.oFaceAnglePitch = o.oFaceAnglePitch + o.oAngleVelPitch
+    o.oFaceAngleYaw = o.oFaceAngleYaw + o.oAngleVelYaw
+    o.oFaceAngleRoll = o.oFaceAngleRoll + o.oAngleVelRoll
+end
+
+function button_for_bridge_loop_2(o)
+    local yVel = 30.0
+    local yaw = 0x1000
+
+    if o.oAction == 0 then
+        if (o.oInteractStatus & INT_STATUS_INTERACTED) ~= 0 and (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
+            gGlobalSyncTable.ifPushedAgain = 1
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        obj_scale_xyz(o, 1.4 * sins(o.oTimer * 0x555), 1.9 * sins(o.oTimer * 555), 1.0)
+        if o.oTimer >= 10 then
+            o.oAction = 2
+        end
+    elseif o.oAction == 2 then
+        o.oVelY = yVel
+        o.oAngleVelYaw = yaw
+        if o.oTimer >= 20 then
+            o.oAction = 3
+        end
+    elseif o.oAction == 3 then
+        o.oVelY = 0
+        obj_mark_for_deletion(o)
+        cur_obj_disable_rendering()
+        cur_obj_become_intangible()
+    end
+
+    o.oPosY = o.oPosY + o.oVelY
+    obj_set_hitbox(o, sBHButtonHitbox)
+    -- vec3i_add(o.oFaceAngleVec, o.oAngleVelVec)
+    o.oFaceAnglePitch = o.oFaceAnglePitch + o.oAngleVelPitch
+    o.oFaceAngleYaw = o.oFaceAngleYaw + o.oAngleVelYaw
+    o.oFaceAngleRoll = o.oFaceAngleRoll + o.oAngleVelRoll
+end
+
+function bridge_loop(o)
+    if o.oAction == 0 then
+        smlua_anim_util_set_animation(o, "bhbridge_anim_ArmatureAction")
+        cur_obj_become_intangible()
+        if gGlobalSyncTable.ifPushed == 1 then
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        smlua_anim_util_set_animation(o, "anim_bflip_ArmatureAction")
+        cur_obj_become_tangible()
+        if o.oTimer >= 21 then
+            o.oAction = 2
+        end
+    elseif o.oAction == 2 then
+        smlua_anim_util_set_animation(o, "bhbridge_idle_anim_ArmatureAction")
+        load_object_collision_model()
+    end
+end
+
+function bridge2_loop(o)
+    if o.oAction == 0 then
+        smlua_anim_util_set_animation(o, "bhbridge_anim_ArmatureAction")
+        cur_obj_become_intangible()
+        if gGlobalSyncTable.ifPushedAgain == 1 then
+            o.oAction = 1
+        end
+    elseif o.oAction == 1 then
+        smlua_anim_util_set_animation(o, "anim_bflip_ArmatureAction")
+        cur_obj_become_tangible()
+        if o.oTimer >= 21 then
+            o.oAction = 2
+        end
+    elseif o.oAction == 2 then
+        smlua_anim_util_set_animation(o, "bhbridge_idle_anim_ArmatureAction")
+        load_object_collision_model()
+    end
+end
+
+function bhv_star_piece_switch_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_E__SG_CUSTOM | OBJ_FLAG_ABILITY_CHRONOS_SMOOTH_SLOW | OBJ_FLAG_NO_DREAM_COMET
+    o.oBobombBuddyPosXCopy = 0
+    network_init_object(o, true,
+        { "oAction", "oGravity", "oVelY", "oShotByShotgun", "oTimer", "oPosY", "oBobombBuddyPosXCopy" })
+end
+
+BLUE_COIN_SWITCH_ACT_IDLE      = 0
+BLUE_COIN_SWITCH_ACT_RECEDING  = 1
+BLUE_COIN_SWITCH_ACT_TICKING   = 2
+BLUE_COIN_SWITCH_ACT_EXTENDING = 3
+
+function bhv_star_piece_switch_loop(o)
+    cur_obj_scale(3.0)
+    local m = nearest_mario_state_to_object(o)
+    local gMarioObject = m.marioObj
+    --djui_chat_message_create(""..o.oBobombBuddyPosXCopy)
+
+    if o.oAction == BLUE_COIN_SWITCH_ACT_IDLE then
+        if (gMarioObject.platform == o and m.action == ACT_GROUND_POUND_LAND) or o.oShotByShotgun == 2 then
+            o.oBobombBuddyPosXCopy = 0
+            o.oAction = BLUE_COIN_SWITCH_ACT_RECEDING
+            o.oVelY = -16.0
+            o.oGravity = 0.0
+            cur_obj_play_sound_2(SOUND_GENERAL_SWITCH_DOOR_OPEN)
+        end
+        o.oShotByShotgun = 0
+        load_object_collision_model()
+    elseif o.oAction == BLUE_COIN_SWITCH_ACT_RECEDING then
+        if o.oTimer > 3 then
+            o.oAction = BLUE_COIN_SWITCH_ACT_TICKING
+            o.oVelY = 0.0
+            o.oGravity = 0.0
+            spawn_mist_particles_variable(0, 0, 46.0)
+        else
+            load_object_collision_model()
+            cur_obj_move_using_fvel_and_gravity()
+        end
+    elseif o.oAction == BLUE_COIN_SWITCH_ACT_TICKING then
+        local fast_tick_limit = (o.oBehParams2ndByte == 0) and 200 or (o.oBehParams2ndByte * 10) - 40
+
+        if o.oTimer < fast_tick_limit then
+            play_sound(SOUND_GENERAL2_SWITCH_TICK_FAST, gGlobalSoundSource)
+        else
+            play_sound(SOUND_GENERAL2_SWITCH_TICK_SLOW, gGlobalSoundSource)
+        end
+
+        if o.oBobombBuddyPosXCopy > 4 then
+            spawn_default_star(o.oPosX, o.oPosY + 400.0, o.oPosZ)
+            spawn_mist_particles_variable(0, 0, 46.0)
+            obj_mark_for_deletion(o)
+        elseif o.oTimer > ((o.oBehParams2ndByte == 0) and 240 or (o.oBehParams2ndByte * 10)) then
+            o.oAction = BLUE_COIN_SWITCH_ACT_EXTENDING
+            o.oVelY = 16.0
+            o.oGravity = 0.0
+        end
+
+        load_object_collision_model()
+    elseif o.oAction == BLUE_COIN_SWITCH_ACT_EXTENDING then
+        if o.oTimer > 3 then
+            o.oAction = 0
+            o.oPosY = o.oHomeY
+        else
+            load_object_collision_model()
+            cur_obj_move_using_fvel_and_gravity()
+        end
+    end
+end
+
+function bhv_star_piece_init(o)
+    network_init_object(o, true,
+        { "oAction", "oGravity", "oVelY", "oShotByShotgun", "oTimer", "oPosY", "oFaceAngleYaw" })
+end
+
+function bhv_star_piece_loop(o)
+    local sps = cur_obj_nearest_object_with_behavior(get_behavior_from_id(bhvStarPieceSwitch))
+
+    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x400
+    o.oPosY = o.oHomeY + 20.0 + sins(o.oTimer * 0x500) * 20.0
+
+    if o.oAction == 0 then
+        cur_obj_hide()
+        o.oAction = 1
+    elseif o.oAction == 1 then
+        if sps and sps.oAction == BLUE_COIN_SWITCH_ACT_TICKING then
+            o.oAction = 2
+            cur_obj_unhide()
+        end
+    elseif o.oAction == 2 then
+        if sps and sps.oTimer > ((sps.oBehParams2ndByte == 0) and 200 or (sps.oBehParams2ndByte * 10) - 40) then
+            if get_global_timer() % 2 == 0 then
+                cur_obj_unhide()
+            else
+                cur_obj_hide()
+            end
+        end
+
+        if dist_between_objects(o, nearest_player_to_object(o)) < 160.0 then
+            cur_obj_hide()
+            cur_obj_play_sound_2(SOUND_MENU_COLLECT_SECRET + sps.oBobombBuddyPosXCopy)
+            spawn_object(o, E_MODEL_SPARKLES, id_bhvCoinSparkles)
+            sps.oBobombBuddyPosXCopy = sps.oBobombBuddyPosXCopy + 1
+            spawn_orange_number(sps.oBobombBuddyPosXCopy, 0, 0, 0)
+            o.oAction = 3
+        end
+    elseif o.oAction == 3 then
+        if sps and (sps.oAction == 3 or sps.oAction == 0) then
+            cur_obj_hide()
+            o.oAction = 1
+        end
+    end
+
+    if sps.oAction == BLUE_COIN_SWITCH_ACT_IDLE then
+        o.oAction = 0
+    end
 end
