@@ -35,6 +35,23 @@ smlua_audio_utils_replace_sequence(0x4b, 42, 80, "4B_c_sea_me_now")
 smlua_audio_utils_replace_sequence(0x4e, 42, 80, "4E_mitm_hub")
 smlua_audio_utils_replace_sequence(0x50, 42, 80, "50_mitm_ability_get")
 
+
+local function drop_coins_on_death(m)
+    for i = 1, 5 do
+        if gGlobalSyncTable.coins > 0 then
+            spawn_sync_object(id_bhvSingleCoinGetsSpawned, E_MODEL_YELLOW_COIN, m.pos.x, m.pos.y + 40, m.pos.z,
+                function(o)
+                    o.oBobombExpBubGfxExpRateX = 1
+                    gGlobalSyncTable.coins = gGlobalSyncTable.coins - 1
+                end)
+        end
+    end
+
+    -- save_file_set_coins()
+    --gSaveFileModified = true
+    --save_file_do_save(gCurrSaveFileNum - 1)
+end
+
 local function mario_update(m)
     if m.playerIndex == 0 then
         if m.action == ACT_TWIRLING and (m.controller.buttonDown & Z_TRIG) ~= 0 then
@@ -45,7 +62,12 @@ local function mario_update(m)
 
         m.peakHeight = m.pos.y
         m.numLives = 99
+
+        if m.action == ACT_FALLING_DEATH_EXIT then
+            drop_coins_on_death(m)
+        end
     end
+    -- gGlobalSyncTable.coins = 999
     if gGlobalSyncTable.coins > 999 then
         gGlobalSyncTable.coins = 999
     end
@@ -62,4 +84,11 @@ local function global_coins(m, o, b)
 end
 
 hook_event(HOOK_ON_INTERACT, global_coins)
+hook_event(HOOK_ALLOW_INTERACT, function(m, o, t)
+    if t == INTERACT_COIN then
+        if o.oBobombExpBubGfxExpRateX == 1 then
+            return false
+        end
+    end
+end)
 hook_event(HOOK_MARIO_UPDATE, mario_update)

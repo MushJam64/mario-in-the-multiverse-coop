@@ -1,7 +1,37 @@
 local function update_coin_attach(o)
-   o.oFlags = o.oFlags | OBJ_FLAG_ATTACHABLE_BY_ROPE o.hookRender = 1
+    o.oFlags = o.oFlags | OBJ_FLAG_ATTACHABLE_BY_ROPE
+    o.hookRender = 1
 end
 
+local function for_each_object_with_behavior(behavior, func) --* function by Isaac
+    local o = obj_get_first_with_behavior_id(behavior)
+    if o == nil then return end
+    while o ~= nil do
+        func(o)
+        o = obj_get_next_with_same_behavior_id(o)
+    end
+end
+
+local function upd_spawned()
+    for_each_object_with_behavior(id_bhvYellowCoin, function(o)
+        if o.oBobombExpBubGfxExpRateX == 1 then
+            o.oHealth = o.oHealth + 1
+            o.header.gfx.node.flags = o.header.gfx.node.flags & (~GRAPH_RENDER_INVISIBLE)
+            --djui_chat_message_create("s")
+
+            if o.oHealth > 30 then
+                if o.oHealth % 2 == 0 then
+                    o.header.gfx.node.flags = o.header.gfx.node.flags | GRAPH_RENDER_INVISIBLE
+                end
+                if o.oHealth > 50 then
+                    obj_mark_for_deletion(o)
+                end
+            end
+        end
+    end)
+end
+
+hook_event(HOOK_UPDATE, upd_spawned)
 hook_behavior(id_bhvBlueCoinJumping, OBJ_LIST_LEVEL, false, update_coin_attach, nil)
 
 --we cant add new o fields that are objs for oRopeObject, so here ill use oHiddenBlueCoinSwitch

@@ -91,4 +91,4 @@ AKU AKU ABILITY:
 -
 
 GENERAL STUFF:
-- Dying and respawning takes away 5 coins (part of coin system) not there yet
+-

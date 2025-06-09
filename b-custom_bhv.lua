@@ -2967,8 +2967,7 @@ function bhv_crane_rock_loop(o)
 
         if count_objects_with_behavior(get_behavior_from_id(bhvCraneRock)) == 1 then
             -- play_puzzle_jingle()
-            local m = nearest_mario_state_to_object(o)
-            spawn_default_star(m.pos.x, m.pos.y + 200, m.pos.z)
+            spawn_default_star(8535, 4140 + 30, 8022)
         end
 
         obj_mark_for_deletion(o)
