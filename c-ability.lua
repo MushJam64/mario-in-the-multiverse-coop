@@ -323,27 +323,21 @@ local function disable_squid_geometry(m)
         end
     end
 end
+
 hook_event(HOOK_OBJECT_SET_MODEL, function(o)
     if obj_has_behavior_id(o, id_bhvMario) ~= 0 then
         local i = network_local_index_from_global(o.globalPlayerIndex)
 
         if charSelect then
-            local chtable = charSelect.character_get_full_table()
-
-            local chModel = {
-                [CT_MARIO] = E_MODEL_MARIO,
-                [CT_LUIGI] = E_MODEL_LUIGI,
-                [CT_TOAD] = E_MODEL_TOAD_PLAYER,
-                [CT_WALUIGI] = E_MODEL_WALUIGI,
-                [CT_WARIO] = E_MODEL_WARIO,
-            }
             local setModel = gPlayerSyncTable[i].modelId
-
-            if not gPlayerSyncTable[i].modelId then
-                setModel = chModel[gMarioStates[i].character.type]
+            local playerCh = charSelect.character_get_current_number(i)
+            local chtable = charSelect.character_get_full_table()
+            if not setModel then
+                setModel = chtable[playerCh][chtable[playerCh].currAlt or 1].ogModel
             end
             if obj_has_model_extended(o, setModel) == 0 then
-                charSelect.character_edit_costume(1, chtable[1] and chtable[1].currAlt or 1, nil, nil, nil, nil,
+                charSelect.character_edit_costume(playerCh, chtable[playerCh] and chtable[playerCh].currAlt or 1, nil,
+                    nil, nil, nil,
                     setModel, nil, nil,
                     nil)
             end
@@ -353,7 +347,7 @@ hook_event(HOOK_OBJECT_SET_MODEL, function(o)
             end
         end
 
-       -- gPlayerSyncTable[i].modelId = nil
+        -- gPlayerSyncTable[i].modelId = nil
     end
 end)
 
