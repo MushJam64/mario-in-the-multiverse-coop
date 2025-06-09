@@ -2550,8 +2550,6 @@ function bhv_moving_funky_platform(o)
 end
 
 -- Globals
-gGlobalSyncTable.ifPushed = 0
-gGlobalSyncTable.ifPushedAgain = 0
 
 sBHButtonHitbox = {
     interactType      = INTERACT_BREAKABLE,
@@ -2567,7 +2565,9 @@ sBHButtonHitbox = {
 
 function bridgesbutton_init(o)
     o.oCollisionDistance = 9000
-    network_init_object(o, true, { "oAction", "oInteractStatus", "oVelY", "oTimer", "oPosY" })
+    o.oBobombExpBubGfxExpRateX = 0
+    o.header.gfx.skipInViewCheck = true
+    network_init_object(o, true, { "oAction", "oInteractStatus", "oVelY", "oTimer", "oPosY", "oBobombExpBubGfxExpRateX" })
 end
 
 function button_for_bridge_loop(o)
@@ -2576,7 +2576,7 @@ function button_for_bridge_loop(o)
 
     if o.oAction == 0 then
         if (o.oInteractStatus & INT_STATUS_INTERACTED) ~= 0 and (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
-            gGlobalSyncTable.ifPushed = 1
+            o.oBobombExpBubGfxExpRateX = 1
             o.oAction = 1
         end
     elseif o.oAction == 1 then
@@ -2616,8 +2616,8 @@ function button_for_bridge_loop_2(o)
 
     if o.oAction == 0 then
         if (o.oInteractStatus & INT_STATUS_INTERACTED) ~= 0 and (o.oInteractStatus & INT_STATUS_WAS_ATTACKED) ~= 0 then
-            gGlobalSyncTable.ifPushedAgain = 1
-            o.oAction = 1
+            o.oBobombExpBubGfxExpRateX = 1
+            o.oAction                  = 1
         end
     elseif o.oAction == 1 then
         obj_scale_xyz(o, 1.4 * sins(o.oTimer * 0x555), 1.9 * sins(o.oTimer * 555), 1.0)
@@ -2649,7 +2649,8 @@ function bridge_loop(o)
     if o.oAction == 0 then
         smlua_anim_util_set_animation(o, "bhbridge_anim_ArmatureAction")
         cur_obj_become_intangible()
-        if gGlobalSyncTable.ifPushed == 1 then
+        local bhbrige = obj_get_nearest_object_with_behavior_id(o, bhvBhButton)
+        if bhbrige and bhbrige.oBobombExpBubGfxExpRateX == 1 then
             o.oAction = 1
         end
     elseif o.oAction == 1 then
@@ -2668,7 +2669,8 @@ function bridge2_loop(o)
     if o.oAction == 0 then
         smlua_anim_util_set_animation(o, "bhbridge_anim_ArmatureAction")
         cur_obj_become_intangible()
-        if gGlobalSyncTable.ifPushedAgain == 1 then
+        local bhbrige = obj_get_nearest_object_with_behavior_id(o, bhvBhButton2)
+        if bhbrige and bhbrige.oBobombExpBubGfxExpRateX == 1 then
             o.oAction = 1
         end
     elseif o.oAction == 1 then
