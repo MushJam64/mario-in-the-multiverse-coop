@@ -35,7 +35,6 @@ Course 3: THE PIRANHA PIT
 Area 1:
 - Custom bullet bill and npcs missing
 - Paintgun doesn't damage enemies yet
-- Crane with control device and behavior (Star 1) not in yet
 - Blimp (supposed boss) is not implemented
 
 Course 4: MARIO IN MUSHROOM HAVOC
@@ -61,7 +60,6 @@ Area 1:
 - Seesaw's toward star on shipwreck aren't there yet
 - Button to spawn breakable boxes toward star on same path as above not there yet
 - Gate locking away a star in a building not fully implemented yet
-- Pokeball Sign beyond small hole to big mushrooms to fly across not there yet
 - A tree at the very end of said place mentioned above is not there
 - Wind currents at the bottom of the slide area aren't there (?)
 
