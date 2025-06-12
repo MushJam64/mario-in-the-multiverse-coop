@@ -22,10 +22,11 @@ jobs:
       shell: bash
       run: |
         mkdir mitm
-        shopt -s extglob
+        cp -r . mitm
 
-        cp -r !(mitm|.git|*.c|*.h|*.png|*.blend|*.blend1|*.obj|mitm.zip) mitm/
+        find mitm -type f \( -name "*.c" -o -name "*.h" -o -name "*.png" -o -name "*.blend" -o -name "*.blend1" -o -name "*.obj" \) -delete
 
+        rm -rf mitm/.git
         zip -r mitm.zip mitm
 
     - name: Push build to Discord webhook
