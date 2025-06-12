@@ -22,7 +22,12 @@ jobs:
       shell: bash
       run: |
         mkdir mitm
-        cp -r . mitm
+        shopt -s dotglob
+
+        for f in * .[^.]*; do
+          [[ "$f" == "mitm" ]] && continue
+          cp -r "$f" mitm/
+        done
 
         find mitm -type f \( -name "*.c" -o -name "*.h" -o -name "*.png" -o -name "*.blend" -o -name "*.blend1" -o -name "*.obj" \) -delete
 
