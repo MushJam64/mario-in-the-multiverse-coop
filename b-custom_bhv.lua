@@ -1838,6 +1838,7 @@ function trampoline_loop(o)
 end
 
 function a_cage_init(o)
+    o.oFlags = o.oFlags|OBJ_FLAG_ATTACHABLE_BY_ROPE
     o.hookRender = 1
     network_init_object(o, true, { "oAction", "oHomeY", "oPosY", "oVelY" })
 end

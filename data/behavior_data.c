@@ -265,7 +265,7 @@ const BehaviorScript bhvTramp[] = {
 const BehaviorScript bhvAcage[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvNewId),
-    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | (OBJ_FLAG_30 + 16))),
+    OR_INT(oFlags, (OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     LOAD_COLLISION_DATA(a_cage_collision),
     //SET_FLOAT(oDrawingDistance, 9000.0f),
     //SET_FLOAT(oCollisionDistance, 9000.0f),
