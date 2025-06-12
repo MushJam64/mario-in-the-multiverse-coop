@@ -18,9 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Create a ZIP file of the repository
+    - name: Create a ZIP file with a top-level "mitm" folder
       run: |
-        zip -r mitm.zip * -x \*.c \*.h \*.png \*.blend \*.blend1 \*.obj
+        mkdir mitm
+        shopt -s extglob
+        cp -r !(mitm|.git|*.c|*.h|*.png|*.blend|*.blend1|*.obj|mitm.zip) mitm/
+        zip -r mitm.zip mitm
 
     - name: Push build to Discord webhook
       uses: MineBartekSA/discord-webhook@v2
