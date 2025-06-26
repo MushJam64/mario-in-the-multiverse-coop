@@ -596,6 +596,18 @@ const BehaviorScript bhvCraneRock[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvCheckpointFlag[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    ID(id_bhvNewId),
+    OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    // LOAD_ANIMATIONS(oAnimations, checkpoint_flag_anims),
+    SCALE(0, 140),
+    // ANIMATE(0),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_checkpoint_flag),
+    END_LOOP(),
+};
+
 /* these are behavior functions from behavior_data.c in mario in the multiverse
 extern void bhv_hub_platform_loop(void);
 
@@ -627,7 +639,7 @@ const BehaviorScript bhvCheckpointFlag[] = {
     ID(id_bhvNewId),
     OR_INT(oFlags, (OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     //LOAD_ANIMATIONS(oAnimations, checkpoint_flag_anims),
-    //SCALE(/*Unused*\ 0, /*Field*\ 140),
+    SCALE(/*Unused*\ 0, /*Field*\ 140),
     //ANIMATE(0),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_checkpoint_flag),

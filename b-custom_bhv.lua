@@ -1597,6 +1597,74 @@ function bhv_g_moving_platform_init(o)
     o.oMoveAngleYaw = o.oFaceAngleYaw;
 end
 
+function bhv_checkpoint_flag(o)
+    local m = gMarioStates[0] -- this is the local player
+    local syncData = gPlayerSyncTable[m.playerIndex]
+
+    -- Set the animation
+    smlua_anim_util_set_animation(o, "checkpoint_flag_anim_ArmatureAction")
+
+    -- Active flag?
+    if o.oBehParams2ndByte == syncData.numCheckpointFlag and gCurrAreaIndex == syncData.areaCheckpointFlag then
+        o.oAnimState = 1
+
+        -- On first active frame, move the death warp to me
+        if o.oTimer == 0 then
+            local dw = obj_get_nearest_object_with_behavior(id_bhvDeathWarp)
+            if dw then
+                dw.oPosX = o.oPosX + math.sins(o.oFaceAngleYaw) * 101.0
+                dw.oPosY = o.oPosY + 150.0
+                dw.oPosZ = o.oPosZ + math.coss(o.oFaceAngleYaw) * 101.0
+                vec3f_copy(dw.oPosVec, gMarioStates[m.playerIndex].vecCheckpointFlag)
+            end
+        end
+
+    else
+        -- Flag is not active for this player
+        o.oAnimState = 0
+
+        -- Activate if close enough
+        if dist_between_objects(o, m.marioObj) < 100.0 then
+            -- Sync new checkpoint index/area
+            syncData.numCheckpointFlag = o.oBehParams2ndByte
+            syncData.areaCheckpointFlag = gCurrAreaIndex
+
+            -- Save respawn position for this player
+            vec3f_copy(gMarioStates[m.playerIndex].vecCheckpointFlag, o.oPosVec)
+
+            -- Animate jump
+            o.oAnimState = 1
+            o.oVelY = 4000.0
+            o.oTimer = 0
+
+            play_sound(SOUND_GENERAL2_RIGHT_ANSWER, m.marioObj.header.gfx.cameraToObject)
+
+            -- Move the death warp to me
+            local dw = obj_get_nearest_object_with_behavior(id_bhvDeathWarp)
+            if dw then
+                dw.oPosX = o.oPosX + sins(o.oFaceAngleYaw) * 101.0
+                dw.oPosY = o.oPosY + 150.0
+                dw.oPosZ = o.oPosZ + coss(o.oFaceAngleYaw) * 101.0
+                vec3f_copy(dw.oPosVec, gMarioStates[m.playerIndex].vecCheckpointFlag)
+            end
+        end
+    end
+
+    -- Sparkle effect
+    if o.oVelY > 2000.0 then
+        local sparkleObj = spawn_non_sync_object(id_MODEL_SPARKLES, id_bhvCoinSparkles)
+        sparkleObj.oPosX = o.oPosX + math.random() * 50.0 - 25.0
+        sparkleObj.oPosY = o.oPosY + math.random() * 100.0
+        sparkleObj.oPosZ = o.oPosZ + math.random() * 50.0 - 25.0
+    end
+
+    -- Rolling and gravity
+    o.oFaceAngleRoll = sins(o.oTimer * 0x900) * o.oVelY
+    o.oVelY = o.oVelY * 0.97
+end
+
+
+
 function bhv_g_moving_platform_loop(o)
     o.oForwardVel = o.oBehParams2ndByte * sins(o.oTimer * 0x88 * ((o.oBehParams >> 24) & 0xff));
     cur_obj_move_xz_using_fvel_and_yaw();
